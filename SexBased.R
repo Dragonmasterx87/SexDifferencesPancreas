@@ -281,7 +281,7 @@ pancreas.list <- list("HP2022801" = HP2022801, "SAMN15877725" = SAMN15877725, "H
 #Normalise data
 pancreas.list <- lapply(X = pancreas.list, FUN = function(x) {
   x <- NormalizeData(x, verbose = FALSE)
-  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 3000)
 })
 
 # Step 7: Feature selection
@@ -294,10 +294,10 @@ pancreas.list <- lapply(X = pancreas.list, FUN = function(x) {
 
 # Step 8: Anchor identification and data integration
 # Identify anchors and integrate dataset
-pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list, anchor.features = pancreas.features, reduction = "rpca")
+pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list, anchor.features = pancreas.features, reduction = "rpca", dims = 1:50)
 
 # this command creates an 'integrated' data assay
-pancreas.combined <- IntegrateData(anchorset = pancreas.anchors)
+pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, dims = 1:50)
 
 # specify that we will perform downstream analysis on the corrected data note that the
 # original unmodified data still resides in the 'RNA' assay
@@ -305,10 +305,13 @@ DefaultAssay(pancreas.combined) <- "integrated"
 
 # Run the standard workflow for visualization and clustering
 pancreas.combined <- ScaleData(pancreas.combined, verbose = FALSE)
-pancreas.combined <- RunPCA(pancreas.combined, npcs = 30, verbose = FALSE)
-pancreas.combined <- RunUMAP(pancreas.combined, reduction = "pca", dims = 1:30)
-pancreas.combined <- FindNeighbors(pancreas.combined, reduction = "pca", dims = 1:30)
+pancreas.combined <- RunPCA(pancreas.combined, npcs = 50, verbose = FALSE)
+pancreas.combined <- RunUMAP(pancreas.combined, reduction = "pca", dims = 1:50)
+pancreas.combined <- FindNeighbors(pancreas.combined, reduction = "pca", dims = 1:50)
 pancreas.combined <- FindClusters(pancreas.combined, resolution = 0.5)
+
+# Visualization
+DimPlot(pancreas.combined, reduction = "umap", group.by = "seurat_clusters")
 
 # Step 9: Linear dimensionality assessment
 # Look at your default assay
@@ -379,16 +382,35 @@ FeaturePlot(object = pancreas.integrated,
             slot = 'counts',
             order = TRUE)
 
-FeaturePlot(object = pancreas.integrated,
-            features = c("SST"
+FeaturePlot(object = pancreas.combined,
+            features = c("SST", "INS", "GCG", "PPY", "GHRL"
             ),
             pt.size = 1,
             cols = c("darkgrey", "red"),
             #min.cutoff = 0,
-            #max.cutoff = 1,
+            max.cutoff = 10000,
             slot = 'counts',
             order = TRUE)
 
+FeaturePlot(object = pancreas.combined,
+            features = c("KRT19", "CPA1", "SPP1", "VWF", "SDS", "COL1A1"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            #min.cutoff = 0,
+            max.cutoff = 10000,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined,
+            features = c("DDIT3"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            #min.cutoff = 0,
+            max.cutoff = 10000,
+            slot = 'counts',
+            order = TRUE)
 
 VlnPlot(
   object = pancreas.integrated,
