@@ -128,21 +128,21 @@ HP2132801$ancestry <- "black"
 HP2202101$ancestry <- "black"
 
 # Ancestry and sex specific Metadata addition
-HP2022801$ancestry <- "white_male"
-SAMN15877725$ancestry <- "white_male"
-HP2024001$ancestry <- "white_female"
-HP2031401$ancestry <- "black_male"
-HP2105501$ancestry <- "white_female"
-HP2106201$ancestry <- "black_female"
-HP2107001$ancestry <- "white_male"
-HP2107901$ancestry <- "white_male"
-HP2108601$ancestry <- "white_female"
-HP2108901$ancestry <- "white_female"
-HP2110001$ancestry <- "black_male"
-HP2121601$ancestry <- "black_female"
-HP2123201$ancestry <- "black_male"
-HP2132801$ancestry <- "black_female"
-HP2202101$ancestry <- "black_female"
+HP2022801$ancestry_sex <- "white_male"
+SAMN15877725$ancestry_sex <- "white_male"
+HP2024001$ancestry_sex <- "white_female"
+HP2031401$ancestry_sex <- "black_male"
+HP2105501$ancestry_sex <- "white_female"
+HP2106201$ancestry_sex <- "black_female"
+HP2107001$ancestry_sex <- "white_male"
+HP2107901$ancestry_sex <- "white_male"
+HP2108601$ancestry_sex <- "white_female"
+HP2108901$ancestry_sex <- "white_female"
+HP2110001$ancestry_sex <- "black_male"
+HP2121601$ancestry_sex <- "black_female"
+HP2123201$ancestry_sex <- "black_male"
+HP2132801$ancestry_sex <- "black_female"
+HP2202101$ancestry_sex <- "black_female"
 }
 
 # STEP 3: Thresholding ####
@@ -277,11 +277,91 @@ pancreas.list <- list("HP2022801" = HP2022801, "SAMN15877725" = SAMN15877725, "H
                       "HP2108601" = HP2108601, "HP2108901" = HP2108901, "HP2110001" = HP2110001, "HP2121601" = HP2121601,
                       "HP2123201" = HP2123201, "HP2132801" = HP2132801, "HP2202101" = HP2202101)
 
+# Normalization
+pancreas.list <- lapply(X = pancreas.list, FUN = SCTransform(x) {
+  x <- SCTransform(x)
+})
+
+features <- SelectIntegrationFeatures(object.list = pancreas.list, nfeatures = 3000)
+# pancreas.list <- PrepSCTIntegration(object.list = pancreas.list, anchor.features = features)
+#saveRDS(pancreas.list, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
+pancreas.list <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
+
+# Run RPCA
+pancreas.list <- lapply(X = pancreas.list, FUN = RunPCA, 
+                        verbose = TRUE, 
+                        features = features)
+anchors <- FindIntegrationAnchors(object.list = pancreas.list, 
+                                  anchor.features = features, 
+                                  normalization.method = "SCT", 
+                                  reduction = "rpca")
+#saveRDS(anchors, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\sct.pancreas.anchors.rds)")
+sct.pancreas.anchors <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors.rds)")
+hca.integrated <- IntegrateData(anchorset = anchors, normalization.method = "SCT")
+
+hca.integrated <- RunPCA(hca.integrated, verbose = FALSE)
+hca.integrated <- RunUMAP(hca.integrated, dims = 1:30)
+DimPlot(hca.integrated, group.by = "orig.ident")
+
+
+
+
+# Anchors
+pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list, normalization.method = "SCT",
+                                           anchor.features = features)
+#saveRDS(pancreas.anchors, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors.rds)")
+pancreas.anchors <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors.rds)")
+
+pancreas.combined.sct <- IntegrateData(anchorset = pancreas.anchors, normalization.method = "SCT")
+
+# PCA analysis
+pancreas.combined.sct <- RunPCA(pancreas.combined.sct, verbose = FALSE)
+pancreas.combined.sct <- RunUMAP(pancreas.combined.sct, reduction = "pca", dims = 1:30)
+
+# Plotting
+DimPlot(pancreas.combined.sct, reduction = "umap", group.by = "stim")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Step 6: Data normalization
 #Normalise data
 pancreas.list <- lapply(X = pancreas.list, FUN = function(x) {
   x <- NormalizeData(x, verbose = FALSE)
-  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 3000)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
 })
 
 # Step 7: Feature selection
