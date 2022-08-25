@@ -334,3 +334,9 @@ FeaturePlot(object = pancreas.combined,
             max.cutoff = 10000,
             slot = 'counts',
             order = TRUE)
+
+# Saving and load
+saveRDS(pancreas.combined, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combined.rds)")
+#pancreas.combined <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combined.rds)")
+
+##
