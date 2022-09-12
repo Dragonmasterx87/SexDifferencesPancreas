@@ -1772,6 +1772,7 @@ write.csv(endothelial.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding
 # Diff gene testing across conditions https://github.com/satijalab/seurat/issues/3933
 # choosing only those genes which are differentially expressed
 # Optimise idents and assay
+table(Idents(pancreas.combined))
 Idents(pancreas.combined) <- "celltype"
 DefaultAssay(object = pancreas.combined) <- "SCT"
 
