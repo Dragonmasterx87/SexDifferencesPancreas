@@ -1,34 +1,48 @@
 # LOAD LIBRARIES ####
 # Restart Rstudio or R
 
-# install.packages('ggplot2')
-# install.packages('cowplot')
-# install.packages('Matrix')
-# install.packages('ggridges')
-# install.packages('ggrepel')
-# install.packages('dplyr')
-# install.packages('Seurat')
-# install.packages('monocle3')
-# install.packages('plotly')
-# install.packages('clustree')
-# install.packages('patchwork')
-# install.packages('future')
+install.packages('ggplot2')
+install.packages('cowplot')
+install.packages('Matrix')
+install.packages('ggridges')
+install.packages('ggrepel')
+install.packages('dplyr')
+#install.packages('Seurat')
+install.packages('plotly')
+install.packages('clustree')
+install.packages('patchwork')
+install.packages('future')
+install.packages("devtools")
 
-# if (!require("BiocManager", quietly = TRUE))
-#   install.packages("BiocManager")
-# 
-# BiocManager::install("EnhancedVolcano")
-# BiocManager::install("DoubletFinder")
-# BiocManager::install("glmGamPoi")
-# BiocManager::install("GOSemSim")
-# BiocManager::install("org.Hs.eg.db")
-# BiocManager::install("AnnotationHub")
-# BiocManager::install("MeSHDbi")
-# BiocManager::install("clusterProfiler")
-# BiocManager::install("DOSE")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version = "3.15")
+
+BiocManager::install(c('BiocGenerics', 'DelayedArray', 'DelayedMatrixStats',
+                       'limma', 'lme4', 'S4Vectors', 'SingleCellExperiment',
+                       'SummarizedExperiment', 'batchelor', 'Matrix.utils',
+                       'HDF5Array', 'terra', 'ggrastr'))
+BiocManager::install("EnhancedVolcano")
+BiocManager::install("DoubletFinder")
+BiocManager::install("glmGamPoi")
+BiocManager::install("GOSemSim")
+BiocManager::install("org.Hs.eg.db")
+BiocManager::install("AnnotationHub")
+BiocManager::install("GenomeInfoDb")
+BiocManager::install("MeSHDbi")
+BiocManager::install("clusterProfiler")
+BiocManager::install("DOSE")
+
 # install Seurat from Github (automatically updates sctransform)
+setRepositories(ind=1:3) # needed to automatically install Bioconductor dependencies
+install.packages("Signac")
+BiocManager::install(c('BSgenome.Hsapiens.UCSC.hg38', 'EnsDb.Hsapiens.v86'))
+
 devtools::install_github("satijalab/seurat", ref = "develop")
 devtools::install_github("satijalab/sctransform", ref = "develop", force = TRUE)
+devtools::install_github('cole-trapnell-lab/monocle3')
+remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
+install.packages("harmony")
 
 # Run the following code once you have Seurat installed
 suppressWarnings(
@@ -43,6 +57,9 @@ suppressWarnings(
     library(Seurat)
     library(monocle3)
     library(harmony)
+    library(Signac)
+    library(EnsDb.Hsapiens.v86)
+    library(GenomeInfoDb)
     library(plotly)
     library(clustree)
     library(patchwork)
@@ -58,12 +75,6 @@ suppressWarnings(
     library(DOSE)
   }
 )
-
-# CONFIRM CORRECT INSTALL ####
-# Confirm package version of Seurat and Monocle
-packageVersion("Seurat")
-packageVersion("monocle3")
-packageVersion("harmony")
 
 # Set global environment parameter
 #options(future.globals.maxSize = 8000 * 1024^2)
@@ -301,6 +312,193 @@ packageVersion("harmony")
   HP2202101 <- RenameCells(HP2202101, add.cell.id = "HP2202101")
   }
 
+# Normalization for visualization and doublet removal
+ HP2022801 <- NormalizeData(HP2022801, verbose = TRUE)
+ SAMN15877725 <- NormalizeData(SAMN15877725, verbose = TRUE)
+ HP2024001 <- NormalizeData(HP2024001, verbose = TRUE)
+ HP2031401 <- NormalizeData(HP2031401, verbose = TRUE)
+ HP2105501 <- NormalizeData(HP2105501, verbose = TRUE)
+ HP2106201 <- NormalizeData(HP2106201, verbose = TRUE)
+ HP2107001 <- NormalizeData(HP2107001, verbose = TRUE)
+ HP2107901 <- NormalizeData(HP2107901, verbose = TRUE)
+ HP2108601 <- NormalizeData(HP2108601, verbose = TRUE)
+ HP2108901 <- NormalizeData(HP2108901, verbose = TRUE)
+ HP2110001 <- NormalizeData(HP2110001, verbose = TRUE)
+ HP2121601 <- NormalizeData(HP2121601, verbose = TRUE)
+ HP2123201 <- NormalizeData(HP2123201, verbose = TRUE)
+ HP2132801 <- NormalizeData(HP2132801, verbose = TRUE)
+ HP2202101 <- NormalizeData(HP2202101, verbose = TRUE)
+ 
+# Var Feat
+ HP2022801 <- FindVariableFeatures(HP2022801, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ SAMN15877725 <- FindVariableFeatures(SAMN15877725, selection.method = "vst", 
+                                      nfeatures = 2000, verbose = TRUE)
+ HP2024001 <- FindVariableFeatures(HP2024001, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2031401 <- FindVariableFeatures(HP2031401, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2105501 <- FindVariableFeatures(HP2105501, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2106201 <- FindVariableFeatures(HP2106201, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2107001 <- FindVariableFeatures(HP2107001, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2107901 <- FindVariableFeatures(HP2107901, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2108601 <- FindVariableFeatures(HP2108601, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2108901 <- FindVariableFeatures(HP2108901, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2110001 <- FindVariableFeatures(HP2110001, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2121601 <- FindVariableFeatures(HP2121601, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2123201 <- FindVariableFeatures(HP2123201, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2132801 <- FindVariableFeatures(HP2132801, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+ HP2202101 <- FindVariableFeatures(HP2202101, selection.method = "vst", 
+                                   nfeatures = 2000, verbose = TRUE)
+
+# Scale dat
+ HP2022801 <- ScaleData(HP2022801, verbose = TRUE)
+ SAMN15877725 <- ScaleData(SAMN15877725, verbose = TRUE)
+ HP2024001 <- ScaleData(HP2024001, verbose = TRUE)
+ HP2031401 <- ScaleData(HP2031401, verbose = TRUE)
+ HP2105501 <- ScaleData(HP2105501, verbose = TRUE)
+ HP2106201 <- ScaleData(HP2106201, verbose = TRUE)
+ HP2107001 <- ScaleData(HP2107001, verbose = TRUE)
+ HP2107901 <- ScaleData(HP2107901, verbose = TRUE)
+ HP2108601 <- ScaleData(HP2108601, verbose = TRUE)
+ HP2108901 <- ScaleData(HP2108901, verbose = TRUE)
+ HP2110001 <- ScaleData(HP2110001, verbose = TRUE)
+ HP2121601 <- ScaleData(HP2121601, verbose = TRUE)
+ HP2123201 <- ScaleData(HP2123201, verbose = TRUE)
+ HP2132801 <- ScaleData(HP2132801, verbose = TRUE)
+ HP2202101 <- ScaleData(HP2202101, verbose = TRUE) 
+ 
+# PCA
+ HP2022801 <- RunPCA(HP2022801, verbose = TRUE, npcs = 20)
+ SAMN15877725 <- RunPCA(SAMN15877725, verbose = TRUE, npcs = 20)
+ HP2024001 <- RunPCA(HP2024001, verbose = TRUE, npcs = 20)
+ HP2031401 <- RunPCA(HP2031401, verbose = TRUE, npcs = 20)
+ HP2105501 <- RunPCA(HP2105501, verbose = TRUE, npcs = 20)
+ HP2106201 <- RunPCA(HP2106201, verbose = TRUE, npcs = 20)
+ HP2107001 <- RunPCA(HP2107001, verbose = TRUE, npcs = 20)
+ HP2107901 <- RunPCA(HP2107901, verbose = TRUE, npcs = 20)
+ HP2108601 <- RunPCA(HP2108601, verbose = TRUE, npcs = 20)
+ HP2108901 <- RunPCA(HP2108901, verbose = TRUE, npcs = 20)
+ HP2110001 <- RunPCA(HP2110001, verbose = TRUE, npcs = 20)
+ HP2121601 <- RunPCA(HP2121601, verbose = TRUE, npcs = 20)
+ HP2123201 <- RunPCA(HP2123201, verbose = TRUE, npcs = 20)
+ HP2132801 <- RunPCA(HP2132801, verbose = TRUE, npcs = 20)
+ HP2202101 <- RunPCA(HP2202101, verbose = TRUE, npcs = 20) 
+
+ # UMAP
+ HP2022801 <- RunUMAP(HP2022801, dims = 1:10, verbose = F)
+ SAMN15877725 <- RunUMAP(SAMN15877725, dims = 1:10, verbose = F)
+ HP2024001 <- RunUMAP(HP2024001, dims = 1:10, verbose = F)
+ HP2031401 <- RunUMAP(HP2031401, dims = 1:10, verbose = F)
+ HP2105501 <- RunUMAP(HP2105501, dims = 1:10, verbose = F)
+ HP2106201 <- RunUMAP(HP2106201, dims = 1:10, verbose = F)
+ HP2107001 <- RunUMAP(HP2107001, dims = 1:10, verbose = F)
+ HP2107901 <- RunUMAP(HP2107901, dims = 1:10, verbose = F)
+ HP2108601 <- RunUMAP(HP2108601, dims = 1:10, verbose = F)
+ HP2108901 <- RunUMAP(HP2108901, dims = 1:10, verbose = F)
+ HP2110001 <- RunUMAP(HP2110001, dims = 1:10, verbose = F)
+ HP2121601 <- RunUMAP(HP2121601, dims = 1:10, verbose = F)
+ HP2123201 <- RunUMAP(HP2123201, dims = 1:10, verbose = F)
+ HP2132801 <- RunUMAP(HP2132801, dims = 1:10, verbose = F)
+ HP2202101 <- RunUMAP(HP2202101, dims = 1:10, verbose = F)
+
+# for (i in 1:length(pancreas.list)) {
+#   pancreas.list[[i]] <- NormalizeData(pancreas.list[[i]], verbose = TRUE)
+#   pancreas.list[[i]] <- FindVariableFeatures(pancreas.list[[i]], selection.method = "vst", 
+#                                              nfeatures = 2000, verbose = TRUE)
+# }
+
+# Optimization
+sweep.res <- paramSweep_v3(HP2022801) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(SAMN15877725) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2024001) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2031401) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2105501) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2106201) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2107001) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2107901) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2108601) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2108901) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2110001) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2121601) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2123201) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2132801) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+sweep.res <- paramSweep_v3(HP2202101) 
+sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+bcmvn <- find.pK(sweep.stats)
+barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+
+# Filtering
+nExp <- round(ncol(HP2022801) * 0.04)  # expect 4% doublets
+HP2022801 <- doubletFinder_v3(HP2022801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+
 # Step 5: creating a list of all datasets
 {
   pancreas.list <- list("HP2022801" = HP2022801, "SAMN15877725" = SAMN15877725, "HP2107001" = HP2107001, "HP2107901" = HP2107901,
@@ -310,27 +508,36 @@ packageVersion("harmony")
                          )
 }
 
-# Normalization for visualization
-pancreas.combined <- lapply(X = pancreas.list, FUN = function(x) {
-  x <- NormalizeData(x)
- })
-
 # normalize and identify variable features for each dataset independently
 pancreas.list <- lapply(X = pancreas.list, FUN = SCTransform, method = "glmGamPoi")
-features <- SelectIntegrationFeatures(object.list = pancreas.list, nfeatures = 3000)
+features <- SelectIntegrationFeatures(object.list = pancreas.list, nfeatures = 2000)
 pancreas.list <- PrepSCTIntegration(object.list = pancreas.list, anchor.features = features)
 pancreas.list <- lapply(X = pancreas.list, FUN = RunPCA, features = features)
 
 # Perform integration note k.anchors = 20 increase in integration strength (5 by default)
-pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list, normalization.method = "SCT",
-                                           anchor.features = features, dims = 1:30, reduction = "rpca", 
-                                           k.anchor = 5)
-pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, normalization.method = "SCT", dims = 1:30,
-                                   verbose = TRUE)
+pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list, 
+                                           normalization.method = "SCT",
+                                           anchor.features = features, 
+                                           dims = 1:30, 
+                                           reduction = "rpca", 
+                                           k.anchor = 10)
+
+saveRDS(pancreas.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
+saveRDS(features, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
+saveRDS(pancreas.list, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
+pancreas.anchors <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
+features <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
+pancreas.combined <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combinedcorrectedSCT.rds)")
+
+pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, 
+                                   normalization.method = "SCT", 
+                                   dims = 1:30,
+                                   verbose = TRUE,
+                                   features.to.integrate = features)
 
 # Post integration UMAP
-pancreas.combined <- RunPCA(pancreas.combined, npcs = 50, verbose = TRUE)
-pancreas.combined <- RunUMAP(pancreas.combined, reduction = "pca", dims = 1:50)
+pancreas.combined <- RunPCA(pancreas.combined, npcs = 50, verbose = TRUE) #C
+pancreas.combined <- RunUMAP(pancreas.combined, reduction = "pca", dims = 1:30, return.model = TRUE)
 
 # Step 9a: CLUSTER ANALYSIS ####
 # Clustering, we run multiple permutations to allow clustree to analyze optimal clustering resolution.
@@ -364,14 +571,34 @@ DimPlot(pancreas.combined, reduction = "umap", group.by = "integrated_snn_res.0.
 clustree(pancreas.combined, prefix = "integrated_snn_res.")
 
 # Discovery based Plotting
-DefaultAssay(pancreas.combined) <- "RNA"
+DefaultAssay(pancreas.combined) <- "SCT"
 FeaturePlot(object = pancreas.combined,
-            features = c("SOX10"
+            features = c("GCG", "INS", "SST", "PPY", "GHRL"
+                         ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined,
+            features = c("VWF", "SDS", "CD8A", "TRAC", "TPSAB1"
             ),
             pt.size = 1,
             cols = c("darkgrey", "red"),
             min.cutoff = 0,
-            max.cutoff = 100,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined,
+            features = c("PDGFRA", "RGS5", "REG1A", "SPP1", "CFTR", "SOX10"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
             slot = 'counts',
             order = TRUE)
 
