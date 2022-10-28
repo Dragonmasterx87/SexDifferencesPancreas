@@ -498,6 +498,48 @@ barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
 nExp <- round(ncol(HP2022801) * 0.04)  # expect 4% doublets
 HP2022801 <- doubletFinder_v3(HP2022801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
 
+nExp <- round(ncol(SAMN15877725) * 0.04)  # expect 4% doublets
+SAMN15877725 <- doubletFinder_v3(SAMN15877725, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2024001) * 0.04)  # expect 4% doublets
+HP2024001 <- doubletFinder_v3(HP2024001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2031401) * 0.04)  # expect 4% doublets
+HP2031401 <- doubletFinder_v3(HP2031401, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2105501) * 0.04)  # expect 4% doublets
+HP2105501 <- doubletFinder_v3(HP2105501, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2106201) * 0.04)  # expect 4% doublets
+HP2106201 <- doubletFinder_v3(HP2106201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2107001) * 0.04)  # expect 4% doublets
+HP2107001 <- doubletFinder_v3(HP2107001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2107901) * 0.04)  # expect 4% doublets
+HP2107901 <- doubletFinder_v3(HP2107901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2108601) * 0.04)  # expect 4% doublets
+HP2108601 <- doubletFinder_v3(HP2108601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2108901) * 0.04)  # expect 4% doublets
+HP2108901 <- doubletFinder_v3(HP2108901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2110001) * 0.04)  # expect 4% doublets
+HP2110001 <- doubletFinder_v3(HP2110001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2121601) * 0.04)  # expect 4% doublets
+HP2121601 <- doubletFinder_v3(HP2121601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2123201) * 0.04)  # expect 4% doublets
+HP2123201 <- doubletFinder_v3(HP2123201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2132801) * 0.04)  # expect 4% doublets
+HP2132801 <- doubletFinder_v3(HP2132801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
+nExp <- round(ncol(HP2202101) * 0.04)  # expect 4% doublets
+HP2202101 <- doubletFinder_v3(HP2202101, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+
 
 # Step 5: creating a list of all datasets
 {
