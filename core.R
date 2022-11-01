@@ -564,13 +564,13 @@ pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list,
                                            reduction = "rpca", 
                                            k.anchor = 10)
 
-saveRDS(pancreas.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
-saveRDS(features, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
-saveRDS(pancreas.list, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
+#saveRDS(pancreas.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
+#saveRDS(features, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
+#saveRDS(pancreas.list, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
 pancreas.anchors <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
 features <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
 pancreas.combined <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combinedcorrectedSCT.rds)")
-
+gc()
 pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, 
                                    normalization.method = "SCT", 
                                    dims = 1:30,
@@ -658,57 +658,6 @@ VlnPlot(
   pt.size = 1
 )
 
-#Rename Idents
-pancreas.combined <- RenameIdents(pancreas.combined, 
-                                    "0" = "Alpha-GCGhi", 
-                                    "1" = "Beta-INShi",
-                                    "2" = "Activated-Stellate", 
-                                    "3" = "Ductal",
-                                    "4" = "Alpha-GCGhi", 
-                                    "5" = "Acinar",
-                                    "6" = "Transdifferentiating-Endo", 
-                                    "7" = "Beta-INSlow",
-                                    "8" = "Alpha-GCGlow", 
-                                    "9" = "Endothelial",
-                                    "10" = "Delta", 
-                                    "11" = "Quiescent-Stellate1",
-                                    "12" = "Quiescent-Stellate2",
-                                    "13" = "Acinar",
-                                    "14" = "Alpha-GCGlow",
-                                    "15" = "Beta-ERStress",
-                                    "16" = "Macrophages",
-                                    "17" = "Gamma",
-                                    "18" = "Mast",
-                                    "19" = "Ductal",
-                                    "20" = "Delta",
-                                    "21" = "Transdifferentiating-Exo",
-                                    "22" = "T-cells",
-                                    "23" = "Endothelial",
-                                    "24" = "Schwann"
-                                    )
-
-# Manual allocation of GHRL epsilon cells
-DefaultAssay(object = pancreas.combined) <- "RNA"
-Idents(pancreas.combined, WhichCells(object = pancreas.combined, expression = GHRL > 100, slot = 'counts')) <- 'Epsilon'
-DimPlot(pancreas.combined, reduction = "umap", label = TRUE)
-
-# Saving this information in the metadata slot
-table(Idents(pancreas.combined))
-pancreas.combined$celltype <- Idents(pancreas.combined)
-summary(pancreas.combined@meta.data)
-
-# Define an order of cluster identities remember after this step-
-# cluster re-assignment occurs, which re-assigns clustering in my_levels
-my_levels <- c("Beta-INShi", "Beta-INSlow", "Beta-ERStress", "Transdifferentiating-Endo", "Alpha-GCGhi", "Alpha-GCGlow", "Delta", "Gamma", "Epsilon",
-               "Ductal", "Transdifferentiating-Exo", "Acinar", 
-               "Quiescent-Stellate1", "Quiescent-Stellate2", "Activated-Stellate",
-               "Macrophages", "T-cells", "Mast",
-               "Schwann", "Endothelial")
-head(pancreas.combined@meta.data$celltype)
-
-# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
-pancreas.combined@meta.data$celltype <- factor(x = pancreas.combined@meta.data$celltype, levels = my_levels)
-Idents(pancreas.combined) <- "celltype"
 
 # Observing cells
 DimPlot(pancreas.combined, 
