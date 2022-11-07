@@ -620,12 +620,12 @@ pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list,
                                            reduction = "rpca", 
                                            k.anchor = 5)
 
-#saveRDS(pancreas.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
-#saveRDS(features, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
-#saveRDS(pancreas.list, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
-pancreas.anchors <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
-features <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
-pancreas.combined <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combinedcorrectedSCT.rds)")
+saveRDS(pancreas.anchors, file = '~/Documents/SexBasedStudy/RDSfiles/pancreas.anchors10.rds')
+saveRDS(features, file = '~/Documents/SexBasedStudy/RDSfiles/features.rds')
+saveRDS(pancreas.list, file = '~/Documents/SexBasedStudy/RDSfiles/pancreas.list.rds')
+pancreas.anchors <- readRDS('~/Documents/SexBasedStudy/RDSfiles/pancreas.anchors10.rds')
+features <- readRDS('~/Documents/SexBasedStudy/RDSfiles/peatures.rds')
+pancreas.combined <- readRDS('~/Documents/SexBasedStudy/RDSfiles/pancreas.combinedcorrectedSCT.rds')
 gc()
 pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, 
                                    normalization.method = "SCT", 
