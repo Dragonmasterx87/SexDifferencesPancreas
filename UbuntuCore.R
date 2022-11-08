@@ -620,12 +620,12 @@ pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list,
                                            reduction = "rpca", 
                                            k.anchor = 5)
 
-saveRDS(pancreas.anchors, file = '~/Documents/SexBasedStudy/RDSfiles/pancreas.anchors10.rds')
-saveRDS(features, file = '~/Documents/SexBasedStudy/RDSfiles/features.rds')
-saveRDS(pancreas.list, file = '~/Documents/SexBasedStudy/RDSfiles/pancreas.list.rds')
-pancreas.anchors <- readRDS('~/Documents/SexBasedStudy/RDSfiles/pancreas.anchors10.rds')
-features <- readRDS('~/Documents/SexBasedStudy/RDSfiles/peatures.rds')
-pancreas.combined <- readRDS('~/Documents/SexBasedStudy/RDSfiles/pancreas.combinedcorrectedSCT.rds')
+#saveRDS(pancreas.anchors, file = '~/Documents/SexBasedStudy/RDSfiles/pancreas.anchors10.rds')
+#saveRDS(features, file = '~/Documents/SexBasedStudy/RDSfiles/features.rds')
+#saveRDS(pancreas.list, file = '~/Documents/SexBasedStudy/RDSfiles/pancreas.list.rds')
+#pancreas.anchors <- readRDS('~/Documents/SexBasedStudy/RDSfiles/pancreas.anchors10.rds')
+#features <- readRDS('~/Documents/SexBasedStudy/RDSfiles/peatures.rds')
+#pancreas.combined <- readRDS('~/Documents/SexBasedStudy/RDSfiles/pancreas.combinedcorrectedSCT.rds')
 gc()
 pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, 
                                    normalization.method = "SCT", 
@@ -661,12 +661,22 @@ PlotClusterTree(pancreas.combined)
 
 # Visualization
 DimPlot(pancreas.combined, reduction = "umap", group.by = "ancestry_sex")
-DimPlot(pancreas.combined, reduction = "umap", group.by = "DF.classifications_0.25_0.09_166")
+DimPlot(pancreas.combined, reduction = "umap", group.by = "doublets")
+
+# Elimination of doublets
+pancreas.combined.withdoublets <- pancreas.combined
+Idents(pancreas.combined) <- "doublets"
+pancreas.combined <- subset(pancreas.combined, idents = "Singlet")
+
+# Plotting
 DimPlot(pancreas.combined, reduction = "umap", group.by = "seurat_clusters", label = TRUE, repel = TRUE)
 DimPlot(pancreas.combined, reduction = "umap", group.by = "integrated_snn_res.0.3", label = TRUE, repel = TRUE)
 
 # Cluster-tree analysis, looking appropriate non-anomalous clustering resolution
 clustree(pancreas.combined, prefix = "integrated_snn_res.")
+
+# SAVE POINT
+saveRDS(pancreas.combined, file = '~/Documents/SexBasedStudy/RDSfiles/pancreas.combined.rds')
 
 # Discovery based Plotting
 DefaultAssay(pancreas.combined) <- "SCT"
