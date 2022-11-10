@@ -976,7 +976,7 @@ beta.INSHi.wmvsbm <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSHi.wmvsbm, n = 15)
-write.csv(beta.INSHi.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSHi.wmvsbm.csv)")
+write.csv(beta.INSHi.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSHi.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 beta.INSHi.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -991,7 +991,7 @@ beta.INSHi.wfvsbf <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSHi.wfvsbf, n = 15)
-write.csv(beta.INSHi.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSHi.wfvsbf.csv)")
+write.csv(beta.INSHi.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSHi.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 beta.INSHi.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1006,7 +1006,7 @@ beta.INSHi.wmvswf <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSHi.wmvswf, n = 15)
-write.csv(beta.INSHi.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSHi.wmvswf.csv)")
+write.csv(beta.INSHi.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSHi.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 beta.INSHi.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1021,7 +1021,7 @@ beta.INSHi.bmvsbf <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSHi.bmvsbf, n = 15)
-write.csv(beta.INSHi.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSHi.bmvsbf.csv)")
+write.csv(beta.INSHi.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSHi.bmvsbf.csv')
 
 # 2.Beta-cells (INS low) ####
 # WHITE MALE VS. BLACK MALE
@@ -1037,7 +1037,7 @@ beta.INSLow.wmvsbm <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSLow.wmvsbm, n = 15)
-write.csv(beta.INSLow.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSLow.wmvsbm.csv)")
+write.csv(beta.INSLow.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSLow.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 beta.INSLow.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1052,7 +1052,7 @@ beta.INSLow.wfvsbf <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSLow.wfvsbf, n = 15)
-write.csv(beta.INSLow.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSLow.wfvsbf.csv)")
+write.csv(beta.INSLow.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSLow.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 beta.INSLow.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1067,7 +1067,7 @@ beta.INSLow.wmvswf <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSLow.wmvswf, n = 15)
-write.csv(beta.INSLow.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSLow.wmvswf.csv)")
+write.csv(beta.INSLow.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSLow.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 beta.INSLow.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1082,7 +1082,7 @@ beta.INSLow.bmvsbf <- FindMarkers(pancreas.combined,
                                  pseudocount.use = 1,
                                  verbose = TRUE)
 head(beta.INSLow.bmvsbf, n = 15)
-write.csv(beta.INSLow.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSLow.bmvsbf.csv)")
+write.csv(beta.INSLow.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSLow.bmvsbf.csv')
 
 # 3.Beta-cells (ER Stress) ####
 # WHITE MALE VS. BLACK MALE
@@ -1098,7 +1098,7 @@ beta.INSERStress.wmvsbm <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(beta.INSERStress.wmvsbm, n = 15)
-write.csv(beta.INSERStress.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSERStress.wmvsbm.csv)")
+write.csv(beta.INSERStress.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSERStress.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 beta.INSERStress.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1113,7 +1113,7 @@ beta.INSERStress.wfvsbf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(beta.INSERStress.wfvsbf, n = 15)
-write.csv(beta.INSERStress.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSERStress.wfvsbf.csv)")
+write.csv(beta.INSERStress.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSERStress.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 beta.INSERStress.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1128,7 +1128,7 @@ beta.INSERStress.wmvswf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(beta.INSERStress.wmvswf, n = 15)
-write.csv(beta.INSERStress.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSERStress.wmvswf.csv)")
+write.csv(beta.INSERStress.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSERStress.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 beta.INSERStress.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1143,7 +1143,7 @@ beta.INSERStress.bmvsbf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(beta.INSERStress.bmvsbf, n = 15)
-write.csv(beta.INSERStress.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\beta.INSERStress.bmvsbf.csv)")
+write.csv(beta.INSERStress.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/beta.INSERStress.bmvsbf.csv')
 
 
 # 5.Alpha-cells (GCG Hi) ####
@@ -1160,7 +1160,7 @@ Alpha.GCGHi.wmvsbm <- FindMarkers(pancreas.combined,
                                 pseudocount.use = 1,
                                 verbose = TRUE)
 head(Alpha.GCGHi.wmvsbm, n = 15)
-write.csv(Alpha.GCGHi.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGHi.wmvsbm.csv)")
+write.csv(Alpha.GCGHi.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGHi.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Alpha.GCGHi.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1175,7 +1175,7 @@ Alpha.GCGHi.wfvsbf <- FindMarkers(pancreas.combined,
                                 pseudocount.use = 1,
                                 verbose = TRUE)
 head(Alpha.GCGHi.wfvsbf, n = 15)
-write.csv(Alpha.GCGHi.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGHi.wfvsbf.csv)")
+write.csv(Alpha.GCGHi.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGHi.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Alpha.GCGHi.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1190,7 +1190,7 @@ Alpha.GCGHi.wmvswf <- FindMarkers(pancreas.combined,
                                 pseudocount.use = 1,
                                 verbose = TRUE)
 head(Alpha.GCGHi.wmvswf, n = 15)
-write.csv(Alpha.GCGHi.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGHi.wmvswf.csv)")
+write.csv(Alpha.GCGHi.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGHi.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Alpha.GCGHi.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1205,7 +1205,7 @@ Alpha.GCGHi.bmvsbf <- FindMarkers(pancreas.combined,
                                 pseudocount.use = 1,
                                 verbose = TRUE)
 head(Alpha.GCGHi.bmvsbf, n = 15)
-write.csv(Alpha.GCGHi.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGHi.bmvsbf.csv)")
+write.csv(Alpha.GCGHi.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGHi.bmvsbf.csv')
 
 # 6.Alpha-cells (GCG Low) ####
 # WHITE MALE VS. BLACK MALE
@@ -1221,7 +1221,7 @@ Alpha.GCGLow.wmvsbm <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(Alpha.GCGLow.wmvsbm, n = 15)
-write.csv(Alpha.GCGLow.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGLow.wmvsbm.csv)")
+write.csv(Alpha.GCGLow.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGLow.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Alpha.GCGLow.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1236,7 +1236,7 @@ Alpha.GCGLow.wfvsbf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(Alpha.GCGLow.wfvsbf, n = 15)
-write.csv(Alpha.GCGLow.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGLow.wfvsbf.csv)")
+write.csv(Alpha.GCGLow.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGLow.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Alpha.GCGLow.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1251,7 +1251,7 @@ Alpha.GCGLow.wmvswf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(Alpha.GCGLow.wmvswf, n = 15)
-write.csv(Alpha.GCGLow.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGLow.wmvswf.csv)")
+write.csv(Alpha.GCGLow.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGLow.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Alpha.GCGLow.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1266,7 +1266,7 @@ Alpha.GCGLow.bmvsbf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(Alpha.GCGLow.bmvsbf, n = 15)
-write.csv(Alpha.GCGLow.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Alpha.GCGLow.bmvsbf.csv)")
+write.csv(Alpha.GCGLow.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Alpha.GCGLow.bmvsbf.csv')
 
 # 7.Delta-cells (SST) ####
 # WHITE MALE VS. BLACK MALE
@@ -1282,7 +1282,7 @@ Delta.wmvsbm <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Delta.wmvsbm, n = 15)
-write.csv(Delta.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Delta.wmvsbm.csv)")
+write.csv(Delta.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Delta.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Delta.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1297,7 +1297,7 @@ Delta.wfvsbf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Delta.wfvsbf, n = 15)
-write.csv(Delta.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Delta.wfvsbf.csv)")
+write.csv(Delta.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Delta.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Delta.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1312,7 +1312,7 @@ Delta.wmvswf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Delta.wmvswf, n = 15)
-write.csv(Delta.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Delta.wmvswf.csv)")
+write.csv(Delta.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Delta.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Delta.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1327,7 +1327,7 @@ Delta.bmvsbf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Delta.bmvsbf, n = 15)
-write.csv(Delta.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Delta.bmvsbf.csv)")
+write.csv(Delta.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Delta.bmvsbf.csv')
 
 # 8.Gamma-cells (PPY) ####
 # WHITE MALE VS. BLACK MALE
@@ -1343,7 +1343,7 @@ Gamma.wmvsbm <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Gamma.wmvsbm, n = 15)
-write.csv(Gamma.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Gamma.wmvsbm.csv)")
+write.csv(Gamma.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Gamma.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Gamma.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1358,7 +1358,7 @@ Gamma.wfvsbf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Gamma.wfvsbf, n = 15)
-write.csv(Gamma.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Gamma.wfvsbf.csv)")
+write.csv(Gamma.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Gamma.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Gamma.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1373,7 +1373,7 @@ Gamma.wmvswf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Gamma.wmvswf, n = 15)
-write.csv(Gamma.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Gamma.wmvswf.csv)")
+write.csv(Gamma.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Gamma.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Gamma.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1388,7 +1388,7 @@ Gamma.bmvsbf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Gamma.bmvsbf, n = 15)
-write.csv(Gamma.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Gamma.bmvsbf.csv)")
+write.csv(Gamma.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Gamma.bmvsbf.csv')
 
 # 9.Epsilon-cells (GHRL) ####
 # WHITE MALE VS. BLACK MALE
@@ -1404,7 +1404,7 @@ Epsilon.wmvsbm <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Epsilon.wmvsbm, n = 15)
-write.csv(Epsilon.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Epsilon.wmvsbm.csv)")
+write.csv(Epsilon.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Epsilon.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Epsilon.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1419,7 +1419,7 @@ Epsilon.wfvsbf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Epsilon.wfvsbf, n = 15)
-write.csv(Epsilon.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Epsilon.wfvsbf.csv)")
+write.csv(Epsilon.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Epsilon.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Epsilon.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1434,7 +1434,7 @@ Epsilon.wmvswf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Epsilon.wmvswf, n = 15)
-write.csv(Epsilon.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Epsilon.wmvswf.csv)")
+write.csv(Epsilon.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Epsilon.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Epsilon.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1449,7 +1449,7 @@ Epsilon.bmvsbf <- FindMarkers(pancreas.combined,
                             pseudocount.use = 1,
                             verbose = TRUE)
 head(Epsilon.bmvsbf, n = 15)
-write.csv(Epsilon.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Epsilon.bmvsbf.csv)")
+write.csv(Epsilon.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Epsilon.bmvsbf.csv')
 
 # 10.Ductal-cells (KRT19) ####
 # WHITE MALE VS. BLACK MALE
@@ -1465,7 +1465,7 @@ Ductal.wmvsbm <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(Ductal.wmvsbm, n = 15)
-write.csv(Ductal.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Ductal.wmvsbm.csv)")
+write.csv(Ductal.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Ductal.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Ductal.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1480,7 +1480,7 @@ Ductal.wfvsbf <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(Ductal.wfvsbf, n = 15)
-write.csv(Ductal.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Ductal.wfvsbf.csv)")
+write.csv(Ductal.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Ductal.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Ductal.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1495,7 +1495,7 @@ Ductal.wmvswf <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(Ductal.wmvswf, n = 15)
-write.csv(Ductal.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Ductal.wmvswf.csv)")
+write.csv(Ductal.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Ductal.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Ductal.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1510,7 +1510,7 @@ Ductal.bmvsbf <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(Ductal.bmvsbf, n = 15)
-write.csv(Ductal.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Ductal.bmvsbf.csv)")
+write.csv(Ductal.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Ductal.bmvsbf.csv')
 
 
 # 12.Acinar cells () ####
@@ -1527,7 +1527,7 @@ acinar.wmvsbm <- FindMarkers(pancreas.combined,
                                pseudocount.use = 1,
                                verbose = TRUE)
 head(acinar.wmvsbm, n = 15)
-write.csv(acinar.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\acinar.wmvsbm.csv)")
+write.csv(acinar.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/acinar.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Acinar.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1542,7 +1542,7 @@ Acinar.wfvsbf <- FindMarkers(pancreas.combined,
                                pseudocount.use = 1,
                                verbose = TRUE)
 head(Acinar.wfvsbf, n = 15)
-write.csv(Acinar.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Acinar.wfvsbf.csv)")
+write.csv(Acinar.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Acinar.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Acinar.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1557,7 +1557,7 @@ Acinar.wmvswf <- FindMarkers(pancreas.combined,
                                pseudocount.use = 1,
                                verbose = TRUE)
 head(Acinar.wmvswf, n = 15)
-write.csv(Acinar.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Acinar.wmvswf.csv)")
+write.csv(Acinar.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Acinar.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Acinar.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1572,11 +1572,11 @@ Acinar.bmvsbf <- FindMarkers(pancreas.combined,
                              pseudocount.use = 1,
                              verbose = TRUE)
 head(Acinar.bmvsbf, n = 15)
-write.csv(Acinar.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Acinar.bmvsbf.csv)")
+write.csv(Acinar.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Acinar.bmvsbf.csv')
 
 # 13.Quiescent-Stellate1 cells () ####
 # WHITE MALE VS. BLACK MALE
-quiescetstellate1.wmvsbm <- FindMarkers(pancreas.combined, 
+quiescent.wmvsbm <- FindMarkers(pancreas.combined, 
                              ident.1 = "Quiescent_white_male", ident.2 = "Quiescent_black_male", 
                              assay = "SCT",
                              slot = "counts",
@@ -1587,11 +1587,11 @@ quiescetstellate1.wmvsbm <- FindMarkers(pancreas.combined,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
-head(quiescetstellate1.wmvsbm, n = 15)
-write.csv(quiescetstellate1.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\quiescetstellate1.wmvsbm.csv)")
+head(quiescent.wmvsbm, n = 15)
+write.csv(quiescent.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/quiescent.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
-quiescetstellate1.wfvsbf <- FindMarkers(pancreas.combined, 
+quiescent.wfvsbf <- FindMarkers(pancreas.combined, 
                              ident.1 = "Quiescent_white_female", ident.2 = "Quiescent_black_female", 
                              assay = "SCT",
                              slot = "counts",
@@ -1602,11 +1602,11 @@ quiescetstellate1.wfvsbf <- FindMarkers(pancreas.combined,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
-head(quiescetstellate1.wfvsbf, n = 15)
-write.csv(quiescetstellate1.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\quiescetstellate1.wfvsbf.csv)")
+head(quiescent.wfvsbf, n = 15)
+write.csv(quiescent.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/quiescent.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
-quiescetstellate1.wmvswf <- FindMarkers(pancreas.combined, 
+quiescent.wmvswf <- FindMarkers(pancreas.combined, 
                              ident.1 = "Quiescent_white_male", ident.2 = "Quiescent_white_female", 
                              assay = "SCT",
                              slot = "counts",
@@ -1617,11 +1617,11 @@ quiescetstellate1.wmvswf <- FindMarkers(pancreas.combined,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
-head(quiescetstellate1.wmvswf, n = 15)
-write.csv(quiescetstellate1.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\quiescetstellate1.wmvswf.csv)")
+head(quiescent.wmvswf, n = 15)
+write.csv(quiescent.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/quiescent.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
-quiescetstellate1.bmvsbf <- FindMarkers(pancreas.combined, 
+quiescent.bmvsbf <- FindMarkers(pancreas.combined, 
                                ident.1 = "Quiescent_black_male", ident.2 = "Quiescent_black_female", 
                                assay = "SCT",
                                slot = "counts",
@@ -1632,13 +1632,13 @@ quiescetstellate1.bmvsbf <- FindMarkers(pancreas.combined,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
-head(quiescetstellate1.bmvsbf, n = 15)
-write.csv(quiescetstellate1.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\quiescetstellate1.bmvsbf.csv)")
+head(quiescent.bmvsbf, n = 15)
+write.csv(quiescent.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/quiescent.bmvsbf.csv')
 
 
 # 15.Activated-Stellate cells () ####
 # WHITE MALE VS. BLACK MALE
-Activated.Stellate.wmvsbm <- FindMarkers(pancreas.combined, 
+Activated.wmvsbm <- FindMarkers(pancreas.combined, 
                                         ident.1 = "Activated_white_male", ident.2 = "Activated_black_male", 
                                         assay = "SCT",
                                         slot = "counts",
@@ -1649,11 +1649,11 @@ Activated.Stellate.wmvsbm <- FindMarkers(pancreas.combined,
                                         logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                         pseudocount.use = 1,
                                         verbose = TRUE)
-head(Activated.Stellate.wmvsbm, n = 15)
-write.csv(Activated.Stellate.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Activated.Stellate.wmvsbm.csv)")
+head(Activated.wmvsbm, n = 15)
+write.csv(Activated.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Activated.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
-Activated.Stellate.wfvsbf <- FindMarkers(pancreas.combined, 
+Activated.wfvsbf <- FindMarkers(pancreas.combined, 
                                         ident.1 = "Activated_white_female", ident.2 = "Activated_black_female", 
                                         assay = "SCT",
                                         slot = "counts",
@@ -1664,11 +1664,11 @@ Activated.Stellate.wfvsbf <- FindMarkers(pancreas.combined,
                                         logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                         pseudocount.use = 1,
                                         verbose = TRUE)
-head(Activated.Stellate.wfvsbf, n = 15)
-write.csv(Activated.Stellate.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Activated.Stellate.wfvsbf.csv)")
+head(Activated.wfvsbf, n = 15)
+write.csv(Activated.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Activated.Stellate.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
-Activated.Stellate.wmvswf <- FindMarkers(pancreas.combined, 
+Activated.wmvswf <- FindMarkers(pancreas.combined, 
                                         ident.1 = "Activated_white_male", ident.2 = "Activated_white_female", 
                                         assay = "SCT",
                                         slot = "counts",
@@ -1679,11 +1679,11 @@ Activated.Stellate.wmvswf <- FindMarkers(pancreas.combined,
                                         logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                         pseudocount.use = 1,
                                         verbose = TRUE)
-head(Activated.Stellate.wmvswf, n = 15)
-write.csv(Activated.Stellate.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Activated.Stellate.wmvswf.csv)")
+head(Activated.wmvswf, n = 15)
+write.csv(Activated.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Activated.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
-Activated.Stellate.bmvsbf <- FindMarkers(pancreas.combined, 
+Activated.bmvsbf <- FindMarkers(pancreas.combined, 
                                         ident.1 = "Activated_black_male", ident.2 = "Activated_black_female", 
                                         assay = "SCT",
                                         slot = "counts",
@@ -1694,8 +1694,8 @@ Activated.Stellate.bmvsbf <- FindMarkers(pancreas.combined,
                                         logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                         pseudocount.use = 1,
                                         verbose = TRUE)
-head(Activated.Stellate.bmvsbf, n = 15)
-write.csv(Activated.Stellate.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Activated.Stellate.bmvsbf.csv)")
+head(Activated.bmvsbf, n = 15)
+write.csv(Activated.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Activated.bmvsbf.csv')
 
 # 16.Macrophages cells () ####
 # WHITE MALE VS. BLACK MALE
@@ -1711,7 +1711,7 @@ Macrophages.wmvsbm <- FindMarkers(pancreas.combined,
                                          pseudocount.use = 1,
                                          verbose = TRUE)
 head(Macrophages.wmvsbm, n = 15)
-write.csv(Macrophages.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Macrophages.wmvsbm.csv)")
+write.csv(Macrophages.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Macrophages.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 Macrophages.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1726,7 +1726,7 @@ Macrophages.wfvsbf <- FindMarkers(pancreas.combined,
                                          pseudocount.use = 1,
                                          verbose = TRUE)
 head(Macrophages.wfvsbf, n = 15)
-write.csv(Macrophages.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Macrophages.wfvsbf.csv)")
+write.csv(Macrophages.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Macrophages.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 Macrophages.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1741,7 +1741,7 @@ Macrophages.wmvswf <- FindMarkers(pancreas.combined,
                                          pseudocount.use = 1,
                                          verbose = TRUE)
 head(Macrophages.wmvswf, n = 15)
-write.csv(Macrophages.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Macrophages.wmvswf.csv)")
+write.csv(Macrophages.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Macrophages.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 Macrophages.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1756,7 +1756,7 @@ Macrophages.bmvsbf <- FindMarkers(pancreas.combined,
                                          pseudocount.use = 1,
                                          verbose = TRUE)
 head(Macrophages.bmvsbf, n = 15)
-write.csv(Macrophages.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Macrophages.bmvsbf.csv)")
+write.csv(Macrophages.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/Macrophages.bmvsbf.csv')
 
 # 17.T-cells () ####
 # WHITE MALE VS. BLACK MALE
@@ -1772,7 +1772,7 @@ tcells.wmvsbm <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(tcells.wmvsbm, n = 15)
-write.csv(tcells.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\tcells.wmvsbm.csv)")
+write.csv(tcells.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/tcells.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 tcells.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1787,7 +1787,7 @@ tcells.wfvsbf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(tcells.wfvsbf, n = 15)
-write.csv(tcells.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\tcells.wfvsbf.csv)")
+write.csv(tcells.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/tcells.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 tcells.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1802,7 +1802,7 @@ tcells.wmvswf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(tcells.wmvswf, n = 15)
-write.csv(tcells.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\tcells.wmvswf.csv)")
+write.csv(tcells.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/tcells.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 tcells.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1817,7 +1817,7 @@ tcells.bmvsbf <- FindMarkers(pancreas.combined,
                                   pseudocount.use = 1,
                                   verbose = TRUE)
 head(tcells.bmvsbf, n = 15)
-write.csv(tcells.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\tcells.bmvsbf.csv)")
+write.csv(tcells.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/tcells.bmvsbf.csv')
 
 # 18.MAST-cells () ####
 # WHITE MALE VS. BLACK MALE
@@ -1833,7 +1833,7 @@ mast.wmvsbm <- FindMarkers(pancreas.combined,
                              pseudocount.use = 1,
                              verbose = TRUE)
 head(mast.wmvsbm, n = 15)
-write.csv(mast.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\mast.wmvsbm.csv)")
+write.csv(mast.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/mast.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 mast.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1848,7 +1848,7 @@ mast.wfvsbf <- FindMarkers(pancreas.combined,
                              pseudocount.use = 1,
                              verbose = TRUE)
 head(mast.wfvsbf, n = 15)
-write.csv(mast.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\mast.wfvsbf.csv)")
+write.csv(mast.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/mast.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 mast.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1863,7 +1863,7 @@ mast.wmvswf <- FindMarkers(pancreas.combined,
                              pseudocount.use = 1,
                              verbose = TRUE)
 head(mast.wmvswf, n = 15)
-write.csv(mast.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\mast.wmvswf.csv)")
+write.csv(mast.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/mast.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 mast.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1878,7 +1878,7 @@ mast.bmvsbf <- FindMarkers(pancreas.combined,
                              pseudocount.use = 1,
                              verbose = TRUE)
 head(mast.bmvsbf, n = 15)
-write.csv(mast.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\mast.bmvsbf.csv)")
+write.csv(mast.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/mast.bmvsbf.csv')
 
 # 19.Schwann-cells () ####
 # WHITE MALE VS. BLACK MALE
@@ -1894,7 +1894,7 @@ schwann.wmvsbm <- FindMarkers(pancreas.combined,
                            pseudocount.use = 1,
                            verbose = TRUE)
 head(schwann.wmvsbm, n = 15)
-write.csv(schwann.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\schwann.wmvsbm.csv)")
+write.csv(schwann.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/schwann.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 schwann.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1909,7 +1909,7 @@ schwann.wfvsbf <- FindMarkers(pancreas.combined,
                            pseudocount.use = 1,
                            verbose = TRUE)
 head(schwann.wfvsbf, n = 15)
-write.csv(schwann.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\schwann.wfvsbf.csv)")
+write.csv(schwann.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/schwann.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 schwann.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1924,7 +1924,7 @@ schwann.wmvswf <- FindMarkers(pancreas.combined,
                            pseudocount.use = 1,
                            verbose = TRUE)
 head(schwann.wmvswf, n = 15)
-write.csv(schwann.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\schwann.wmvswf.csv)")
+write.csv(schwann.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/schwann.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 schwann.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -1939,7 +1939,7 @@ schwann.bmvsbf <- FindMarkers(pancreas.combined,
                            pseudocount.use = 1,
                            verbose = TRUE)
 head(schwann.bmvsbf, n = 15)
-write.csv(schwann.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\schwann.bmvsbf.csv)")
+write.csv(schwann.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/schwann.bmvsbf.csv')
 
 # 20.Endothelial-cells () ####
 # WHITE MALE VS. BLACK MALE
@@ -1955,7 +1955,7 @@ endothelial.wmvsbm <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(endothelial.wmvsbm, n = 15)
-write.csv(endothelial.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\endothelial.wmvsbm.csv)")
+write.csv(endothelial.wmvsbm, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/endothelial.wmvsbm.csv')
 
 # WHITE FEMALE VS. BLACK FEMALE
 endothelial.wfvsbf <- FindMarkers(pancreas.combined, 
@@ -1970,7 +1970,7 @@ endothelial.wfvsbf <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(endothelial.wfvsbf, n = 15)
-write.csv(endothelial.wfvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\endothelial.wfvsbf.csv)")
+write.csv(endothelial.wfvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/endothelial.wfvsbf.csv')
 
 # WHITE MALE VS. WHITE FEMALE
 endothelial.wmvswf <- FindMarkers(pancreas.combined, 
@@ -1985,7 +1985,7 @@ endothelial.wmvswf <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(endothelial.wmvswf, n = 15)
-write.csv(endothelial.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\endothelial.wmvswf.csv)")
+write.csv(endothelial.wmvswf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/endothelial.wmvswf.csv')
 
 # BLACK MALE VS. BLACK FEMALE
 endothelial.bmvsbf <- FindMarkers(pancreas.combined, 
@@ -2000,7 +2000,7 @@ endothelial.bmvsbf <- FindMarkers(pancreas.combined,
                               pseudocount.use = 1,
                               verbose = TRUE)
 head(endothelial.bmvsbf, n = 15)
-write.csv(endothelial.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\endothelial.bmvsbf.csv)")
+write.csv(endothelial.bmvsbf, file = '~/ExpanDrive/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Ubuntu/endothelial.bmvsbf.csv')
 }
 
 # Diff gene testing across conditions https://github.com/satijalab/seurat/issues/3933
