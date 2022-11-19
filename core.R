@@ -1,3 +1,10 @@
+# CODING COMPENDIUM ####
+# The following set of code is a description of the analysis performed in the 
+# paper entitled "enter name of paper here"
+# Author Fahd Qadir FMJ Lab Tulane University, Schoool of Medicine
+# Date code was written: 11/16/2022
+# R version 4.2.1 (2019-12-12) 'Funny-Looking Kid'
+
 # LOAD LIBRARIES ####
 # Restart Rstudio or R
 
@@ -76,8 +83,9 @@ suppressWarnings(
   }
 )
 
-# Set global environment parameter
+# Set global environment parameter par-proc
 #options(future.globals.maxSize = 8000 * 1024^2)
+set.seed(123)
 
 # OBJECT SETUP AND NORMALIZATION ####
 # STEP 1: Load 10X data ####
@@ -171,7 +179,7 @@ suppressWarnings(
   HP2132801$ancestry <- "black"
   HP2202101$ancestry <- "black"
 
-# Ancestry and sex specific Metadata addition
+# Ancestry and sex specific UNION Metadata addition
   HP2022801$ancestry_sex <- "white_male"
   SAMN15877725$ancestry_sex <- "white_male"
   HP2024001$ancestry_sex <- "white_female"
@@ -190,7 +198,7 @@ suppressWarnings(
   }
 
 # STEP 3: Thresholding ####
-# The operator can add columns to object metadata. This is a great place to stash QC stats
+# Add -MT gene percentage data as QC to cutoff for doublets 1st doublet threshold
 {
   HP2022801[["percent.mt"]] <- PercentageFeatureSet(object = HP2022801, pattern = "^MT-")
   SAMN15877725[["percent.mt"]] <- PercentageFeatureSet(object = SAMN15877725, pattern = "^MT-")
@@ -242,7 +250,7 @@ suppressWarnings(
   VlnPlot(object = HP2132801, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
   VlnPlot(object = HP2202101, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
-# RNA based cell thresholding
+# RNA features + MT RNA percentage based cell thresholding 1st THRESHOLD
   HP2022801 <- subset(x = HP2022801, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
   SAMN15877725 <- subset(x = SAMN15877725, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
   HP2024001 <- subset(x = HP2024001, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
@@ -294,7 +302,7 @@ suppressWarnings(
   VlnPlot(object = HP2202101, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
 # Step 4: Add cell IDs ####
-# Add cell IDs
+# Add UNIQUE cell IDs preventing barcode overlap
   HP2022801 <- RenameCells(HP2022801, add.cell.id = "HP2022801")
   SAMN15877725 <- RenameCells(SAMN15877725, add.cell.id = "SAMN15877725")
   HP2024001 <- RenameCells(HP2024001, add.cell.id = "HP2024001")
@@ -313,6 +321,8 @@ suppressWarnings(
   }
 
 # Normalization for visualization and doublet removal
+# Dooublet removal using doubletfinder 2nd THRESHOLD
+{
  HP2022801 <- NormalizeData(HP2022801, verbose = TRUE)
  SAMN15877725 <- NormalizeData(SAMN15877725, verbose = TRUE)
  HP2024001 <- NormalizeData(HP2024001, verbose = TRUE)
@@ -361,7 +371,7 @@ suppressWarnings(
  HP2202101 <- FindVariableFeatures(HP2202101, selection.method = "vst", 
                                    nfeatures = 2000, verbose = TRUE)
 
-# Scale dat
+# Scale data
  HP2022801 <- ScaleData(HP2022801, verbose = TRUE)
  SAMN15877725 <- ScaleData(SAMN15877725, verbose = TRUE)
  HP2024001 <- ScaleData(HP2024001, verbose = TRUE)
@@ -411,7 +421,7 @@ suppressWarnings(
  HP2123201 <- RunUMAP(HP2123201, dims = 1:10, verbose = F)
  HP2132801 <- RunUMAP(HP2132801, dims = 1:10, verbose = F)
  HP2202101 <- RunUMAP(HP2202101, dims = 1:10, verbose = F)
-
+}
 # for (i in 1:length(pancreas.list)) {
 #   pancreas.list[[i]] <- NormalizeData(pancreas.list[[i]], verbose = TRUE)
 #   pancreas.list[[i]] <- FindVariableFeatures(pancreas.list[[i]], selection.method = "vst", 
@@ -419,9 +429,11 @@ suppressWarnings(
 # }
 
 # Optimization
+{
 sweep.res <- paramSweep_v3(HP2022801) 
 sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
 bcmvn <- find.pK(sweep.stats)
+
 barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
 
 sweep.res <- paramSweep_v3(SAMN15877725) 
@@ -539,7 +551,24 @@ HP2132801 <- doubletFinder_v3(HP2132801, pN = 0.25, pK = 0.09, nExp = nExp, PCs 
 
 nExp <- round(ncol(HP2202101) * 0.04)  # expect 4% doublets
 HP2202101 <- doubletFinder_v3(HP2202101, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+}
 
+# Setup one metadata column
+HP2022801$doublets <- HP2022801$DF.classifications_0.25_0.09_166
+SAMN15877725$doublets <- SAMN15877725$DF.classifications_0.25_0.09_155
+HP2107001$doublets <- HP2107001$DF.classifications_0.25_0.09_170
+HP2107901$doublets <- HP2107901$DF.classifications_0.25_0.09_132
+HP2024001$doublets <- HP2024001$DF.classifications_0.25_0.09_121
+HP2105501$doublets <- HP2105501$DF.classifications_0.25_0.09_124
+HP2108601$doublets <- HP2108601$DF.classifications_0.25_0.09_218
+HP2108901$doublets <- HP2108901$DF.classifications_0.25_0.09_171
+HP2031401$doublets <- HP2031401$DF.classifications_0.25_0.09_183
+HP2110001$doublets <- HP2110001$DF.classifications_0.25_0.09_226
+HP2123201$doublets <- HP2123201$DF.classifications_0.25_0.09_62
+HP2106201$doublets <- HP2106201$DF.classifications_0.25_0.09_260
+HP2121601$doublets <- HP2121601$DF.classifications_0.25_0.09_140
+HP2132801$doublets <- HP2132801$DF.classifications_0.25_0.09_93
+HP2202101$doublets <- HP2202101$DF.classifications_0.25_0.09_159
 
 # Step 5: creating a list of all datasets
 {
@@ -556,20 +585,21 @@ features <- SelectIntegrationFeatures(object.list = pancreas.list, nfeatures = 2
 pancreas.list <- PrepSCTIntegration(object.list = pancreas.list, anchor.features = features)
 pancreas.list <- lapply(X = pancreas.list, FUN = RunPCA, features = features)
 
-# Perform integration note k.anchors = 20 increase in integration strength (5 by default)
+# Perform integration (note k.anchors = 5)
 pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list, 
                                            normalization.method = "SCT",
                                            anchor.features = features, 
                                            dims = 1:30, 
                                            reduction = "rpca", 
-                                           k.anchor = 10)
+                                           k.anchor = 5)
 
-#saveRDS(pancreas.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
+#saveRDS(pancreas.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors.rds)")
 #saveRDS(features, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
 #saveRDS(pancreas.list, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
 pancreas.anchors <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
 features <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
 pancreas.combined <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combinedcorrectedSCT.rds)")
+
 gc()
 pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, 
                                    normalization.method = "SCT", 
@@ -578,8 +608,8 @@ pancreas.combined <- IntegrateData(anchorset = pancreas.anchors,
                                    features.to.integrate = features)
 
 # Post integration UMAP
-pancreas.combined <- RunPCA(pancreas.combined, npcs = 50, verbose = TRUE) #C
-pancreas.combined <- RunUMAP(pancreas.combined, reduction = "pca", dims = 1:30, return.model = TRUE)
+pancreas.combined <- RunPCA(pancreas.combined, npcs = 50, verbose = TRUE)
+pancreas.combined <- RunUMAP(pancreas.combined, reduction = "pca", dims = 1:50, return.model = TRUE)
 
 # Step 9a: CLUSTER ANALYSIS ####
 # Clustering, we run multiple permutations to allow clustree to analyze optimal clustering resolution.
@@ -606,11 +636,24 @@ PlotClusterTree(pancreas.combined)
 
 # Visualization
 DimPlot(pancreas.combined, reduction = "umap", group.by = "ancestry_sex")
-DimPlot(pancreas.combined, reduction = "umap", group.by = "seurat_clusters", label = TRUE, repel = TRUE)
-DimPlot(pancreas.combined, reduction = "umap", group.by = "integrated_snn_res.0.3", label = TRUE, repel = TRUE)
+DimPlot(pancreas.combined, reduction = "umap", group.by = "doublets")
 
 # Cluster-tree analysis, looking appropriate non-anomalous clustering resolution
 clustree(pancreas.combined, prefix = "integrated_snn_res.")
+
+# Plotting
+DimPlot(pancreas.combined, reduction = "umap", group.by = "seurat_clusters", label = TRUE, repel = TRUE)
+DimPlot(pancreas.combined, reduction = "umap", group.by = "integrated_snn_res.0.4", label = TRUE, repel = TRUE) # this along with doublet UMAP shows cluster 7 in beta to be doublet
+
+# Elimination of doublets
+# pancreas.combined.withdoublets <- pancreas.combined
+# pancreas.combined <- pancreas.combined.withdoublets # OBJECT RESET RUN CAREFULLY
+# Idents(pancreas.combined) <- "doublets"
+# pancreas.combined <- subset(pancreas.combined, idents = "Singlet")
+
+# SAVE POINT
+# saveRDS(pancreas.combined, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combined.rds)")
+  pancreas.combined <- readRDS('~/Documents/SexBasedStudy/RDSfiles/pancreas.combined.rds')
 
 # Discovery based Plotting
 DefaultAssay(pancreas.combined) <- "SCT"
@@ -636,6 +679,16 @@ FeaturePlot(object = pancreas.combined,
 
 FeaturePlot(object = pancreas.combined,
             features = c("PDGFRA", "RGS5", "REG1A", "SPP1", "CFTR", "SOX10"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined,
+            features = c("MKI67"
             ),
             pt.size = 1,
             cols = c("darkgrey", "red"),
