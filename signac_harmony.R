@@ -1187,14 +1187,32 @@ set.seed(1234)
              HP2108901_atac, HP2110001_atac, HP2121601_atac, HP2123201_atac,
              HP2132801_atac, HP2202101_atac))
   
+  VlnPlot(
+    object = combined_atac,
+    features = c('pct_reads_in_peaks', 'peak_region_fragments',
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
+    pt.size = 0.1,
+    ncol = 6, raster = FALSE
+  )
+  
+  # QC Cleanup
+  combined_atac <- subset(
+    x = combined_atac, 
+    subset = peak_region_fragments > 2000 &
+      peak_region_fragments < 20000 &
+      pct_reads_in_peaks > 30 &
+      blacklist_ratio < 0.05 &
+      nucleosome_signal < 4 &
+      TSS.enrichment > 2 &
+      FRiP > 0.2
+    )
+  combined_atac
+  
   #Save file
   saveRDS(combined_atac, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\combined_atac.rds)")
   pancreas.combined <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\combined_atac.rds)")
   
-  #FRiP
-  
-  
-  
+
   # Run TFDIF  
   combined_atac <- FindTopFeatures(combined_atac, min.cutoff = 20)
   combined_atac <- RunTFIDF(combined_atac)
@@ -1204,9 +1222,9 @@ set.seed(1234)
   
   
   # Batch correction using Harmony
-  hm.integrated <- RunHarmony(object = unintegrated, group.by.vars = 'sample', reduction = 'lsi', assay.use = 'peaks', project.dim = FALSE)
+  hm.integrated <- RunHarmony(object = combined_atac, group.by.vars = 'sample', reduction = 'lsi', assay.use = 'ATAC', project.dim = FALSE)
   hm.integrated <- RunUMAP(hm.integrated, dims = 2:50, reduction = 'harmony')
-  DimPlot(hm.integrated, group.by = 'sample', pt.size = 0.1)
+  DimPlot(hm.integrated, group.by = 'ancestry_sex', pt.size = 0.1)
   
   
   
