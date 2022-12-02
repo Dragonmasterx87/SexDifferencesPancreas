@@ -854,146 +854,331 @@ set.seed(1234)
   HP2202101_atac$nucleosome_group <- ifelse(HP2202101_atac$nucleosome_signal > 4, 'NS > 4', 'NS < 4')
   FragmentHistogram(object = HP2202101_atac, group.by = 'nucleosome_group')
 
-# Visualize QC
+  # Count fragments
+  HP2022801_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\1_220628 Fahd_snATAC1_HP-20228-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  SAMN15877725_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\2_220701 Fahd_snATAC2_SAMN15877725\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2024001_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\3_220701 Fahd_snATAC3_HP-20240-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2031401_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\4_220630 Fahd_snATAC4_HP-20314-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2105501_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\5_220303_snATAC_F52_HP-21055-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2106201_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\6_210401 snATAC_F62_HP-21062-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2107001_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\7_210401 snATAC_F7a_HP-21070-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2107901_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\9_210628 snATAC_F9a_HP-21079-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2108601_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\10_210628 snATAC_F10a_HP-21086-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2108901_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\11_210714 snATAC_F11a_HP-21089-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2110001_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\12_210714 snATAC_F12a_HP-21100-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2121601_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\13_211208_snATAC_F13_HP-21216-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2123201_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\14_211208_snATAC_F14_HP-21232-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2132801_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\15_220303_snATAC_F15a_HP-21328-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  HP2202101_atac_fraginfo <- CountFragments(r"(D:\1. Sex based Study raw data\Cellranger_raw data\snATACseq\16_220630 Fahd_snATAC16_HP-22021-01\fragments.tsv.gz)", cells = NULL, max_lines = NULL, verbose = TRUE)
+  
+  rownames(HP2022801_atac_fraginfo) <- HP2022801_atac_fraginfo$CB
+  rownames(SAMN15877725_atac_fraginfo) <- SAMN15877725_atac_fraginfo$CB
+  rownames(HP2024001_atac_fraginfo) <- HP2024001_atac_fraginfo$CB
+  rownames(HP2031401_atac_fraginfo) <- HP2031401_atac_fraginfo$CB
+  rownames(HP2105501_atac_fraginfo) <- HP2105501_atac_fraginfo$CB
+  rownames(HP2106201_atac_fraginfo) <- HP2106201_atac_fraginfo$CB
+  rownames(HP2107001_atac_fraginfo) <- HP2107001_atac_fraginfo$CB
+  rownames(HP2107901_atac_fraginfo) <- HP2107901_atac_fraginfo$CB
+  rownames(HP2108601_atac_fraginfo) <- HP2108601_atac_fraginfo$CB
+  rownames(HP2108901_atac_fraginfo) <- HP2108901_atac_fraginfo$CB
+  rownames(HP2110001_atac_fraginfo) <- HP2110001_atac_fraginfo$CB
+  rownames(HP2121601_atac_fraginfo) <- HP2121601_atac_fraginfo$CB
+  rownames(HP2123201_atac_fraginfo) <- HP2123201_atac_fraginfo$CB
+  rownames(HP2132801_atac_fraginfo) <- HP2132801_atac_fraginfo$CB
+  rownames(HP2202101_atac_fraginfo) <- HP2202101_atac_fraginfo$CB
+  
+  HP2022801_atac$fragments <- HP2022801_atac_fraginfo[colnames(HP2022801_atac), "frequency_count"]
+  HP2022801_atac$mononucleosomal <- HP2022801_atac_fraginfo[colnames(HP2022801_atac), "mononucleosomal"]
+  HP2022801_atac$nucleosome_free <- HP2022801_atac_fraginfo[colnames(HP2022801_atac), "nucleosome_free"]
+  HP2022801_atac$reads_count <- HP2022801_atac_fraginfo[colnames(HP2022801_atac), "reads_count"]
+  
+  SAMN15877725_atac$fragments <- SAMN15877725_atac_fraginfo[colnames(SAMN15877725_atac), "frequency_count"]
+  SAMN15877725_atac$mononucleosomal <- SAMN15877725_atac_fraginfo[colnames(SAMN15877725_atac), "mononucleosomal"]
+  SAMN15877725_atac$nucleosome_free <- SAMN15877725_atac_fraginfo[colnames(SAMN15877725_atac), "nucleosome_free"]
+  SAMN15877725_atac$reads_count <- SAMN15877725_atac_fraginfo[colnames(SAMN15877725_atac), "reads_count"]
+  
+  HP2024001_atac$fragments <- HP2024001_atac_fraginfo[colnames(HP2024001_atac), "frequency_count"]
+  HP2024001_atac$mononucleosomal <- HP2024001_atac_fraginfo[colnames(HP2024001_atac), "mononucleosomal"]
+  HP2024001_atac$nucleosome_free <- HP2024001_atac_fraginfo[colnames(HP2024001_atac), "nucleosome_free"]
+  HP2024001_atac$reads_count <- HP2024001_atac_fraginfo[colnames(HP2024001_atac), "reads_count"]
+  
+  HP2031401_atac$fragments <- HP2031401_atac_fraginfo[colnames(HP2031401_atac), "frequency_count"]
+  HP2031401_atac$mononucleosomal <- HP2031401_atac_fraginfo[colnames(HP2031401_atac), "mononucleosomal"]
+  HP2031401_atac$nucleosome_free <- HP2031401_atac_fraginfo[colnames(HP2031401_atac), "nucleosome_free"]
+  HP2031401_atac$reads_count <- HP2031401_atac_fraginfo[colnames(HP2031401_atac), "reads_count"]
+  
+  HP2105501_atac$fragments <- HP2105501_atac_fraginfo[colnames(HP2105501_atac), "frequency_count"]
+  HP2105501_atac$mononucleosomal <- HP2105501_atac_fraginfo[colnames(HP2105501_atac), "mononucleosomal"]
+  HP2105501_atac$nucleosome_free <- HP2105501_atac_fraginfo[colnames(HP2105501_atac), "nucleosome_free"]
+  HP2105501_atac$reads_count <- HP2105501_atac_fraginfo[colnames(HP2105501_atac), "reads_count"]
+  
+  HP2106201_atac$fragments <- HP2106201_atac_fraginfo[colnames(HP2106201_atac), "frequency_count"]
+  HP2106201_atac$mononucleosomal <- HP2106201_atac_fraginfo[colnames(HP2106201_atac), "mononucleosomal"]
+  HP2106201_atac$nucleosome_free <- HP2106201_atac_fraginfo[colnames(HP2106201_atac), "nucleosome_free"]
+  HP2106201_atac$reads_count <- HP2106201_atac_fraginfo[colnames(HP2106201_atac), "reads_count"]
+  
+  HP2107001_atac$fragments <- HP2107001_atac_fraginfo[colnames(HP2107001_atac), "frequency_count"]
+  HP2107001_atac$mononucleosomal <- HP2107001_atac_fraginfo[colnames(HP2107001_atac), "mononucleosomal"]
+  HP2107001_atac$nucleosome_free <- HP2107001_atac_fraginfo[colnames(HP2107001_atac), "nucleosome_free"]
+  HP2107001_atac$reads_count <- HP2107001_atac_fraginfo[colnames(HP2107001_atac), "reads_count"]
+  
+  HP2107901_atac$fragments <- HP2107901_atac_fraginfo[colnames(HP2107901_atac), "frequency_count"]
+  HP2107901_atac$mononucleosomal <- HP2107901_atac_fraginfo[colnames(HP2107901_atac), "mononucleosomal"]
+  HP2107901_atac$nucleosome_free <- HP2107901_atac_fraginfo[colnames(HP2107901_atac), "nucleosome_free"]
+  HP2107901_atac$reads_count <- HP2107901_atac_fraginfo[colnames(HP2107901_atac), "reads_count"]
+  
+  HP2108601_atac$fragments <- HP2108601_atac_fraginfo[colnames(HP2108601_atac), "frequency_count"]
+  HP2108601_atac$mononucleosomal <- HP2108601_atac_fraginfo[colnames(HP2108601_atac), "mononucleosomal"]
+  HP2108601_atac$nucleosome_free <- HP2108601_atac_fraginfo[colnames(HP2108601_atac), "nucleosome_free"]
+  HP2108601_atac$reads_count <- HP2108601_atac_fraginfo[colnames(HP2108601_atac), "reads_count"]
+  
+  HP2108901_atac$fragments <- HP2108901_atac_fraginfo[colnames(HP2108901_atac), "frequency_count"]
+  HP2108901_atac$mononucleosomal <- HP2108901_atac_fraginfo[colnames(HP2108901_atac), "mononucleosomal"]
+  HP2108901_atac$nucleosome_free <- HP2108901_atac_fraginfo[colnames(HP2108901_atac), "nucleosome_free"]
+  HP2108901_atac$reads_count <- HP2108901_atac_fraginfo[colnames(HP2108901_atac), "reads_count"]
+  
+  HP2110001_atac$fragments <- HP2110001_atac_fraginfo[colnames(HP2110001_atac), "frequency_count"]
+  HP2110001_atac$mononucleosomal <- HP2110001_atac_fraginfo[colnames(HP2110001_atac), "mononucleosomal"]
+  HP2110001_atac$nucleosome_free <- HP2110001_atac_fraginfo[colnames(HP2110001_atac), "nucleosome_free"]
+  HP2110001_atac$reads_count <- HP2110001_atac_fraginfo[colnames(HP2110001_atac), "reads_count"]
+  
+  HP2121601_atac$fragments <- HP2121601_atac_fraginfo[colnames(HP2121601_atac), "frequency_count"]
+  HP2121601_atac$mononucleosomal <- HP2121601_atac_fraginfo[colnames(HP2121601_atac), "mononucleosomal"]
+  HP2121601_atac$nucleosome_free <- HP2121601_atac_fraginfo[colnames(HP2121601_atac), "nucleosome_free"]
+  HP2121601_atac$reads_count <- HP2121601_atac_fraginfo[colnames(HP2121601_atac), "reads_count"]
+  
+  HP2123201_atac$fragments <- HP2123201_atac_fraginfo[colnames(HP2123201_atac), "frequency_count"]
+  HP2123201_atac$mononucleosomal <- HP2123201_atac_fraginfo[colnames(HP2123201_atac), "mononucleosomal"]
+  HP2123201_atac$nucleosome_free <- HP2123201_atac_fraginfo[colnames(HP2123201_atac), "nucleosome_free"]
+  HP2123201_atac$reads_count <- HP2123201_atac_fraginfo[colnames(HP2123201_atac), "reads_count"]
+  
+  HP2132801_atac$fragments <- HP2132801_atac_fraginfo[colnames(HP2132801_atac), "frequency_count"]
+  HP2132801_atac$mononucleosomal <- HP2132801_atac_fraginfo[colnames(HP2132801_atac), "mononucleosomal"]
+  HP2132801_atac$nucleosome_free <- HP2132801_atac_fraginfo[colnames(HP2132801_atac), "nucleosome_free"]
+  HP2132801_atac$reads_count <- HP2132801_atac_fraginfo[colnames(HP2132801_atac), "reads_count"]
+  
+  HP2202101_atac$fragments <- HP2202101_atac_fraginfo[colnames(HP2202101_atac), "frequency_count"]
+  HP2202101_atac$mononucleosomal <- HP2202101_atac_fraginfo[colnames(HP2202101_atac), "mononucleosomal"]
+  HP2202101_atac$nucleosome_free <- HP2202101_atac_fraginfo[colnames(HP2202101_atac), "nucleosome_free"]
+  HP2202101_atac$reads_count <- HP2202101_atac_fraginfo[colnames(HP2202101_atac), "reads_count"]
+  
+  
+  HP2022801_atac <- FRiP(
+    object = HP2022801_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  SAMN15877725_atac <- FRiP(
+    object = SAMN15877725_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2024001_atac <- FRiP(
+    object = HP2024001_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2031401_atac <- FRiP(
+    object = HP2031401_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2105501_atac <- FRiP(
+    object = HP2105501_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2106201_atac <- FRiP(
+    object = HP2106201_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2107001_atac <- FRiP(
+    object = HP2107001_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2107901_atac <- FRiP(
+    object = HP2107901_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2108601_atac <- FRiP(
+    object = HP2108601_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2108901_atac <- FRiP(
+    object = HP2108901_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2110001_atac <- FRiP(
+    object = HP2110001_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2121601_atac <- FRiP(
+    object = HP2121601_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2123201_atac <- FRiP(
+    object = HP2123201_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2132801_atac <- FRiP(
+    object = HP2132801_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  HP2202101_atac <- FRiP(
+    object = HP2202101_atac,
+    assay = 'ATAC',
+    total.fragments = 'fragments')
+  
+  # Add unique cell names otherwise integration will give errors
+  {
+    HP2022801_atac <- RenameCells(object = HP2022801_atac, add.cell.id = "HP2022801")
+    SAMN15877725_atac <- RenameCells(object = SAMN15877725_atac, add.cell.id = "SAMN15877725")
+    HP2024001_atac <- RenameCells(object = HP2024001_atac, add.cell.id = "HP2024001")
+    HP2031401_atac <- RenameCells(object = HP2031401_atac, add.cell.id = "HP2031401")
+    HP2105501_atac <- RenameCells(object = HP2105501_atac, add.cell.id = "HP2105501")
+    HP2106201_atac <- RenameCells(object = HP2106201_atac, add.cell.id = "HP2106201")
+    HP2107001_atac <- RenameCells(object = HP2107001_atac, add.cell.id = "HP2107001")
+    HP2107901_atac <- RenameCells(object = HP2107901_atac, add.cell.id = "HP2107901")
+    HP2108601_atac <- RenameCells(object = HP2108601_atac, add.cell.id = "HP2108601")
+    HP2108901_atac <- RenameCells(object = HP2108901_atac, add.cell.id = "HP2108901")
+    HP2110001_atac <- RenameCells(object = HP2110001_atac, add.cell.id = "HP2110001")
+    HP2121601_atac <- RenameCells(object = HP2121601_atac, add.cell.id = "HP2121601")
+    HP2123201_atac <- RenameCells(object = HP2123201_atac, add.cell.id = "HP2123201")
+    HP2132801_atac <- RenameCells(object = HP2132801_atac, add.cell.id = "HP2132801")
+    HP2202101_atac <- RenameCells(object = HP2202101_atac, add.cell.id = "HP2202101")
+  }
+  
+  # Visualize QC
   VlnPlot(
     object = HP2022801_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = SAMN15877725_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2024001_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2031401_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2105501_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2106201_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2107001_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2107901_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2108601_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2108901_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2110001_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2121601_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2123201_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2132801_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
   VlnPlot(
     object = HP2202101_atac,
     features = c('pct_reads_in_peaks', 'peak_region_fragments',
-                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal'),
+                 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'FRiP'),
     pt.size = 0.1,
-    ncol = 5
+    ncol = 6
   )
   
-  # Add unique cell names otherwise integration will give errors
-  {
-  HP2022801_atac <- RenameCells(object = HP2022801_atac, add.cell.id = "HP2022801")
-  SAMN15877725_atac <- RenameCells(object = SAMN15877725_atac, add.cell.id = "SAMN15877725")
-  HP2024001_atac <- RenameCells(object = HP2024001_atac, add.cell.id = "HP2024001")
-  HP2031401_atac <- RenameCells(object = HP2031401_atac, add.cell.id = "HP2031401")
-  HP2105501_atac <- RenameCells(object = HP2105501_atac, add.cell.id = "HP2105501")
-  HP2106201_atac <- RenameCells(object = HP2106201_atac, add.cell.id = "HP2106201")
-  HP2107001_atac <- RenameCells(object = HP2107001_atac, add.cell.id = "HP2107001")
-  HP2107901_atac <- RenameCells(object = HP2107901_atac, add.cell.id = "HP2107901")
-  HP2108601_atac <- RenameCells(object = HP2108601_atac, add.cell.id = "HP2108601")
-  HP2108901_atac <- RenameCells(object = HP2108901_atac, add.cell.id = "HP2108901")
-  HP2110001_atac <- RenameCells(object = HP2110001_atac, add.cell.id = "HP2110001")
-  HP2121601_atac <- RenameCells(object = HP2121601_atac, add.cell.id = "HP2121601")
-  HP2123201_atac <- RenameCells(object = HP2123201_atac, add.cell.id = "HP2123201")
-  HP2132801_atac <- RenameCells(object = HP2132801_atac, add.cell.id = "HP2132801")
-  HP2202101_atac <- RenameCells(object = HP2202101_atac, add.cell.id = "HP2202101")
-  }
-  
+ 
   # merge all datasets, adding a cell ID to make sure cell names are unique
   combined_atac <- merge(
     x = HP2022801_atac,
@@ -1001,6 +1186,14 @@ set.seed(1234)
              HP2106201_atac, HP2107001_atac, HP2107901_atac, HP2108601_atac, 
              HP2108901_atac, HP2110001_atac, HP2121601_atac, HP2123201_atac,
              HP2132801_atac, HP2202101_atac))
+  
+  #Save file
+  saveRDS(combined_atac, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\combined_atac.rds)")
+  pancreas.combined <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\combined_atac.rds)")
+  
+  #FRiP
+  
+  
   
   # Run TFDIF  
   combined_atac <- FindTopFeatures(combined_atac, min.cutoff = 20)
@@ -1010,7 +1203,10 @@ set.seed(1234)
   DimPlot(combined_atac, group.by = 'ancestry_sex', pt.size = 0.1)
   
   
-  
+  # Batch correction using Harmony
+  hm.integrated <- RunHarmony(object = unintegrated, group.by.vars = 'sample', reduction = 'lsi', assay.use = 'peaks', project.dim = FALSE)
+  hm.integrated <- RunUMAP(hm.integrated, dims = 2:50, reduction = 'harmony')
+  DimPlot(hm.integrated, group.by = 'sample', pt.size = 0.1)
   
   
   
