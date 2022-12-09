@@ -1178,6 +1178,148 @@ set.seed(1234)
     ncol = 6
   )
   
+  # Add Gene activity matrix
+  {
+    gene.activities.HP2022801 <- GeneActivity(HP2022801_atac)
+    gene.activities.SAMN15877725 <- GeneActivity(SAMN15877725_atac)
+    gene.activities.HP2024001 <- GeneActivity(HP2024001_atac)
+    gene.activities.HP2031401 <- GeneActivity(HP2031401_atac)
+    gene.activities.HP2105501 <- GeneActivity(HP2105501_atac)
+    gene.activities.HP2106201 <- GeneActivity(HP2106201_atac)
+    gene.activities.HP2107001 <- GeneActivity(HP2107001_atac)
+    gene.activities.HP2107901 <- GeneActivity(HP2107901_atac)
+    gene.activities.HP2108601 <- GeneActivity(HP2108601_atac)
+    gene.activities.HP2108901 <- GeneActivity(HP2108901_atac)
+    gene.activities.HP2110001 <- GeneActivity(HP2110001_atac)
+    gene.activities.HP2121601 <- GeneActivity(HP2121601_atac)
+    gene.activities.HP2123201 <- GeneActivity(HP2123201_atac)
+    gene.activities.HP2132801 <- GeneActivity(HP2132801_atac)
+    gene.activities.HP2202101 <- GeneActivity(HP2202101_atac)
+  }
+  
+  # add the gene activity matrix to the Seurat object as a new assay and normalize it
+  {
+    HP2022801_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2022801)
+    HP2022801_atac <- NormalizeData(
+      object = HP2022801_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2022801_atac$nCount_RNA)
+    )
+    
+    SAMN15877725_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.SAMN15877725)
+    SAMN15877725_atac <- NormalizeData(
+      object = SAMN15877725_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(SAMN15877725_atac$nCount_RNA)
+    )
+    
+    HP2024001_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2024001)
+    HP2024001_atac <- NormalizeData(
+      object = HP2024001_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2024001_atac$nCount_RNA)
+    )
+    
+    HP2031401_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2031401)
+    HP2031401_atac <- NormalizeData(
+      object = HP2031401_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2031401_atac$nCount_RNA)
+    )
+    
+    HP2105501_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2105501)
+    HP2105501_atac <- NormalizeData(
+      object = HP2105501_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2105501_atac$nCount_RNA)
+    )
+    
+    HP2106201_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2106201)
+    HP2106201_atac <- NormalizeData(
+      object = HP2106201_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2106201_atac$nCount_RNA)
+    )
+    
+    HP2107001_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2107001)
+    HP2107001_atac <- NormalizeData(
+      object = HP2107001_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2107001_atac$nCount_RNA)
+    )
+    
+    HP2107901_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2107901)
+    HP2107901_atac <- NormalizeData(
+      object = HP2107901_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2107901_atac$nCount_RNA)
+    )
+    
+    HP2108601_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2108601)
+    HP2108601_atac <- NormalizeData(
+      object = HP2108601_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2108601_atac$nCount_RNA)
+    )
+    
+    HP2108901_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2108901)
+    HP2108901_atac <- NormalizeData(
+      object = HP2108901_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2108901_atac$nCount_RNA)
+    )
+    
+    HP2110001_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2110001)
+    HP2110001_atac <- NormalizeData(
+      object = HP2110001_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2110001_atac$nCount_RNA)
+    )
+    
+    HP2121601_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2121601)
+    HP2121601_atac <- NormalizeData(
+      object = HP2121601_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2121601_atac$nCount_RNA)
+    )
+    
+    HP2123201_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2123201)
+    HP2123201_atac <- NormalizeData(
+      object = HP2123201_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2123201_atac$nCount_RNA)
+    )
+    
+    HP2132801_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2132801)
+    HP2132801_atac <- NormalizeData(
+      object = HP2132801_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2132801_atac$nCount_RNA)
+    )
+    
+    HP2202101_atac[['RNA']] <- CreateAssayObject(counts = gene.activities.HP2202101)
+    HP2202101_atac <- NormalizeData(
+      object = HP2202101_atac,
+      assay = 'RNA',
+      normalization.method = 'LogNormalize',
+      scale.factor = median(HP2202101_atac$nCount_RNA)
+    )
+  }
+  
  
   # merge all datasets, adding a cell ID to make sure cell names are unique
   combined_atac <- merge(
