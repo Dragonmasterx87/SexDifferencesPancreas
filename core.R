@@ -54,6 +54,10 @@ install.packages("harmony")
 # Run the following code once you have Seurat installed
 suppressWarnings(
   {
+    library(leiden)
+    library(stringr)
+    library(hdf5r)
+    library(SoupX)
     library(Rcpp)
     library(ggplot2)
     library(cowplot)
@@ -61,6 +65,10 @@ suppressWarnings(
     library(ggridges)
     library(ggrepel)
     library(dplyr)
+    library(tidyverse)
+    library(data.table)
+    if(.Platform$OS.type == "windows") Sys.setenv(PATH= paste("C:/Users/mqadir/AppData/Local/r-miniconda/envs/r-reticulate",Sys.getenv()["PATH"],sep=";"))
+    library(reticulate)
     library(Seurat)
     library(monocle3)
     library(harmony)
@@ -80,51 +88,101 @@ suppressWarnings(
     library(MeSHDbi)
     library(clusterProfiler)
     library(DOSE)
+    py_config()
   }
 )
 
 # Set global environment parameter par-proc
 #options(future.globals.maxSize = 8000 * 1024^2)
-set.seed(123)
+set.seed(1234)
 
 # OBJECT SETUP AND NORMALIZATION ####
-# STEP 1: Load 10X data ####
+# STEP 1: Load 
+samples <- c("HP2022801", "SAMN15877725", "HP2107001", "HP2107901",
+             "HP2024001", "HP2105501", "HP2108601", "HP2108901",
+             "HP2031401", "HP2110001", "HP2123201",
+             "HP2106201", "HP2121601", "HP2132801", "HP2202101")
+
+for (sample in samples){
+  wd <- sprintf('D:/1. Sex based Study raw data/Cellranger_raw data/scRNAseq/%s', samples)
+}
+
+# Automated SoupX created
+for (x in wd){
+  sample_name <- str_split_fixed(x, "/", n=5)[5] #Adjust this to output your sample name
+  rna_counts <- Read10X_h5(file.path(x, 'raw_feature_bc_matrix.h5'))
+  data <- CreateSeuratObject(counts=rna_counts)
+  data[['percent.mt']] <- PercentageFeatureSet(data, pattern = '^MT-')
+  data <- subset(x = data, subset = nFeature_RNA > 500 & nFeature_RNA < 8000 & percent.mt < 20)
+  
+  #Running sctransform takes into account sequencing depth at each cell
+  #data <- SCTransform(data, vars.to.regress = "percent.mt", verbose = FALSE,return.only.var.genes = FALSE)
+  #data <- SCTransform(data, verbose = FALSE)
+  
+  #Log normalization alternative to sctransform
+  data <- NormalizeData(data, normalization.method = "LogNormalize", scale.factor = 10000)
+  data <- FindVariableFeatures(data, selection.method = "vst", nfeatures = 2000)
+  all.genes <- rownames(data)
+  data <- ScaleData(data, features = all.genes)
+  
+  data <- RunPCA(data, verbose = FALSE)
+  data <- RunUMAP(data, dims = 1:30, verbose = FALSE)
+  data <- FindNeighbors(data, dims = 1:30, verbose = FALSE)
+  data <- FindClusters(data, algorithm=4, resolution = 1, verbose=FALSE)
+  
+  #Read in RNA assay counts from our filtered seurat object
+  DefaultAssay(data) <- 'RNA'
+  toc <- GetAssayData(object = data, slot = "counts") #with nFeature >500 filter
+  tod <- Seurat::Read10X_h5(file.path(x, 'raw_feature_bc_matrix.h5')) #raw count matrix
+  
+  #Pull out the required metadata from the clustered filtered adata object
+  #We need the UMAP coordinates (RD1 and RD2) and the cluster assignments at minimum
+  metadata <- (cbind(as.data.frame(data[["umap"]]@cell.embeddings),
+                     as.data.frame(Idents(data)),
+                     as.data.frame(Idents(data))))
+  colnames(metadata) <- c("RD1","RD2","Cluster","Annotation")
+  
+  #Create the SoupChannel Object
+  sc <- SoupChannel(tod,toc)
+  
+  #Add in the metadata (dimensionality reduction UMAP coords and cluster assignments)
+  sc <- setDR(sc,metadata[colnames(sc$toc),c("RD1","RD2")])
+  sc <- setClusters(sc,setNames(metadata$Cluster,rownames(metadata)))
+  sc <- autoEstCont(sc)
+  out <- adjustCounts(sc)
+  
+  #Create post-SoupX Seurat Object
+  data2 <- CreateSeuratObject(out)
+  data2[['percent.mt']] <- PercentageFeatureSet(data2, pattern = '^MT-')
+  data2 <- NormalizeData(data2, normalization.method = "LogNormalize", scale.factor = 10000)  #Can be changed to sctransform
+  data2 <- FindVariableFeatures(data2, selection.method = "vst", nfeatures = 2000)
+  all.genes <- rownames(data2)
+  data2 <- ScaleData(data2, features = all.genes)
+  data2 <- RunPCA(data2, verbose = FALSE)
+  data2 <- RunUMAP(data2, dims = 1:30, verbose = FALSE)
+  data2 <- FindNeighbors(data2, dims = 1:30, verbose = FALSE)
+  data2 <- FindClusters(data2, algorithm=4, resolution = 1, verbose=FALSE)
+  saveRDS(data2, file = sprintf("D:/1. Sex based Study raw data/Cellranger_raw data/soupx/%s.rds",sample_name))
+}
+
+# Load data
 {
-  HP2022801.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\1_220624_Fahd_GEX1_F1_HP-20228-01\filtered_feature_bc_matrix)")
-  SAMN15877725.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\2_220624_Fahd_GEX2_F2_SAMN15877725\filtered_feature_bc_matrix)")
-  HP2024001.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\3_220624_Fahd_GEX3_F3_HP-20240-01\filtered_feature_bc_matrix)")
-  HP2031401.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\4_220624_Fahd_GEX4_F4_HP-20314-01\filtered_feature_bc_matrix)")
-  HP2105501.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\5_210406 GEX_F5_HP-21055-01\filtered_feature_bc_matrix)")
-  HP2106201.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\6_210406 GEX_F6_HP-21062-01\filtered_feature_bc_matrix)")
-  HP2107001.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\7_210406 GEX_F7a_HP-21070-01\filtered_feature_bc_matrix)")
-  HP2107901.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\9_210714 GEX_F9a_HP-21079-01\filtered_feature_bc_matrix)")
-  HP2108601.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\10_211108 GEX_F10a_HP-21086-01\filtered_feature_bc_matrix)")
-  HP2108901.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\11_211108 GEX_F11a_HP-21089-01\filtered_feature_bc_matrix)")
-  HP2110001.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\12_211108 GEX_F12a_HP-21100-01\filtered_feature_bc_matrix)")
-  HP2121601.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\13_211108 GEX_F13a_HP-21216-01\filtered_feature_bc_matrix)")
-  HP2123201.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\14_220124 GEX_F14_HP21232-01\filtered_feature_bc_matrix)")
-  HP2132801.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\15_220124 GEX_F15_HP-21328-01\filtered_feature_bc_matrix)")
-  HP2202101.data <- Read10X(data.dir = r"(D:\1. Sex based Study raw data\Cellranger_raw data\scRNAseq\16_220324 GEX_F16_HP-22021-01\filtered_feature_bc_matrix)")
-
-
-# STEP 2: Create Seurat objects ####
-
-  HP2022801 <- CreateSeuratObject(counts = HP2022801.data, min.features = 500)
-  SAMN15877725 <- CreateSeuratObject(counts = SAMN15877725.data, min.features = 500)
-  HP2024001 <- CreateSeuratObject(counts = HP2024001.data, min.features = 500)
-  HP2031401 <- CreateSeuratObject(counts = HP2031401.data, min.features = 500)
-  HP2105501 <- CreateSeuratObject(counts = HP2105501.data, min.features = 500)
-  HP2106201 <- CreateSeuratObject(counts = HP2106201.data, min.features = 500)
-  HP2107001 <- CreateSeuratObject(counts = HP2107001.data, min.features = 500)
-  HP2107901 <- CreateSeuratObject(counts = HP2107901.data, min.features = 500)
-  HP2108601 <- CreateSeuratObject(counts = HP2108601.data, min.features = 500)
-  HP2108901 <- CreateSeuratObject(counts = HP2108901.data, min.features = 500)
-  HP2110001 <- CreateSeuratObject(counts = HP2110001.data, min.features = 500)
-  HP2121601 <- CreateSeuratObject(counts = HP2121601.data, min.features = 500)
-  HP2123201 <- CreateSeuratObject(counts = HP2123201.data, min.features = 500)
-  HP2132801 <- CreateSeuratObject(counts = HP2132801.data, min.features = 500)
-  HP2202101 <- CreateSeuratObject(counts = HP2202101.data, min.features = 500)
-  }
+HP2022801 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2022801.rds)")
+SAMN15877725 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\SAMN15877725.rds)")
+HP2024001 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2024001.rds)")
+HP2031401 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2031401.rds)")
+HP2105501 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2105501.rds)")
+HP2106201 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2106201.rds)")
+HP2107001 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2107001.rds)")
+HP2107901 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2107901.rds)")
+HP2108601 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2108601.rds)")
+HP2108901 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2108901.rds)")
+HP2110001 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2110001.rds)")
+HP2121601 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2121601.rds)")
+HP2123201 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2123201.rds)")
+HP2132801 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2132801.rds)")
+HP2202101 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx\HP2202101.rds)")
+}
 
 # Sample specific Metadata addition
 {
@@ -197,360 +255,129 @@ set.seed(123)
   HP2202101$ancestry_sex <- "black_female"
   }
 
-# STEP 3: Thresholding ####
-# Add -MT gene percentage data as QC to cutoff for doublets 1st doublet threshold
-{
-  HP2022801[["percent.mt"]] <- PercentageFeatureSet(object = HP2022801, pattern = "^MT-")
-  SAMN15877725[["percent.mt"]] <- PercentageFeatureSet(object = SAMN15877725, pattern = "^MT-")
-  HP2024001[["percent.mt"]] <- PercentageFeatureSet(object = HP2024001, pattern = "^MT-")
-  HP2031401[["percent.mt"]] <- PercentageFeatureSet(object = HP2031401, pattern = "^MT-")
-  HP2105501[["percent.mt"]] <- PercentageFeatureSet(object = HP2105501, pattern = "^MT-")
-  HP2106201[["percent.mt"]] <- PercentageFeatureSet(object = HP2106201, pattern = "^MT-")
-  HP2107001[["percent.mt"]] <- PercentageFeatureSet(object = HP2107001, pattern = "^MT-")
-  HP2107901[["percent.mt"]] <- PercentageFeatureSet(object = HP2107901, pattern = "^MT-")
-  HP2108601[["percent.mt"]] <- PercentageFeatureSet(object = HP2108601, pattern = "^MT-")
-  HP2108901[["percent.mt"]] <- PercentageFeatureSet(object = HP2108901, pattern = "^MT-")
-  HP2110001[["percent.mt"]] <- PercentageFeatureSet(object = HP2110001, pattern = "^MT-")
-  HP2121601[["percent.mt"]] <- PercentageFeatureSet(object = HP2121601, pattern = "^MT-")
-  HP2123201[["percent.mt"]] <- PercentageFeatureSet(object = HP2123201, pattern = "^MT-")
-  HP2132801[["percent.mt"]] <- PercentageFeatureSet(object = HP2132801, pattern = "^MT-")
-  HP2202101[["percent.mt"]] <- PercentageFeatureSet(object = HP2202101, pattern = "^MT-")
-
-# QC information before thresholding
-  summary(head(HP2022801@meta.data))
-  summary(head(SAMN15877725@meta.data))
-  summary(head(HP2024001@meta.data))
-  summary(head(HP2031401@meta.data))
-  summary(head(HP2105501@meta.data))
-  summary(head(HP2106201@meta.data))
-  summary(head(HP2107001@meta.data))
-  summary(head(HP2107901@meta.data))
-  summary(head(HP2108601@meta.data))
-  summary(head(HP2108901@meta.data))
-  summary(head(HP2110001@meta.data))
-  summary(head(HP2121601@meta.data))
-  summary(head(HP2123201@meta.data))
-  summary(head(HP2132801@meta.data))
-  summary(head(HP2202101@meta.data))
-
-# Visualize QC metrics as a violin plot
-  VlnPlot(object = HP2022801, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = SAMN15877725, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2024001, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2031401, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2105501, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2106201, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2107001, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2107901, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2108601, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2108901, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2110001, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2121601, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2123201, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2132801, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2202101, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-
-# RNA features + MT RNA percentage based cell thresholding 1st THRESHOLD
-  HP2022801 <- subset(x = HP2022801, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  SAMN15877725 <- subset(x = SAMN15877725, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2024001 <- subset(x = HP2024001, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2031401 <- subset(x = HP2031401, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2105501 <- subset(x = HP2105501, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2106201 <- subset(x = HP2106201, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2107001 <- subset(x = HP2107001, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2107901 <- subset(x = HP2107901, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2108601 <- subset(x = HP2108601, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2108901 <- subset(x = HP2108901, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2110001 <- subset(x = HP2110001, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2121601 <- subset(x = HP2121601, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2123201 <- subset(x = HP2123201, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2132801 <- subset(x = HP2132801, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-  HP2202101 <- subset(x = HP2202101, subset = nFeature_RNA > 200 & nFeature_RNA < 8000 & percent.mt < 20)
-
-# QC information after thresholding
-  summary(head(HP2022801@meta.data))
-  summary(head(SAMN15877725@meta.data))
-  summary(head(HP2024001@meta.data))
-  summary(head(HP2031401@meta.data))
-  summary(head(HP2105501@meta.data))
-  summary(head(HP2106201@meta.data))
-  summary(head(HP2107001@meta.data))
-  summary(head(HP2107901@meta.data))
-  summary(head(HP2108601@meta.data))
-  summary(head(HP2108901@meta.data))
-  summary(head(HP2110001@meta.data))
-  summary(head(HP2121601@meta.data))
-  summary(head(HP2123201@meta.data))
-  summary(head(HP2132801@meta.data))
-  summary(head(HP2202101@meta.data))
-
-# Visualize QC metrics post thresholding as a violin plot
-  VlnPlot(object = HP2022801, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = SAMN15877725, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2024001, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2031401, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2105501, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2106201, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2107001, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2107901, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2108601, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2108901, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2110001, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2121601, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2123201, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2132801, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-  VlnPlot(object = HP2202101, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-
-# Step 4: Add cell IDs ####
-# Add UNIQUE cell IDs preventing barcode overlap
-  HP2022801 <- RenameCells(HP2022801, add.cell.id = "HP2022801")
-  SAMN15877725 <- RenameCells(SAMN15877725, add.cell.id = "SAMN15877725")
-  HP2024001 <- RenameCells(HP2024001, add.cell.id = "HP2024001")
-  HP2031401 <- RenameCells(HP2031401, add.cell.id = "HP2031401")
-  HP2105501 <- RenameCells(HP2105501, add.cell.id = "HP2105501")
-  HP2106201 <- RenameCells(HP2106201, add.cell.id = "HP2106201")
-  HP2107001 <- RenameCells(HP2107001, add.cell.id = "HP2107001")
-  HP2107901 <- RenameCells(HP2107901, add.cell.id = "HP2107901")
-  HP2108601 <- RenameCells(HP2108601, add.cell.id = "HP2108601")
-  HP2108901 <- RenameCells(HP2108901, add.cell.id = "HP2108901")
-  HP2110001 <- RenameCells(HP2110001, add.cell.id = "HP2110001")
-  HP2121601 <- RenameCells(HP2121601, add.cell.id = "HP2121601")
-  HP2123201 <- RenameCells(HP2123201, add.cell.id = "HP2123201")
-  HP2132801 <- RenameCells(HP2132801, add.cell.id = "HP2132801")
-  HP2202101 <- RenameCells(HP2202101, add.cell.id = "HP2202101")
-  }
-
-# Normalization for visualization and doublet removal
-# Dooublet removal using doubletfinder 2nd THRESHOLD
-{
- HP2022801 <- NormalizeData(HP2022801, verbose = TRUE)
- SAMN15877725 <- NormalizeData(SAMN15877725, verbose = TRUE)
- HP2024001 <- NormalizeData(HP2024001, verbose = TRUE)
- HP2031401 <- NormalizeData(HP2031401, verbose = TRUE)
- HP2105501 <- NormalizeData(HP2105501, verbose = TRUE)
- HP2106201 <- NormalizeData(HP2106201, verbose = TRUE)
- HP2107001 <- NormalizeData(HP2107001, verbose = TRUE)
- HP2107901 <- NormalizeData(HP2107901, verbose = TRUE)
- HP2108601 <- NormalizeData(HP2108601, verbose = TRUE)
- HP2108901 <- NormalizeData(HP2108901, verbose = TRUE)
- HP2110001 <- NormalizeData(HP2110001, verbose = TRUE)
- HP2121601 <- NormalizeData(HP2121601, verbose = TRUE)
- HP2123201 <- NormalizeData(HP2123201, verbose = TRUE)
- HP2132801 <- NormalizeData(HP2132801, verbose = TRUE)
- HP2202101 <- NormalizeData(HP2202101, verbose = TRUE)
- 
-# Var Feat
- HP2022801 <- FindVariableFeatures(HP2022801, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- SAMN15877725 <- FindVariableFeatures(SAMN15877725, selection.method = "vst", 
-                                      nfeatures = 2000, verbose = TRUE)
- HP2024001 <- FindVariableFeatures(HP2024001, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2031401 <- FindVariableFeatures(HP2031401, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2105501 <- FindVariableFeatures(HP2105501, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2106201 <- FindVariableFeatures(HP2106201, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2107001 <- FindVariableFeatures(HP2107001, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2107901 <- FindVariableFeatures(HP2107901, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2108601 <- FindVariableFeatures(HP2108601, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2108901 <- FindVariableFeatures(HP2108901, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2110001 <- FindVariableFeatures(HP2110001, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2121601 <- FindVariableFeatures(HP2121601, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2123201 <- FindVariableFeatures(HP2123201, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2132801 <- FindVariableFeatures(HP2132801, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
- HP2202101 <- FindVariableFeatures(HP2202101, selection.method = "vst", 
-                                   nfeatures = 2000, verbose = TRUE)
-
-# Scale data
- HP2022801 <- ScaleData(HP2022801, verbose = TRUE)
- SAMN15877725 <- ScaleData(SAMN15877725, verbose = TRUE)
- HP2024001 <- ScaleData(HP2024001, verbose = TRUE)
- HP2031401 <- ScaleData(HP2031401, verbose = TRUE)
- HP2105501 <- ScaleData(HP2105501, verbose = TRUE)
- HP2106201 <- ScaleData(HP2106201, verbose = TRUE)
- HP2107001 <- ScaleData(HP2107001, verbose = TRUE)
- HP2107901 <- ScaleData(HP2107901, verbose = TRUE)
- HP2108601 <- ScaleData(HP2108601, verbose = TRUE)
- HP2108901 <- ScaleData(HP2108901, verbose = TRUE)
- HP2110001 <- ScaleData(HP2110001, verbose = TRUE)
- HP2121601 <- ScaleData(HP2121601, verbose = TRUE)
- HP2123201 <- ScaleData(HP2123201, verbose = TRUE)
- HP2132801 <- ScaleData(HP2132801, verbose = TRUE)
- HP2202101 <- ScaleData(HP2202101, verbose = TRUE) 
- 
-# PCA
- HP2022801 <- RunPCA(HP2022801, verbose = TRUE, npcs = 20)
- SAMN15877725 <- RunPCA(SAMN15877725, verbose = TRUE, npcs = 20)
- HP2024001 <- RunPCA(HP2024001, verbose = TRUE, npcs = 20)
- HP2031401 <- RunPCA(HP2031401, verbose = TRUE, npcs = 20)
- HP2105501 <- RunPCA(HP2105501, verbose = TRUE, npcs = 20)
- HP2106201 <- RunPCA(HP2106201, verbose = TRUE, npcs = 20)
- HP2107001 <- RunPCA(HP2107001, verbose = TRUE, npcs = 20)
- HP2107901 <- RunPCA(HP2107901, verbose = TRUE, npcs = 20)
- HP2108601 <- RunPCA(HP2108601, verbose = TRUE, npcs = 20)
- HP2108901 <- RunPCA(HP2108901, verbose = TRUE, npcs = 20)
- HP2110001 <- RunPCA(HP2110001, verbose = TRUE, npcs = 20)
- HP2121601 <- RunPCA(HP2121601, verbose = TRUE, npcs = 20)
- HP2123201 <- RunPCA(HP2123201, verbose = TRUE, npcs = 20)
- HP2132801 <- RunPCA(HP2132801, verbose = TRUE, npcs = 20)
- HP2202101 <- RunPCA(HP2202101, verbose = TRUE, npcs = 20) 
-
- # UMAP
- HP2022801 <- RunUMAP(HP2022801, dims = 1:10, verbose = F)
- SAMN15877725 <- RunUMAP(SAMN15877725, dims = 1:10, verbose = F)
- HP2024001 <- RunUMAP(HP2024001, dims = 1:10, verbose = F)
- HP2031401 <- RunUMAP(HP2031401, dims = 1:10, verbose = F)
- HP2105501 <- RunUMAP(HP2105501, dims = 1:10, verbose = F)
- HP2106201 <- RunUMAP(HP2106201, dims = 1:10, verbose = F)
- HP2107001 <- RunUMAP(HP2107001, dims = 1:10, verbose = F)
- HP2107901 <- RunUMAP(HP2107901, dims = 1:10, verbose = F)
- HP2108601 <- RunUMAP(HP2108601, dims = 1:10, verbose = F)
- HP2108901 <- RunUMAP(HP2108901, dims = 1:10, verbose = F)
- HP2110001 <- RunUMAP(HP2110001, dims = 1:10, verbose = F)
- HP2121601 <- RunUMAP(HP2121601, dims = 1:10, verbose = F)
- HP2123201 <- RunUMAP(HP2123201, dims = 1:10, verbose = F)
- HP2132801 <- RunUMAP(HP2132801, dims = 1:10, verbose = F)
- HP2202101 <- RunUMAP(HP2202101, dims = 1:10, verbose = F)
-}
-# for (i in 1:length(pancreas.list)) {
-#   pancreas.list[[i]] <- NormalizeData(pancreas.list[[i]], verbose = TRUE)
-#   pancreas.list[[i]] <- FindVariableFeatures(pancreas.list[[i]], selection.method = "vst", 
-#                                              nfeatures = 2000, verbose = TRUE)
-# }
-
+# Doublet removal
 # Optimization
 {
-sweep.res <- paramSweep_v3(HP2022801) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(SAMN15877725) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2024001) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2031401) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2105501) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2106201) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2107001) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2107901) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2108601) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2108901) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2110001) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2121601) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2123201) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2132801) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-sweep.res <- paramSweep_v3(HP2202101) 
-sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
-bcmvn <- find.pK(sweep.stats)
-barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
-
-# Filtering
-nExp <- round(ncol(HP2022801) * 0.04)  # expect 4% doublets
-HP2022801 <- doubletFinder_v3(HP2022801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(SAMN15877725) * 0.04)  # expect 4% doublets
-SAMN15877725 <- doubletFinder_v3(SAMN15877725, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2024001) * 0.04)  # expect 4% doublets
-HP2024001 <- doubletFinder_v3(HP2024001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2031401) * 0.04)  # expect 4% doublets
-HP2031401 <- doubletFinder_v3(HP2031401, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2105501) * 0.04)  # expect 4% doublets
-HP2105501 <- doubletFinder_v3(HP2105501, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2106201) * 0.04)  # expect 4% doublets
-HP2106201 <- doubletFinder_v3(HP2106201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2107001) * 0.04)  # expect 4% doublets
-HP2107001 <- doubletFinder_v3(HP2107001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2107901) * 0.04)  # expect 4% doublets
-HP2107901 <- doubletFinder_v3(HP2107901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2108601) * 0.04)  # expect 4% doublets
-HP2108601 <- doubletFinder_v3(HP2108601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2108901) * 0.04)  # expect 4% doublets
-HP2108901 <- doubletFinder_v3(HP2108901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2110001) * 0.04)  # expect 4% doublets
-HP2110001 <- doubletFinder_v3(HP2110001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2121601) * 0.04)  # expect 4% doublets
-HP2121601 <- doubletFinder_v3(HP2121601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2123201) * 0.04)  # expect 4% doublets
-HP2123201 <- doubletFinder_v3(HP2123201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2132801) * 0.04)  # expect 4% doublets
-HP2132801 <- doubletFinder_v3(HP2132801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
-
-nExp <- round(ncol(HP2202101) * 0.04)  # expect 4% doublets
-HP2202101 <- doubletFinder_v3(HP2202101, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  sweep.res <- paramSweep_v3(HP2022801) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(SAMN15877725) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2024001) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2031401) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2105501) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2106201) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2107001) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2107901) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2108601) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2108901) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2110001) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2121601) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2123201) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2132801) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  sweep.res <- paramSweep_v3(HP2202101) 
+  sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
+  bcmvn <- find.pK(sweep.stats)
+  barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
+  
+  # Filtering
+  nExp <- round(ncol(HP2022801) * 0.04)  # expect 4% doublets
+  HP2022801 <- doubletFinder_v3(HP2022801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(SAMN15877725) * 0.04)  # expect 4% doublets
+  SAMN15877725 <- doubletFinder_v3(SAMN15877725, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2024001) * 0.04)  # expect 4% doublets
+  HP2024001 <- doubletFinder_v3(HP2024001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2031401) * 0.04)  # expect 4% doublets
+  HP2031401 <- doubletFinder_v3(HP2031401, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2105501) * 0.04)  # expect 4% doublets
+  HP2105501 <- doubletFinder_v3(HP2105501, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2106201) * 0.04)  # expect 4% doublets
+  HP2106201 <- doubletFinder_v3(HP2106201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2107001) * 0.04)  # expect 4% doublets
+  HP2107001 <- doubletFinder_v3(HP2107001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2107901) * 0.04)  # expect 4% doublets
+  HP2107901 <- doubletFinder_v3(HP2107901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2108601) * 0.04)  # expect 4% doublets
+  HP2108601 <- doubletFinder_v3(HP2108601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2108901) * 0.04)  # expect 4% doublets
+  HP2108901 <- doubletFinder_v3(HP2108901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2110001) * 0.04)  # expect 4% doublets
+  HP2110001 <- doubletFinder_v3(HP2110001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2121601) * 0.04)  # expect 4% doublets
+  HP2121601 <- doubletFinder_v3(HP2121601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2123201) * 0.04)  # expect 4% doublets
+  HP2123201 <- doubletFinder_v3(HP2123201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2132801) * 0.04)  # expect 4% doublets
+  HP2132801 <- doubletFinder_v3(HP2132801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  
+  nExp <- round(ncol(HP2202101) * 0.04)  # expect 4% doublets
+  HP2202101 <- doubletFinder_v3(HP2202101, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
 }
 
 # Setup one metadata column
