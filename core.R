@@ -67,7 +67,6 @@ suppressWarnings(
     library(dplyr)
     library(tidyverse)
     library(data.table)
-    if(.Platform$OS.type == "windows") Sys.setenv(PATH= paste("C:/Users/mqadir/AppData/Local/r-miniconda/envs/r-reticulate",Sys.getenv()["PATH"],sep=";"))
     library(reticulate)
     library(Seurat)
     library(monocle3)
@@ -88,13 +87,16 @@ suppressWarnings(
     library(MeSHDbi)
     library(clusterProfiler)
     library(DOSE)
-    py_config()
-  }
+    }
 )
 
 # Set global environment parameter par-proc
 #options(future.globals.maxSize = 8000 * 1024^2)
 set.seed(1234)
+
+# Python env
+if(.Platform$OS.type == "windows") Sys.setenv(PATH= paste("C:/Users/mqadir/AppData/Local/r-miniconda/envs/r-reticulate",Sys.getenv()["PATH"],sep=";"))
+py_config()
 
 # OBJECT SETUP AND NORMALIZATION ####
 # STEP 1: Load 
@@ -116,7 +118,7 @@ for (x in wd){
   data <- subset(x = data, subset = nFeature_RNA > 500 & nFeature_RNA < 8000 & percent.mt < 20)
   
   #Running sctransform takes into account sequencing depth at each cell
-  #data <- SCTransform(data, vars.to.regress = "percent.mt", verbose = FALSE,return.only.var.genes = FALSE)
+  #data <- SCTransform(data, vars.to.regress = "percent.mt", verbose = FALSE, return.only.var.genes = FALSE, vst.flavor = "v2")
   #data <- SCTransform(data, verbose = FALSE)
   
   #Log normalization alternative to sctransform
@@ -154,10 +156,11 @@ for (x in wd){
   #Create post-SoupX Seurat Object
   data2 <- CreateSeuratObject(out)
   data2[['percent.mt']] <- PercentageFeatureSet(data2, pattern = '^MT-')
-  data2 <- NormalizeData(data2, normalization.method = "LogNormalize", scale.factor = 10000)  #Can be changed to sctransform
-  data2 <- FindVariableFeatures(data2, selection.method = "vst", nfeatures = 2000)
-  all.genes <- rownames(data2)
-  data2 <- ScaleData(data2, features = all.genes)
+  #data2 <- NormalizeData(data2, normalization.method = "LogNormalize", scale.factor = 10000)  #Can be changed to sctransform
+  #data2 <- FindVariableFeatures(data2, selection.method = "vst", nfeatures = 2000)
+  #all.genes <- rownames(data2)
+  #data2 <- ScaleData(data2, features = all.genes)
+  data2 <- SCTransform(data2, vars.to.regress = "percent.mt", verbose = FALSE, return.only.var.genes = FALSE, vst.flavor = "v2")
   data2 <- RunPCA(data2, verbose = FALSE)
   data2 <- RunUMAP(data2, dims = 1:30, verbose = FALSE)
   data2 <- FindNeighbors(data2, dims = 1:30, verbose = FALSE)
@@ -254,148 +257,244 @@ HP2202101 <- readRDS(r"(D:\1. Sex based Study raw data\Cellranger_raw data\soupx
   HP2132801$ancestry_sex <- "black_female"
   HP2202101$ancestry_sex <- "black_female"
   }
-
 # Doublet removal
 # Optimization
 {
-  sweep.res <- paramSweep_v3(HP2022801) 
+  sweep.res <- paramSweep_v3(HP2022801, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(SAMN15877725) 
+  sweep.res <- paramSweep_v3(SAMN15877725, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2024001) 
+  sweep.res <- paramSweep_v3(HP2024001, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2031401) 
+  sweep.res <- paramSweep_v3(HP2031401, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2105501) 
+  sweep.res <- paramSweep_v3(HP2105501, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2106201) 
+  sweep.res <- paramSweep_v3(HP2106201, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2107001) 
+  sweep.res <- paramSweep_v3(HP2107001, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2107901) 
+  sweep.res <- paramSweep_v3(HP2107901, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2108601) 
+  sweep.res <- paramSweep_v3(HP2108601, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2108901) 
+  sweep.res <- paramSweep_v3(HP2108901, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2110001) 
+  sweep.res <- paramSweep_v3(HP2110001, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2121601) 
+  sweep.res <- paramSweep_v3(HP2121601, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2123201) 
+  sweep.res <- paramSweep_v3(HP2123201, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2132801) 
+  sweep.res <- paramSweep_v3(HP2132801, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
-  sweep.res <- paramSweep_v3(HP2202101) 
+  sweep.res <- paramSweep_v3(HP2202101, sct = TRUE) 
   sweep.stats <- summarizeSweep(sweep.res, GT = FALSE) 
   bcmvn <- find.pK(sweep.stats)
   barplot(bcmvn$BCmetric, names.arg = bcmvn$pK, las=2)
   
   # Filtering
   nExp <- round(ncol(HP2022801) * 0.04)  # expect 4% doublets
-  HP2022801 <- doubletFinder_v3(HP2022801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2022801 <- doubletFinder_v3(HP2022801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(SAMN15877725) * 0.04)  # expect 4% doublets
-  SAMN15877725 <- doubletFinder_v3(SAMN15877725, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  SAMN15877725 <- doubletFinder_v3(SAMN15877725, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2024001) * 0.04)  # expect 4% doublets
-  HP2024001 <- doubletFinder_v3(HP2024001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2024001 <- doubletFinder_v3(HP2024001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2031401) * 0.04)  # expect 4% doublets
-  HP2031401 <- doubletFinder_v3(HP2031401, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2031401 <- doubletFinder_v3(HP2031401, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2105501) * 0.04)  # expect 4% doublets
-  HP2105501 <- doubletFinder_v3(HP2105501, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2105501 <- doubletFinder_v3(HP2105501, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2106201) * 0.04)  # expect 4% doublets
-  HP2106201 <- doubletFinder_v3(HP2106201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2106201 <- doubletFinder_v3(HP2106201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2107001) * 0.04)  # expect 4% doublets
-  HP2107001 <- doubletFinder_v3(HP2107001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2107001 <- doubletFinder_v3(HP2107001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2107901) * 0.04)  # expect 4% doublets
-  HP2107901 <- doubletFinder_v3(HP2107901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2107901 <- doubletFinder_v3(HP2107901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2108601) * 0.04)  # expect 4% doublets
-  HP2108601 <- doubletFinder_v3(HP2108601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2108601 <- doubletFinder_v3(HP2108601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2108901) * 0.04)  # expect 4% doublets
-  HP2108901 <- doubletFinder_v3(HP2108901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2108901 <- doubletFinder_v3(HP2108901, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2110001) * 0.04)  # expect 4% doublets
-  HP2110001 <- doubletFinder_v3(HP2110001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2110001 <- doubletFinder_v3(HP2110001, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2121601) * 0.04)  # expect 4% doublets
-  HP2121601 <- doubletFinder_v3(HP2121601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2121601 <- doubletFinder_v3(HP2121601, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2123201) * 0.04)  # expect 4% doublets
-  HP2123201 <- doubletFinder_v3(HP2123201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2123201 <- doubletFinder_v3(HP2123201, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2132801) * 0.04)  # expect 4% doublets
-  HP2132801 <- doubletFinder_v3(HP2132801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2132801 <- doubletFinder_v3(HP2132801, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
   
   nExp <- round(ncol(HP2202101) * 0.04)  # expect 4% doublets
-  HP2202101 <- doubletFinder_v3(HP2202101, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10)
+  HP2202101 <- doubletFinder_v3(HP2202101, pN = 0.25, pK = 0.09, nExp = nExp, PCs = 1:10, sct = TRUE)
 }
 
 # Setup one metadata column
-HP2022801$doublets <- HP2022801$DF.classifications_0.25_0.09_166
-SAMN15877725$doublets <- SAMN15877725$DF.classifications_0.25_0.09_155
-HP2107001$doublets <- HP2107001$DF.classifications_0.25_0.09_170
+HP2022801$doublets <- HP2022801$DF.classifications_0.25_0.09_170
+SAMN15877725$doublets <- SAMN15877725$DF.classifications_0.25_0.09_161
+HP2107001$doublets <- HP2107001$DF.classifications_0.25_0.09_169
 HP2107901$doublets <- HP2107901$DF.classifications_0.25_0.09_132
 HP2024001$doublets <- HP2024001$DF.classifications_0.25_0.09_121
-HP2105501$doublets <- HP2105501$DF.classifications_0.25_0.09_124
+HP2105501$doublets <- HP2105501$DF.classifications_0.25_0.09_125
 HP2108601$doublets <- HP2108601$DF.classifications_0.25_0.09_218
 HP2108901$doublets <- HP2108901$DF.classifications_0.25_0.09_171
-HP2031401$doublets <- HP2031401$DF.classifications_0.25_0.09_183
-HP2110001$doublets <- HP2110001$DF.classifications_0.25_0.09_226
+HP2031401$doublets <- HP2031401$DF.classifications_0.25_0.09_187
+HP2110001$doublets <- HP2110001$DF.classifications_0.25_0.09_232
 HP2123201$doublets <- HP2123201$DF.classifications_0.25_0.09_62
 HP2106201$doublets <- HP2106201$DF.classifications_0.25_0.09_260
-HP2121601$doublets <- HP2121601$DF.classifications_0.25_0.09_140
-HP2132801$doublets <- HP2132801$DF.classifications_0.25_0.09_93
-HP2202101$doublets <- HP2202101$DF.classifications_0.25_0.09_159
+HP2121601$doublets <- HP2121601$DF.classifications_0.25_0.09_143
+HP2132801$doublets <- HP2132801$DF.classifications_0.25_0.09_96
+HP2202101$doublets <- HP2202101$DF.classifications_0.25_0.09_160
+
+# Step 4: Add cell IDs ####
+# Add cell IDs
+{
+  HP2022801 <- RenameCells(HP2022801, add.cell.id = "HP2022801")
+  SAMN15877725 <- RenameCells(SAMN15877725, add.cell.id = "SAMN15877725")
+  HP2024001 <- RenameCells(HP2024001, add.cell.id = "HP2024001")
+  HP2031401 <- RenameCells(HP2031401, add.cell.id = "HP2031401")
+  HP2105501 <- RenameCells(HP2105501, add.cell.id = "HP2105501")
+  HP2106201 <- RenameCells(HP2106201, add.cell.id = "HP2106201")
+  HP2107001 <- RenameCells(HP2107001, add.cell.id = "HP2107001")
+  HP2107901 <- RenameCells(HP2107901, add.cell.id = "HP2107901")
+  HP2108601 <- RenameCells(HP2108601, add.cell.id = "HP2108601")
+  HP2108901 <- RenameCells(HP2108901, add.cell.id = "HP2108901")
+  HP2110001 <- RenameCells(HP2110001, add.cell.id = "HP2110001")
+  HP2121601 <- RenameCells(HP2121601, add.cell.id = "HP2121601")
+  HP2123201 <- RenameCells(HP2123201, add.cell.id = "HP2123201")
+  HP2132801 <- RenameCells(HP2132801, add.cell.id = "HP2132801")
+  HP2202101 <- RenameCells(HP2202101, add.cell.id = "HP2202101")
+}
+
+# Step 5: creating a list of all datasets
+{
+  pancreas.list <- list("HP2022801" = HP2022801, "SAMN15877725" = SAMN15877725, "HP2107001" = HP2107001, "HP2107901" = HP2107901,
+                        "HP2024001" = HP2024001, "HP2105501" = HP2105501, "HP2108601" = HP2108601, "HP2108901" = HP2108901, 
+                        "HP2031401" = HP2031401, "HP2110001" = HP2110001, "HP2123201" = HP2123201,
+                        "HP2106201" = HP2106201, "HP2121601" = HP2121601, "HP2132801" = HP2132801, "HP2202101" = HP2202101
+  )
+}
+
+# Find integration features
+pancreas.features <- SelectIntegrationFeatures(object.list = pancreas.list, nfeatures = 3000)
+
+# Step 5: Merge Datasets
+# Based on comment to Issue #4753 https://github.com/satijalab/seurat/issues/4753
+# Harmony needs 1 seurat object
+pancreas.combined.h <- merge(HP2022801, y = c(SAMN15877725, HP2107001, HP2107901, 
+                                              HP2024001, HP2105501, HP2108601, HP2108901,
+                                              HP2031401, HP2110001, HP2123201,
+                                              HP2106201, HP2121601, HP2132801, HP2202101), project = "pancreas", merge.data = TRUE)
+pancreas.combined.h
+Idents(pancreas.combined.h) <- "sample"
+VlnPlot(object = pancreas.combined.h, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+# In order to log norm
+DefaultAssay(pancreas.combined.h) <- "RNA"
+pancreas.combined.h <- NormalizeData(pancreas.combined.h, normalization.method = "LogNormalize", scale.factor = 10000)
+all.genes <- rownames(pancreas.combined.h)
+pancreas.combined.h <- ScaleData(pancreas.combined.h, features = all.genes)
+
+# Replace Variable features with those calculated using SelectIntegrationFeatures
+VariableFeatures(pancreas.combined.h) <- pancreas.features
+
+# Run PCA and Harmony
+pancreas.combined.h <- RunPCA(object = pancreas.combined.h, assay = "SCT", npcs = 50)
+pancreas.combined.h <- RunHarmony(object = pancreas.combined.h,
+                                  assay.use = "SCT",
+                                  reduction = "pca",
+                                  dims.use = 1:50,
+                                  group.by.vars = c("sample", "ancestry_sex"),
+                                  plot_convergence = TRUE)
+
+# Calculate UMAP, and find neighbours
+pancreas.combined.h <- RunUMAP(object = pancreas.combined.h, assay = "SCT", reduction = "harmony", dims = 1:50)
+pancreas.combined.h <- FindNeighbors(object = pancreas.combined.h, assay = "SCT", reduction = "harmony", dims = 1:50)
+
+# Find clusters
+pancreas.combined.h <- FindClusters(object = pancreas.combined.h, resolution = 0.4)
+
+# Investigation
+p1 <- DimPlot(pancreas.combined.h, reduction = "umap", group.by = "ancestry_sex")
+p2 <- DimPlot(pancreas.combined.h, reduction = "umap", group.by = "seurat_clusters", label = TRUE, repel = TRUE)
+p1 + p2
+DimPlot(pancreas.combined.h, reduction = "umap", group.by = "doublets")
+
+# Discovery based Plotting
+DefaultAssay(pancreas.combined.h) <- "RNA"
+FeaturePlot(object = pancreas.combined.h,
+            features = c("GCG", "INS", "SST", "PPY", "GHRL"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined.h,
+            features = c("DDIT3"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
 
 # Step 5: creating a list of all datasets
 {
