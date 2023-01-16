@@ -2,7 +2,7 @@
 # The following set of code is a description of the analysis performed in the 
 # paper entitled "enter name of paper here"
 # Author Fahd Qadir FMJ Lab Tulane University, Schoool of Medicine
-# Date code was written: 1/14/2023
+# Date code was written: 11/16/2022
 # R version 4.2.1 (2019-12-12) 'Funny-Looking Kid'
 
 # LOAD LIBRARIES ####
@@ -421,41 +421,41 @@ HP2202101$doublets <- HP2202101$DF.classifications_0.25_0.09_160
 
 # Save point
 {
-saveRDS(HP2022801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2022801.rds)")
-saveRDS(SAMN15877725, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\SAMN15877725.rds)")
-saveRDS(HP2024001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2024001.rds)")
-saveRDS(HP2031401, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2031401.rds)")
-saveRDS(HP2105501, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2105501.rds)")
-saveRDS(HP2106201 , file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2106201 .rds)")
-saveRDS(HP2107001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107001.rds)")
-saveRDS(HP2107901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107901.rds)")
-saveRDS(HP2108601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108601.rds)")
-saveRDS(HP2108901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108901.rds)")
-saveRDS(HP2110001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2110001.rds)")
-saveRDS(HP2121601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2121601.rds)")
-saveRDS(HP2123201, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2123201.rds)")
-saveRDS(HP2132801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2132801.rds)")
-saveRDS(HP2202101, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2202101.rds)")
+saveRDS(HP2022801, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2022801.rds)")
+saveRDS(SAMN15877725, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\SAMN15877725.rds)")
+saveRDS(HP2024001, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2024001.rds)")
+saveRDS(HP2031401, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2031401.rds)")
+saveRDS(HP2105501, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2105501.rds)")
+saveRDS(HP2106201, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2106201.rds)")
+saveRDS(HP2107001, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107001.rds)")
+saveRDS(HP2107901, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107901.rds)")
+saveRDS(HP2108601, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108601.rds)")
+saveRDS(HP2108901, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108901.rds)")
+saveRDS(HP2110001, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2110001.rds)")
+saveRDS(HP2121601, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2121601.rds)")
+saveRDS(HP2123201, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2123201.rds)")
+saveRDS(HP2132801, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2132801.rds)")
+saveRDS(HP2202101, file = r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2202101.rds)")
 }
 
 # Reload data
 # Load data
 {
-  HP2022801 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2022801.rds)")
-  SAMN15877725 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\SAMN15877725.rds)")
-  HP2024001 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2024001.rds)")
-  HP2031401 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2031401.rds)")
-  HP2105501 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2105501.rds)")
-  HP2106201 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2106201.rds)")
-  HP2107001 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107001.rds)")
-  HP2107901 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107901.rds)")
-  HP2108601 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108601.rds)")
-  HP2108901 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108901.rds)")
-  HP2110001 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2110001.rds)")
-  HP2121601 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2121601.rds)")
-  HP2123201 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2123201.rds)")
-  HP2132801 <- readRDS(r"C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2132801.rds)")
-  HP2202101 <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2202101.rds)")
+HP2022801 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2022801.rds)")
+SAMN15877725 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\SAMN15877725.rds)")
+HP2024001 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2024001.rds)")
+HP2031401 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2031401.rds)")
+HP2105501 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2105501.rds)")
+HP2106201 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2106201.rds)")
+HP2107001 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107001.rds)")
+HP2107901 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2107901.rds)")
+HP2108601 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108601.rds)")
+HP2108901 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2108901.rds)")
+HP2110001 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2110001.rds)")
+HP2121601 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2121601.rds)")
+HP2123201 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2123201.rds)")
+HP2132801 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2132801.rds)")
+HP2202101 <- readRDS(r"(D:\3. Coding Scripts and Data\Sex Based study\RDS files\scRNAseq\CoreArch_CurrentR\HP Files after doubletfinder\HP2202101.rds)")
 }
 
 # Step 5: creating a list of all datasets
@@ -481,6 +481,7 @@ pancreas.combined.h
 Idents(pancreas.combined.h) <- "sample"
 VlnPlot(object = pancreas.combined.h, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 pancreas.combined.h.s <- NULL
+
 # In order to log norm
 DefaultAssay(pancreas.combined.h) <- "RNA"
 pancreas.combined.h <- NormalizeData(pancreas.combined.h, normalization.method = "LogNormalize", scale.factor = 10000)
@@ -492,17 +493,17 @@ VariableFeatures(pancreas.combined.h) <- pancreas.features
 
 # Run PCA and Harmony
 DefaultAssay(pancreas.combined.h) <- "SCT"
-pancreas.combined.h <- RunPCA(object = pancreas.combined.h, assay = "SCT", npcs = 50)
+pancreas.combined.h <- RunPCA(object = pancreas.combined.h, assay = "SCT", npcs = 30)
 pancreas.combined.h <- RunHarmony(object = pancreas.combined.h,
                                   assay.use = "SCT",
                                   reduction = "pca",
-                                  dims.use = 1:50,
+                                  dims.use = 1:30,
                                   group.by.vars = c("sample", "ancestry_sex"),
                                   plot_convergence = TRUE)
 
 # Calculate UMAP, and find neighbours
-pancreas.combined.h <- RunUMAP(object = pancreas.combined.h, assay = "SCT", reduction = "harmony", dims = 1:50)
-pancreas.combined.h <- FindNeighbors(object = pancreas.combined.h, assay = "SCT", reduction = "harmony", dims = 1:50)
+pancreas.combined.h <- RunUMAP(object = pancreas.combined.h, assay = "SCT", reduction = "harmony", dims = 1:30)
+pancreas.combined.h <- FindNeighbors(object = pancreas.combined.h, assay = "SCT", reduction = "harmony", dims = 1:30)
 
 # Find clusters
 pancreas.combined.h <- FindClusters(object = pancreas.combined.h, resolution = 0.5)
@@ -536,29 +537,30 @@ FeaturePlot(object = pancreas.combined.h,
             slot = 'counts',
             order = TRUE)
 
-# Subset out doublets
-Idents(pancreas.combined.h) <- "doublets"
-pancreas.combined.h.s <- subset(pancreas.combined.h, idents = "Singlet")
-Idents(pancreas.combined.h.s) <- ""
-pancreas.combined.h.s <- subset
+# Subset out doublets clusters 5 and 18
+Idents(pancreas.combined.h) <- "SCT_snn_res.0.5"
+pancreas.combined.h.s <- subset(pancreas.combined.h, idents = c("0", "1", "2", "4", "5", "6", "7", "8", "9", "10", "11", 
+                                                                "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "21", "22", "23"))
+Idents(pancreas.combined.h.s) <- "doublets"
+pancreas.combined.h.s <- subset(pancreas.combined.h.s, idents = "Singlet")
 pancreas.combined.h.s
 
 # Run PCA and Harmony
-pancreas.combined.h.s <- RunPCA(object = pancreas.combined.h.s, assay = "SCT", npcs = 50)
+pancreas.combined.h.s <- RunPCA(object = pancreas.combined.h.s, assay = "SCT", npcs = 30)
 pancreas.combined.h.s <- RunHarmony(object = pancreas.combined.h.s,
                                   assay.use = "SCT",
                                   reduction = "pca",
-                                  dims.use = 1:50,
+                                  dims.use = 1:30,
                                   group.by.vars = c("sample", "ancestry_sex"),
                                   plot_convergence = TRUE)
 
 # Calculate UMAP, and find neighbours
-pancreas.combined.h.s <- RunUMAP(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:50)
-pancreas.combined.h.s <- FindNeighbors(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:50)
+pancreas.combined.h.s <- RunUMAP(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30)
+pancreas.combined.h.s <- FindNeighbors(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30)
 
 # Find clusters
 DefaultAssay(pancreas.combined.h.s) <- "SCT"
-pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.4)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.5)
 
 # Investigation
 p1 <- DimPlot(pancreas.combined.h.s, reduction = "umap", group.by = "ancestry_sex")
