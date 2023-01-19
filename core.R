@@ -480,7 +480,6 @@ pancreas.combined.h <- merge(HP2022801, y = c(SAMN15877725, HP2107001, HP2107901
 pancreas.combined.h
 Idents(pancreas.combined.h) <- "sample"
 VlnPlot(object = pancreas.combined.h, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-pancreas.combined.h.s <- NULL
 
 # In order to log norm
 DefaultAssay(pancreas.combined.h) <- "RNA"
@@ -493,6 +492,7 @@ VariableFeatures(pancreas.combined.h) <- pancreas.features
 
 # Run PCA and Harmony
 DefaultAssay(pancreas.combined.h) <- "SCT"
+VariableFeatures(pancreas.combined.h) <- pancreas.features
 pancreas.combined.h <- RunPCA(object = pancreas.combined.h, assay = "SCT", npcs = 30)
 pancreas.combined.h <- RunHarmony(object = pancreas.combined.h,
                                   assay.use = "SCT",
@@ -540,7 +540,7 @@ FeaturePlot(object = pancreas.combined.h,
 # Subset out doublets clusters 5 and 18
 Idents(pancreas.combined.h) <- "SCT_snn_res.0.5"
 pancreas.combined.h.s <- subset(pancreas.combined.h, idents = c("0", "1", "2", "4", "5", "6", "7", "8", "9", "10", "11", 
-                                                                "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "21", "22", "23"))
+                                                                "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"))
 Idents(pancreas.combined.h.s) <- "doublets"
 pancreas.combined.h.s <- subset(pancreas.combined.h.s, idents = "Singlet")
 pancreas.combined.h.s
@@ -582,7 +582,7 @@ FeaturePlot(object = pancreas.combined.h.s,
             order = TRUE)
 
 FeaturePlot(object = pancreas.combined.h.s,
-            features = c("INS"
+            features = c("COL1A1", "KRT19", "MECOM", "VWF", "SDS", "SOX10", "TRAC", "TPSAB1", "SPP1"
             ),
             pt.size = 1,
             cols = c("darkgrey", "red"),
@@ -591,40 +591,182 @@ FeaturePlot(object = pancreas.combined.h.s,
             slot = 'counts',
             order = TRUE)
 
+# Subset out all poor quality cells that remain "streakers" These cells are unknown and can be analyzed at a different date
+Idents(pancreas.combined.h.s) <- "SCT_snn_res.0.5"
+pancreas.combined.h.s <- subset(pancreas.combined.h.s, idents = c("0", "1", "2", "3", "4", "5", "6", 
+                                                                  #"7", 
+                                                                  "8", "9", "10", "11", 
+                                                                  #"12",
+                                                                  #"13", 
+                                                                  "14", "15", "16", 
+                                                                  #"17", 
+                                                                  "18", 
+                                                                  #"19", "20", 
+                                                                  "21", "22", "23"))
+pancreas.combined.h.s
+
+# Run PCA and Harmony
+pancreas.combined.h.s <- RunPCA(object = pancreas.combined.h.s, assay = "SCT", npcs = 30)
+pancreas.combined.h.s <- RunHarmony(object = pancreas.combined.h.s,
+                                    assay.use = "SCT",
+                                    reduction = "pca",
+                                    dims.use = 1:30,
+                                    group.by.vars = c("sample", "ancestry_sex"),
+                                    plot_convergence = TRUE)
+
+# Calculate UMAP, and find neighbours
+pancreas.combined.h.s <- RunUMAP(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30)
+pancreas.combined.h.s <- FindNeighbors(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30)
+
+# Find clusters
+DefaultAssay(pancreas.combined.h.s) <- "SCT"
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.1)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.2)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.3)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.4)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.5)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.6)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.7)
+pancreas.combined.h.s <- FindClusters(object = pancreas.combined.h.s, resolution = 0.8)
+
+# Cluster-tree analysis, looking appropriate non-anomalous clustering resolution
+clustree(pancreas.combined.h.s, prefix = "SCT_snn_res.")
+
+# Based of clustree assessment choose res = 0.3
+pancreas.combined.h.s <- FindClusters(pancreas.combined.h.s, resolution = 0.7)
+
+# Alternatively build a cluster tree
+DefaultAssay(object = pancreas.combined.h.s) <- "SCT"
+pancreas.combined.h.s = BuildClusterTree(pancreas.combined.h.s, slot = "scale.data")
+PlotClusterTree(pancreas.combined.h.s)
+
+
+# Investigation
+p1 <- DimPlot(pancreas.combined.h.s, reduction = "umap", group.by = "ancestry_sex")
+p2 <- DimPlot(pancreas.combined.h.s, reduction = "umap", group.by = "seurat_clusters", label = TRUE, repel = TRUE)
+p1 + p2
+p3 <- DimPlot(pancreas.combined.h.s, reduction = "umap", group.by = "doublets")
+p3 + p2
+
+# Discovery based Plotting
+DefaultAssay(pancreas.combined.h.s) <- "SCT"
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("GCG", "INS", "SST", "PPY", "GHRL"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("RGS5", "PDGFRA", "MKI67"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            max.cutoff = 10000,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("COL1A1", "KRT19", "PRSS1", "VWF", "SDS", "SOX10", "TRAC", "TPSAB1", "SPP1"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+#Rename Idents
+Idents(pancreas.combined.h.s) <- "SCT_snn_res.0.7"
+pancreas.combined.h.s <- RenameIdents(pancreas.combined.h.s, 
+                                    "0" = "Alpha", 
+                                    "1" = "Beta",
+                                    "2" = "Alpha", 
+                                    "3" = "Beta",
+                                    "4" = "Acinar", 
+                                    "5" = "Activated Stellate", #(PDGFRA+)
+                                    "6" = "Ductal", 
+                                    "7" = "Endothelial",
+                                    "8" = "Beta", 
+                                    "9" = "Alpha",
+                                    "10" = "Beta", 
+                                    "11" = "Delta",
+                                    "12" = "Quiescent Stellate", #(RGS5+)
+                                    "13" = "Activated Stellate",
+                                    "14" = "Macrophage",
+                                    "15" = "Gamma",
+                                    "16" = "Ductal",
+                                    "17" = "Mast",
+                                    "18" = "Lymphocyte",
+                                    "19" = "Schwann",
+                                    "20" = "Beta",
+                                    "21" = "EndMT"
+)
+
+#plot <- DimPlot(pancreas.combined.h.s, reduction = "umap")
+DefaultAssay(object = pancreas.combined.h.s) <- "RNA"
+Idents(pancreas.combined.h.s, WhichCells(object = pancreas.combined.h.s, expression = GHRL > 1, slot = 'counts')) <- 'Epsilon'
+DimPlot(pancreas.combined.h.s, reduction = "umap", label = TRUE)
+
+# Saving this information in the metadata slot
+table(Idents(pancreas.combined.h.s))
+pancreas.combined.h.s$celltype <- Idents(pancreas.combined.h.s)
+head(pancreas.combined.h.s@meta.data)
+
+# Define an order of cluster identities remember after this step-
+# cluster re-assignment occurs, which re-assigns clustering in my_levels
+my_levels <- c("Beta", "Alpha", "Delta", "Gamma", "Epsilon",
+               "Ductal", "Acinar", 
+               "Quiescent Stellate", "Activated Stellate", "EndMT",
+               "Macrophage", "Lymphocyte", "Mast",
+               "Schwann", "Endothelial")
+head(pancreas.combined.h.s@meta.data$celltype)
+
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+pancreas.combined.h.s@meta.data$celltype <- factor(x = pancreas.combined.h.s@meta.data$celltype, levels = my_levels)
+Idents(pancreas.combined.h.s) <- "celltype"
+
+# Observing cells
+DimPlot(pancreas.combined.h.s, split.by = "ancestry_sex", group.by = "celltype", label = FALSE, ncol = 2,  cols = c("red",
+                                                                                                              "red4",
+                                                                                                              "orange",
+                                                                                                              "lightgoldenrod3",
+                                                                                                              "sienna",
+                                                                                                              "indianred",
+                                                                                                              "orangered1",
+                                                                                                              "black",
+                                                                                                              "darkturquoise",
+                                                                                                              "paleturquoise",
+                                                                                                              "lightgreen",
+                                                                                                              "springgreen4",
+                                                                                                              "darkolivegreen",
+                                                                                                              "purple4",
+                                                                                                              "purple",
+                                                                                                              "deeppink",
+                                                                                                              "violetred",
+                                                                                                              "violet"
+))
+                                                                                                                 
 
 
 
 
 
-# Step 5: creating a list of all datasets
-{
-  pancreas.list <- list("HP2022801" = HP2022801, "SAMN15877725" = SAMN15877725, "HP2107001" = HP2107001, "HP2107901" = HP2107901,
-                        "HP2024001" = HP2024001, "HP2105501" = HP2105501, "HP2108601" = HP2108601, "HP2108901" = HP2108901, 
-                        "HP2031401" = HP2031401, "HP2110001" = HP2110001, "HP2123201" = HP2123201,
-                        "HP2106201" = HP2106201, "HP2121601" = HP2121601, "HP2132801" = HP2132801, "HP2202101" = HP2202101
-                         )
-}
 
-# normalize and identify variable features for each dataset independently
-pancreas.list <- lapply(X = pancreas.list, FUN = SCTransform, method = "glmGamPoi")
-features <- SelectIntegrationFeatures(object.list = pancreas.list, nfeatures = 2000)
-pancreas.list <- PrepSCTIntegration(object.list = pancreas.list, anchor.features = features)
-pancreas.list <- lapply(X = pancreas.list, FUN = RunPCA, features = features)
 
-# Perform integration (note k.anchors = 5)
-pancreas.anchors <- FindIntegrationAnchors(object.list = pancreas.list, 
-                                           normalization.method = "SCT",
-                                           anchor.features = features, 
-                                           dims = 1:30, 
-                                           reduction = "rpca", 
-                                           k.anchor = 5)
 
-#saveRDS(pancreas.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors.rds)")
-#saveRDS(features, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
-#saveRDS(pancreas.list, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.list.rds)")
-pancreas.anchors <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.anchors10.rds)")
-features <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\features.rds)")
-pancreas.combined <- readRDS(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\pancreas.combinedcorrectedSCT.rds)")
+# Save/Load files
+saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+
+
+
+
 
 gc()
 pancreas.combined <- IntegrateData(anchorset = pancreas.anchors, 
@@ -653,7 +795,7 @@ pancreas.combined <- FindClusters(object = pancreas.combined, resolution = 0.6)
 clustree(pancreas.combined, prefix = "integrated_snn_res.")
 
 # Based of clustree assessment choose res = 0.3
-pancreas.combined <- FindClusters(pancreas.combined, resolution = 0.3)
+pancreas.combined <- FindClusters(pancreas.combined, resolution = 0.7)
 
 # Alternatively build a cluster tree
 DefaultAssay(object = pancreas.combined) <- "integrated"
