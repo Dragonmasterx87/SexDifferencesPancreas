@@ -486,6 +486,8 @@ DefaultAssay(pancreas.combined.h) <- "RNA"
 pancreas.combined.h <- NormalizeData(pancreas.combined.h, normalization.method = "LogNormalize", scale.factor = 10000)
 all.genes <- rownames(pancreas.combined.h)
 pancreas.combined.h <- ScaleData(pancreas.combined.h, features = all.genes)
+gc()
+gc()
 
 # Replace Variable features with those calculated using SelectIntegrationFeatures
 VariableFeatures(pancreas.combined.h) <- pancreas.features
@@ -500,6 +502,8 @@ pancreas.combined.h <- RunHarmony(object = pancreas.combined.h,
                                   dims.use = 1:30,
                                   group.by.vars = c("sample", "ancestry_sex"),
                                   plot_convergence = TRUE)
+gc()
+gc()
 
 # Calculate UMAP, and find neighbours
 pancreas.combined.h <- RunUMAP(object = pancreas.combined.h, assay = "SCT", reduction = "harmony", dims = 1:30)
@@ -641,7 +645,6 @@ DefaultAssay(object = pancreas.combined.h.s) <- "SCT"
 pancreas.combined.h.s = BuildClusterTree(pancreas.combined.h.s, slot = "scale.data")
 PlotClusterTree(pancreas.combined.h.s)
 
-
 # Investigation
 p1 <- DimPlot(pancreas.combined.h.s, reduction = "umap", group.by = "ancestry_sex")
 p2 <- DimPlot(pancreas.combined.h.s, reduction = "umap", group.by = "seurat_clusters", label = TRUE, repel = TRUE)
@@ -732,31 +735,135 @@ pancreas.combined.h.s@meta.data$celltype <- factor(x = pancreas.combined.h.s@met
 Idents(pancreas.combined.h.s) <- "celltype"
 
 # Observing cells
-DimPlot(pancreas.combined.h.s, split.by = "ancestry_sex", group.by = "celltype", label = FALSE, ncol = 2,  cols = c("red",
-                                                                                                              "red4",
-                                                                                                              "orange",
-                                                                                                              "lightgoldenrod3",
-                                                                                                              "sienna",
-                                                                                                              "indianred",
-                                                                                                              "orangered1",
-                                                                                                              "black",
-                                                                                                              "darkturquoise",
-                                                                                                              "paleturquoise",
-                                                                                                              "lightgreen",
-                                                                                                              "springgreen4",
-                                                                                                              "darkolivegreen",
-                                                                                                              "purple4",
-                                                                                                              "purple",
-                                                                                                              "deeppink",
-                                                                                                              "violetred",
-                                                                                                              "violet"
-))
+DimPlot(pancreas.combined.h.s, 
+        split.by = "ancestry_sex", 
+        group.by = "celltype", 
+        label = FALSE, 
+        ncol = 2,  
+        cols = c("darkturquoise",
+                 "lightgreen",
+                 "springgreen4",
+                 "lightgoldenrod3",
+                 "green3",
+                 "grey56",
+                 "grey80",
+                 "deeppink",
+                 "violet",
+                 "purple",
+                 "coral2",
+                 "magenta",
+                 "red4",
+                 "black",
+                 "red"
+                 )
+        )
                                                                                                                  
+DimPlot(pancreas.combined.h.s, 
+        #split.by = "ancestry_sex", 
+        group.by = "celltype", 
+        label = FALSE, 
+        ncol = 1,  
+        cols = c("darkturquoise",
+                 "lightgreen",
+                 "springgreen4",
+                 "lightgoldenrod3",
+                 "green3",
+                 "grey56",
+                 "grey80",
+                 "deeppink",
+                 "violet",
+                 "purple",
+                 "coral2",
+                 "magenta",
+                 "red4",
+                 "black",
+                 "red"
+                 )
+        )
 
+# Dotplot
+DotPlot(pancreas.combined.h.s,
+        group.by = "celltype",
+        #split.by = "treatment",
+        features = c("INS", "GCG"), 
+        cols = c("yellow", "red"), 
+        col.min = -10, 
+        col.max = 10)
 
+# Advanced coding for ggplot2
+# Create a new metadata slot containing combined info, segregating clusters and samples
+Idents(object = pancreas.combined.h.s) <- "celltype"
+pancreas.combined.h.s$celltype.sample <- paste(Idents(pancreas.combined.h.s), pancreas.combined.h.s$ancestry_sex, sep = "_")
+table(pancreas.combined.h.s@meta.data$celltype.sample)
 
+# New metadata column is not paired, so we need to pair
+my_levels2 <- c("Beta_white_male", "Beta_white_female", "Beta_black_male", "Beta_black_female",
+                "Alpha_white_male", "Alpha_white_female", "Alpha_black_male", "Alpha_black_female",
+                "Delta_white_male", "Delta_white_female", "Delta_black_male", "Delta_black_female",
+                "Gamma_white_male", "Gamma_white_female", "Gamma_black_male", "Gamma_black_female",
+                "Epsilon_white_male", "Epsilon_white_female", "Epsilon_black_male", "Epsilon_black_female",
+                "Ductal_white_male", "Ductal_white_female", "Ductal_black_male", "Ductal_black_female",
+                "Acinar_white_male", "Acinar_white_female", "Acinar_black_male", "Acinar_black_female",
+                "Quiescent Stellate_white_male", "Quiescent Stellate_white_female", "Quiescent Stellate_black_male", "Quiescent Stellate_black_female",
+                "EndMT_white_male", "EndMT_white_female", "EndMT_back_male", "EndMT_black_female",
+                "Activated Stellate_white_male", "Activated Stellate_white_female", "Activated Stellate_black_male", "Activated Stellate_black_female",
+                "Macrophage_white_male", "Macrophage_white_female", "Macrophage_black_male", "Macrophage_black_female",
+                "Lymphocyte_white_male", "Lymphocyte_white_female", "Lymphocyte_black_male", "Lymphocyte_black_female",
+                "Mast_white_male", "Mast_white_female", "Mast_black_male", "Mast_black_female",
+                "Schwann_white_male", "Schwann_white_female", "Schwann_black_male", "Schwann_black_female",
+                "Endothelial_white_male", "Endothelial_white_female", "Endothelial_black_male", "Endothelial_black_female")
 
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+pancreas.combined.h.s@meta.data$celltype.sample <- factor(x = pancreas.combined.h.s@meta.data$celltype.sample, levels = my_levels2)
+table(pancreas.combined.h.s@meta.data$celltype.sample)
 
+# Re select organized idents
+Idents(pancreas.combined.h.s) <- "celltype.sample"
+DefaultAssay(object = pancreas.combined.h.s) <- "SCT"
+
+# Selected genes
+markers.to.plot <- c("INS", "IAPP", "NKX6-1", "MAFA", "MAFB", "GCG", "DPP4", "GC", "LEPR", "SST", "FRZB", "PPY", "CALB1", "THSD7A", "GHRL", "PHGR1",
+                     "CFTR", "KRT19", "MMP7", "CELA2A", "CELA2B", "CELA3A", "RGS5", "CSRP2", "FABP4", "COL3A1", "FMOD", "PDGFRB", "MKI67", "HIST1H4C", "STMN1", 
+                     "CD86", "CSF1R", "SDS", "NKG7", "IL2RB", "CCL5", "RGS13", "TPSB2", "TPSAB1", "SOX10", "CDH19", "NGFR", "CD34", "ENG", "VWF", "UCN3")
+markers.to.plot <- unique(markers.to.plot)
+
+#subset
+pancreas.combined.h.s <- subset(pancreas.combined.h.s, idents = c("Beta_white_male", "Beta_white_female", "Beta_black_male", "Beta_black_female",
+                                                                  "Alpha_white_male", "Alpha_white_female", "Alpha_black_male", "Alpha_black_female",
+                                                                  "Delta_white_male", "Delta_white_female", "Delta_black_male", "Delta_black_female",
+                                                                  "Gamma_white_male", "Gamma_white_female", "Gamma_black_male", "Gamma_black_female",
+                                                                  "Epsilon_white_male", "Epsilon_white_female", "Epsilon_black_male", "Epsilon_black_female",
+                                                                  "Ductal_white_male", "Ductal_white_female", "Ductal_black_male", "Ductal_black_female",
+                                                                  "Acinar_white_male", "Acinar_white_female", "Acinar_black_male", "Acinar_black_female",
+                                                                  "Quiescent Stellate_white_male", "Quiescent Stellate_white_female", "Quiescent Stellate_black_male", "Quiescent Stellate_black_female",
+                                                                  "EndMT_white_male", "EndMT_white_female", "EndMT_black_female", #No ENDMT black male
+                                                                  "Endothelial_white_male", "Endothelial_white_female", "Endothelial_black_male", "Endothelial_black_female",
+                                                                  "Activated Stellate_white_male", "Activated Stellate_white_female", "Activated Stellate_black_male", "Activated Stellate_black_female",
+                                                                  "Macrophage_white_male", "Macrophage_white_female", "Macrophage_black_male", "Macrophage_black_female",
+                                                                  "Lymphocyte_white_male", "Lymphocyte_white_female", "Lymphocyte_black_male", "Lymphocyte_black_female",
+                                                                  "Mast_white_male", "Mast_white_female", "Mast_black_male", "Mast_black_female",
+                                                                  "Schwann_white_male", "Schwann_white_female", "Schwann_black_male", "Schwann_black_female"
+                                                                  )
+)
+
+# Dotplot
+DotPlot(pancreas.combined.h.s,
+        assay = "RNA",
+        dot.scale = 8,
+        col.min = 0, #minimum level
+        col.max = 1,  #maximum level
+        features = rev(markers.to.plot)) + 
+  geom_point(aes(size=pct.exp), shape = 21, stroke=0.5) +
+  theme_light() +
+  #facet_wrap(~??? what metadata should be here??)
+  #coord_flip() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(plot.title = element_text(size = 10, face = "bold"),
+        legend.title=element_text(size=12, face = "bold"), 
+        legend.text=element_text(size=12, face = "bold")) +
+  scale_colour_gradient2(low =c("dodgerblue"), mid = c("white"), high =c("red3")) +
+  guides(color = guide_colorbar(title = 'Average Expression'))
 
 
 
