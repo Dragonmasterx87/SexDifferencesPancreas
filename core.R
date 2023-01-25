@@ -871,7 +871,7 @@ pancreas.combined.h.s <- PrepSCTFindMarkers(pancreas.combined.h.s)
 
 # Save/Load files
 saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
-pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+pancreas.combined.h.s <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
 
 {
   # 1.Beta-cells ####
@@ -883,7 +883,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                    #latent.vars = 'sample',
                                    #min.cells.feature = 100,
-                                   min.pct = 0,
+                                   #min.pct = 0.1,
                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                    pseudocount.use = 1,
                                    verbose = TRUE)
@@ -898,7 +898,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                    #latent.vars = 'sample',
                                    #min.cells.feature = 100,
-                                   min.pct = 0,
+                                   #min.pct = 0.1,
                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                    pseudocount.use = 1,
                                    verbose = TRUE)
@@ -913,7 +913,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                    #latent.vars = 'sample',
                                    #min.cells.feature = 100,
-                                   min.pct = 0,
+                                   #min.pct = 0.1,
                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                    pseudocount.use = 1,
                                    verbose = TRUE)
@@ -928,7 +928,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                    #latent.vars = 'sample',
                                    #min.cells.feature = 100,
-                                   min.pct = 0,
+                                   #min.pct = 0.1,
                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                    pseudocount.use = 1,
                                    verbose = TRUE)
@@ -944,7 +944,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0.1,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -959,7 +959,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0.1,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -974,7 +974,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0.1,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -989,7 +989,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0.1,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1005,7 +1005,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0.1,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1020,7 +1020,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1035,7 +1035,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1050,7 +1050,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1066,7 +1066,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1081,7 +1081,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1096,7 +1096,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1111,7 +1111,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                               test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                               #latent.vars = 'sample',
                               #min.cells.feature = 100,
-                              min.pct = 0,
+                              #min.pct = 0,
                               logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                               pseudocount.use = 1,
                               verbose = TRUE)
@@ -1127,7 +1127,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1142,7 +1142,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1157,7 +1157,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1172,7 +1172,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1188,7 +1188,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1203,7 +1203,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1218,7 +1218,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1233,7 +1233,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1249,7 +1249,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1264,7 +1264,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1279,7 +1279,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1294,7 +1294,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1310,7 +1310,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                           #latent.vars = 'sample',
                                           #min.cells.feature = 100,
-                                          min.pct = 0,
+                                          #min.pct = 0,
                                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                           pseudocount.use = 1,
                                           verbose = TRUE)
@@ -1325,7 +1325,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                           #latent.vars = 'sample',
                                           #min.cells.feature = 100,
-                                          min.pct = 0,
+                                          #min.pct = 0,
                                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                           pseudocount.use = 1,
                                           verbose = TRUE)
@@ -1334,13 +1334,13 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
   
   # WHITE MALE VS. WHITE FEMALE
   quiescetstellate.wmvswf <- FindMarkers(pancreas.combined.h.s, 
-                                          ident.1 = "Quiescent-Stellate1_white_male", ident.2 = "Quiescent-Stellate1_white_female", 
+                                          ident.1 = "Quiescent Stellate_white_male", ident.2 = "Quiescent Stellate_white_female", 
                                           assay = "SCT",
                                           slot = "counts",
                                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                           #latent.vars = 'sample',
                                           #min.cells.feature = 100,
-                                          min.pct = 0,
+                                          #min.pct = 0,
                                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                           pseudocount.use = 1,
                                           verbose = TRUE)
@@ -1355,7 +1355,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                           #latent.vars = 'sample',
                                           #min.cells.feature = 100,
-                                          min.pct = 0,
+                                          #min.pct = 0,
                                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                           pseudocount.use = 1,
                                           verbose = TRUE)
@@ -1371,7 +1371,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                            #latent.vars = 'sample',
                                            #min.cells.feature = 100,
-                                           min.pct = 0,
+                                           #min.pct = 0,
                                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                            pseudocount.use = 1,
                                            verbose = TRUE)
@@ -1380,13 +1380,13 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
   
   # WHITE FEMALE VS. BLACK FEMALE
   Activated.Stellate.wfvsbf <- FindMarkers(pancreas.combined.h.s, 
-                                           ident.1 = "Activated-Stellate_white_female", ident.2 = "Activated-Stellate_black_female", 
+                                           ident.1 = "Activated Stellate_white_female", ident.2 = "Activated Stellate_black_female", 
                                            assay = "SCT",
                                            slot = "counts",
                                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                            #latent.vars = 'sample',
                                            #min.cells.feature = 100,
-                                           min.pct = 0,
+                                           #min.pct = 0,
                                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                            pseudocount.use = 1,
                                            verbose = TRUE)
@@ -1401,7 +1401,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                            #latent.vars = 'sample',
                                            #min.cells.feature = 100,
-                                           min.pct = 0,
+                                           #min.pct = 0,
                                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                            pseudocount.use = 1,
                                            verbose = TRUE)
@@ -1416,7 +1416,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                            #latent.vars = 'sample',
                                            #min.cells.feature = 100,
-                                           min.pct = 0,
+                                           #min.pct = 0,
                                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                            pseudocount.use = 1,
                                            verbose = TRUE)
@@ -1432,7 +1432,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1447,7 +1447,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1462,7 +1462,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1477,7 +1477,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1493,7 +1493,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1508,7 +1508,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1523,7 +1523,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1538,7 +1538,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                #latent.vars = 'sample',
                                #min.cells.feature = 100,
-                               min.pct = 0,
+                               #min.pct = 0,
                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                pseudocount.use = 1,
                                verbose = TRUE)
@@ -1554,7 +1554,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                              #latent.vars = 'sample',
                              #min.cells.feature = 100,
-                             min.pct = 0,
+                             #min.pct = 0,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
@@ -1569,7 +1569,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                              #latent.vars = 'sample',
                              #min.cells.feature = 100,
-                             min.pct = 0,
+                             #min.pct = 0,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
@@ -1584,7 +1584,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                              #latent.vars = 'sample',
                              #min.cells.feature = 100,
-                             min.pct = 0,
+                             #min.pct = 0,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
@@ -1599,7 +1599,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                              #latent.vars = 'sample',
                              #min.cells.feature = 100,
-                             min.pct = 0,
+                             #min.pct = 0,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
@@ -1615,7 +1615,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1630,7 +1630,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1645,7 +1645,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1660,7 +1660,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                 test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                 #latent.vars = 'sample',
                                 #min.cells.feature = 100,
-                                min.pct = 0,
+                                #min.pct = 0,
                                 logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                 pseudocount.use = 1,
                                 verbose = TRUE)
@@ -1676,7 +1676,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1691,7 +1691,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1706,7 +1706,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1721,7 +1721,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                                     #latent.vars = 'sample',
                                     #min.cells.feature = 100,
-                                    min.pct = 0,
+                                    #min.pct = 0,
                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                                     pseudocount.use = 1,
                                     verbose = TRUE)
@@ -1730,19 +1730,19 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
   
   # 2.EndMT ####
   # WHITE MALE VS. BLACK MALE
-  EndMT.wmvsbm <- FindMarkers(pancreas.combined.h.s, 
-                             ident.1 = "EndMT_white_male", ident.2 = "EndMT_black_male", 
-                             assay = "SCT",
-                             slot = "counts",
-                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-                             #latent.vars = 'sample',
-                             #min.cells.feature = 100,
-                             min.pct = 0,
-                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
-                             pseudocount.use = 1,
-                             verbose = TRUE)
-  head(EndMT.wmvsbm, n = 15)
-  write.csv(EndMT.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\New Analysis\EndMT.wmvsbm.csv)")
+  # EndMT.wmvsbm <- FindMarkers(pancreas.combined.h.s, 
+  #                            ident.1 = "EndMT_white_male", ident.2 = "EndMT_black_male", 
+  #                            assay = "SCT",
+  #                            slot = "counts",
+  #                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+  #                            #latent.vars = 'sample',
+  #                            #min.cells.feature = 100,
+  #                            #min.pct = 0,
+  #                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+  #                            pseudocount.use = 1,
+  #                            verbose = TRUE)
+  # head(EndMT.wmvsbm, n = 15)
+  # write.csv(EndMT.wmvsbm, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\New Analysis\EndMT.wmvsbm.csv)")
   
   # WHITE FEMALE VS. BLACK FEMALE
   EndMT.wfvsbf <- FindMarkers(pancreas.combined.h.s, 
@@ -1752,7 +1752,7 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                              #latent.vars = 'sample',
                              #min.cells.feature = 100,
-                             min.pct = 0,
+                             #min.pct = 0,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
@@ -1767,28 +1767,28 @@ pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combi
                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
                              #latent.vars = 'sample',
                              #min.cells.feature = 100,
-                             min.pct = 0,
+                             #min.pct = 0,
                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
                              pseudocount.use = 1,
                              verbose = TRUE)
   head(EndMT.wmvswf, n = 15)
   write.csv(EndMT.wmvswf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\New Analysis\EndMT.wmvswf.csv)")
   
-  # BLACK MALE VS. BLACK FEMALE
-  EndMT.bmvsbf <- FindMarkers(pancreas.combined.h.s, 
-                             ident.1 = "EndMT_black_male", ident.2 = "EndMT_black_female", 
-                             assay = "SCT",
-                             slot = "counts",
-                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-                             #latent.vars = 'sample',
-                             #min.cells.feature = 100,
-                             min.pct = 0,
-                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
-                             pseudocount.use = 1,
-                             verbose = TRUE)
-  head(EndMT.bmvsbf, n = 15)
-  write.csv(EndMT.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\New Analysis\EndMT.bmvsbf.csv)")
-  }
+  # # BLACK MALE VS. BLACK FEMALE
+  # EndMT.bmvsbf <- FindMarkers(pancreas.combined.h.s, 
+  #                            ident.1 = "EndMT_black_male", ident.2 = "EndMT_black_female", 
+  #                            assay = "SCT",
+  #                            slot = "counts",
+  #                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+  #                            #latent.vars = 'sample',
+  #                            #min.cells.feature = 100,
+  #                            #min.pct = 0,
+  #                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+  #                            pseudocount.use = 1,
+  #                            verbose = TRUE)
+  # head(EndMT.bmvsbf, n = 15)
+  # write.csv(EndMT.bmvsbf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\New Analysis\EndMT.bmvsbf.csv)")
+   }
 
 # Save/Load files
 saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
