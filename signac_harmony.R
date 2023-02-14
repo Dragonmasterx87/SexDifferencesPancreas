@@ -1,18 +1,22 @@
 # LOAD LIBRARIES ####
 # Restart Rstudio or R
-
+Sys.getenv("PATH")
+devtools::find_rtools()
+pkgbuild::find_rtools()
+.libPaths()
 install.packages('ggplot2')
 install.packages('cowplot')
 install.packages('Matrix')
 install.packages('ggridges')
 install.packages('ggrepel')
 install.packages('dplyr')
-# install.packages('Seurat')
+install.packages('Seurat')
 install.packages('plotly')
 install.packages('clustree')
 install.packages('patchwork')
 install.packages('future')
 install.packages("devtools")
+install.packages("readr")
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
@@ -21,14 +25,16 @@ BiocManager::install(version = "3.15")
 BiocManager::install(c('BiocGenerics', 'DelayedArray', 'DelayedMatrixStats',
                        'limma', 'lme4', 'S4Vectors', 'SingleCellExperiment',
                        'SummarizedExperiment', 'batchelor', 'Matrix.utils',
-                       'HDF5Array', 'terra', 'ggrastr'))
-BiocManager::install("EnhancedVolcano")
-BiocManager::install("DoubletFinder")
+                       'HDF5Array', 'terra', 'ggrastr'), type = "source") #https://github.com/cole-trapnell-lab/monocle3/issues/295
+install.packages("grr")
+install.packages("https://cran.r-project.org/src/contrib/Archive/Matrix.utils/Matrix.utils_0.9.8.tar.gz", dependencies = TRUE, type = "source", repos = NULL)
+BiocManager::install("EnhancedVolcano", type = "source")
+BiocManager::install("DoubletFinder", type = "source")
 BiocManager::install("glmGamPoi")
 BiocManager::install("GOSemSim")
 BiocManager::install("org.Hs.eg.db")
 BiocManager::install("AnnotationHub")
-BiocManager::install("GenomeInfoDb")
+remotes::install_github("Bioconductor/GenomeInfoDb") # https://rdrr.io/github/Bioconductor/GenomeInfoDb/
 BiocManager::install("MeSHDbi")
 BiocManager::install("clusterProfiler")
 BiocManager::install("DOSE")
@@ -48,6 +54,7 @@ devtools::install_github('https://github.com/cvarrichio/Matrix.utils')
 devtools::install_github('cole-trapnell-lab/monocle3')
 remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
 install.packages("harmony")
+BiocManager::install("scDblFinder")
 
 # Run the following code once you have Seurat installed
 suppressWarnings(
@@ -81,6 +88,9 @@ suppressWarnings(
     library(GenomicRanges)
     library(biovizBase)
     library(EnsDb.Hsapiens.v86)
+    library(scDblFinder)
+    library(data.table)
+    library(readr)
   }
 )
 
@@ -90,10 +100,61 @@ packageVersion("Seurat")
 packageVersion("monocle3")
 packageVersion("harmony")
 packageVersion("Signac")
+packageVersion("GenomeInfoDb")
+packageVersion("scDblFinder")
 
 # Set global environment parameter
 #options(future.globals.maxSize = 8000 * 1024^2)
 set.seed(1234)
+
+# Calculation of Doublets https://bioconductor.org/packages/devel/bioc/vignettes/scDblFinder/inst/doc/scATAC.html
+# Provide GRanges of repeat elements for exclusion:
+suppressPackageStartupMessages(library(GenomicRanges))
+repeats <- GRanges("chr6", IRanges(1000,2000))
+
+# Combine with mitochondrial and sex chromosomes
+otherChroms <- GRanges(c("M","chrM","MT","X","Y","chrX","chrY"),IRanges(1L,width=10^8))
+
+# Combining them:
+toExclude <- suppressWarnings(c(repeats, otherChroms))
+
+# Running amulet method
+
+  fragfile.HP2022801 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\1_220628_Fahd_snATAC1_HP-20228-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.SAMN15877725 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\2_220701_Fahd_snATAC2_SAMN15877725\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2024001 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\3_220701_Fahd_snATAC3_HP-20240-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2031401 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\4_220630_Fahd_snATAC4_HP-20314-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2105501 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\5_220303_snATAC_F52_HP-21055-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2106201 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\6_210401_snATAC_F62_HP-21062-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2107001 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\7_210401_snATAC_F7a_HP-21070-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2107901 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\9_210628_snATAC_F9a_HP-21079-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2108601 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\10_210628_snATAC_F10a_HP-21086-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2108901 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\11_210714_snATAC_F11a_HP-21089-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2110001 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\12_210714 snATAC_F12a_HP-21100-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2121601 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\13_211208_snATAC_F13_HP-21216-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2123201 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\14_211208_snATAC_F14_HP-21232-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2132801 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\15_220303_snATAC_F15a_HP-21328-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2202101 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\16_220630_Fahd_snATAC16_HP-22021-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  
+
+#Save file
+saveRDS(fragfile.HP2022801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2022801.rds)")
+saveRDS(fragfile.SAMN15877725, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.SAMN15877725.rds)")
+saveRDS(fragfile.HP2024001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2024001.rds)")
+saveRDS(fragfile.HP2031401, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2031401.rds)")
+saveRDS(fragfile.HP2105501, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2105501.rds)")
+saveRDS(fragfile.HP2106201, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2106201.rds)")
+saveRDS(fragfile.HP2107001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107001.rds)")
+saveRDS(fragfile.HP2107901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107901.rds)")
+saveRDS(fragfile.HP2108601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108601.rds)")
+saveRDS(fragfile.HP2108901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108901.rds)")
+saveRDS(fragfile.HP2110001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2110001.rds)")
+saveRDS(fragfile.HP2121601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2121601.rds)")
+saveRDS(fragfile.HP2123201, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2123201.rds)")
+saveRDS(fragfile.HP2132801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2132801.rds)")
+saveRDS(fragfile.HP2202101, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2202101.rds)")
+#combined_atac <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
+
 
 
 # OBJECT SETUP AND NORMALIZATION ####
@@ -1351,21 +1412,21 @@ set.seed(1234)
   combined_atac
   
   #Save file
-  saveRDS(combined_atac, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\combined_atac.rds)")
-  pancreas.combined <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\combined_atac.rds)")
+  #saveRDS(combined_atac, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
+  combined_atac <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
   
 
   # Run TFDIF  
   combined_atac <- FindTopFeatures(combined_atac, min.cutoff = 20)
   combined_atac <- RunTFIDF(combined_atac)
   combined_atac <- RunSVD(combined_atac)
-  combined_atac <- RunUMAP(combined_atac, dims = 2:50, reduction = 'lsi')
+  combined_atac <- RunUMAP(combined_atac, dims = 2:30, reduction = 'lsi')
   DimPlot(combined_atac, group.by = 'ancestry_sex', pt.size = 0.1)
   
   
   # Batch correction using Harmony
   hm.integrated <- RunHarmony(object = combined_atac, group.by.vars = 'sample', reduction = 'lsi', assay.use = 'ATAC', project.dim = FALSE)
-  hm.integrated <- RunUMAP(hm.integrated, dims = 2:50, reduction = 'harmony')
+  hm.integrated <- RunUMAP(hm.integrated, dims = 2:30, reduction = 'harmony')
   DimPlot(hm.integrated, group.by = 'ancestry_sex', pt.size = 0.1)
   
   
