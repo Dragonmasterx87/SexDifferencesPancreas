@@ -39,6 +39,8 @@ BiocManager::install("GenomeInfoDb")
 BiocManager::install("MeSHDbi")
 BiocManager::install("clusterProfiler")
 BiocManager::install("DOSE")
+BiocManager::install("dittoSeq")
+BiocManager::install("escape")
 
 # install Seurat from Github (automatically updates sctransform)
 setRepositories(ind=1:3) # needed to automatically install Bioconductor dependencies
@@ -50,6 +52,7 @@ devtools::install_github("satijalab/sctransform", ref = "develop", force = TRUE)
 devtools::install_github('cole-trapnell-lab/monocle3')
 remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
 install.packages("harmony")
+BiocManager::install("EnrichmentBrowser")
 
 
 # Run the following code once you have Seurat installed
@@ -88,6 +91,9 @@ suppressWarnings(
     library(MeSHDbi)
     library(clusterProfiler)
     library(DOSE)
+    library(dittoSeq)
+    library(escape)
+    library(EnrichmentBrowser)
     }
 )
 
@@ -102,6 +108,11 @@ py_config()
 
 # Check package versions
 packageVersion("clusterProfiler")
+packageVersion("dittoSeq")
+packageVersion("escape")
+packageVersion("seurat")
+packageVersion("signac")
+packageVersion("EnrichmentBrowser")
 
 # OBJECT SETUP AND NORMALIZATION ####
 # STEP 1: Load 
@@ -689,6 +700,16 @@ FeaturePlot(object = pancreas.combined.h.s,
             slot = 'counts',
             order = TRUE)
 
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("CARTPT", "SST", "GHRL", "PPY"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
 #Rename Idents
 Idents(pancreas.combined.h.s) <- "SCT_snn_res.0.7"
 pancreas.combined.h.s <- RenameIdents(pancreas.combined.h.s, 
@@ -730,9 +751,9 @@ head(pancreas.combined.h.s@meta.data)
 # cluster re-assignment occurs, which re-assigns clustering in my_levels
 my_levels <- c("Beta", "Alpha", "Delta", "Gamma", "Epsilon",
                "Ductal", "Acinar", 
-               "Quiescent Stellate", "Activated Stellate", "EndMT",
+               "Activated Stellate", "Quiescent Stellate", "EndMT", "Endothelial",
                "Macrophage", "Lymphocyte", "Mast",
-               "Schwann", "Endothelial")
+               "Schwann")
 head(pancreas.combined.h.s@meta.data$celltype)
 
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
@@ -742,7 +763,7 @@ Idents(pancreas.combined.h.s) <- "celltype"
 # Observing cells
 DimPlot(pancreas.combined.h.s, 
         split.by = "ancestry_sex", 
-        group.by = "celltype", 
+        #group.by = "celltype", 
         label = FALSE, 
         ncol = 2,  
         cols = c("darkturquoise",
@@ -809,14 +830,15 @@ my_levels2 <- c("Beta_white_male", "Beta_white_female", "Beta_black_male", "Beta
                 "Epsilon_white_male", "Epsilon_white_female", "Epsilon_black_male", "Epsilon_black_female",
                 "Ductal_white_male", "Ductal_white_female", "Ductal_black_male", "Ductal_black_female",
                 "Acinar_white_male", "Acinar_white_female", "Acinar_black_male", "Acinar_black_female",
+                "Activated Stellate_white_male", "Activated Stellate_white_female", "Activated Stellate_black_male", "Activated Stellate_black_female",
                 "Quiescent Stellate_white_male", "Quiescent Stellate_white_female", "Quiescent Stellate_black_male", "Quiescent Stellate_black_female",
                 "EndMT_white_male", "EndMT_white_female", "EndMT_back_male", "EndMT_black_female",
-                "Activated Stellate_white_male", "Activated Stellate_white_female", "Activated Stellate_black_male", "Activated Stellate_black_female",
+                "Endothelial_white_male", "Endothelial_white_female", "Endothelial_black_male", "Endothelial_black_female",
                 "Macrophage_white_male", "Macrophage_white_female", "Macrophage_black_male", "Macrophage_black_female",
                 "Lymphocyte_white_male", "Lymphocyte_white_female", "Lymphocyte_black_male", "Lymphocyte_black_female",
                 "Mast_white_male", "Mast_white_female", "Mast_black_male", "Mast_black_female",
-                "Schwann_white_male", "Schwann_white_female", "Schwann_black_male", "Schwann_black_female",
-                "Endothelial_white_male", "Endothelial_white_female", "Endothelial_black_male", "Endothelial_black_female")
+                "Schwann_white_male", "Schwann_white_female", "Schwann_black_male", "Schwann_black_female"
+                )
 
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
 pancreas.combined.h.s@meta.data$celltype.sample <- factor(x = pancreas.combined.h.s@meta.data$celltype.sample, levels = my_levels2)
@@ -840,10 +862,10 @@ pancreas.combined.h.s <- subset(pancreas.combined.h.s, idents = c("Beta_white_ma
                                                                   "Epsilon_white_male", "Epsilon_white_female", "Epsilon_black_male", "Epsilon_black_female",
                                                                   "Ductal_white_male", "Ductal_white_female", "Ductal_black_male", "Ductal_black_female",
                                                                   "Acinar_white_male", "Acinar_white_female", "Acinar_black_male", "Acinar_black_female",
+                                                                  "Activated Stellate_white_male", "Activated Stellate_white_female", "Activated Stellate_black_male", "Activated Stellate_black_female",
                                                                   "Quiescent Stellate_white_male", "Quiescent Stellate_white_female", "Quiescent Stellate_black_male", "Quiescent Stellate_black_female",
                                                                   "EndMT_white_male", "EndMT_white_female", "EndMT_black_female", #No ENDMT black male
                                                                   "Endothelial_white_male", "Endothelial_white_female", "Endothelial_black_male", "Endothelial_black_female",
-                                                                  "Activated Stellate_white_male", "Activated Stellate_white_female", "Activated Stellate_black_male", "Activated Stellate_black_female",
                                                                   "Macrophage_white_male", "Macrophage_white_female", "Macrophage_black_male", "Macrophage_black_female",
                                                                   "Lymphocyte_white_male", "Lymphocyte_white_female", "Lymphocyte_black_male", "Lymphocyte_black_female",
                                                                   "Mast_white_male", "Mast_white_female", "Mast_black_male", "Mast_black_female",
@@ -875,7 +897,7 @@ DotPlot(pancreas.combined.h.s,
 pancreas.combined.h.s <- PrepSCTFindMarkers(pancreas.combined.h.s)
 
 # Save/Load files
-saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+# saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
 pancreas.combined.h.s <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
 
 {
@@ -1814,8 +1836,8 @@ my_levels3 <- c("Beta_male", "Beta_female",
                 "Epsilon_male", "Epsilon_female",
                 "Ductal_male", "Ductal_female",
                 "Acinar_male", "Acinar_female",
-                "Quiescent Stellate_male", "Quiescent Stellate_female",
                 "Activated Stellate_male", "Activated Stellate_female",
+                "Quiescent Stellate_male", "Quiescent Stellate_female",
                 "EndMT_male", "EndMT_female",
                 "Endothelial_male", "Endothelial_female",
                 "Macrophage_male", "Macrophage_female",
@@ -2076,7 +2098,7 @@ DefaultAssay(object = pancreas.combined.h.s) <- "SCT"
 }
 
 
-# Gene ontology analysis
+# Gene ontology analysis Rapid Gene ontology Auto Loader (Rapid GOAL)
 # Create a list of all files in directory
 dgelist <- list.files(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\New Analysis)", 
                            all.files = FALSE, 
@@ -2127,64 +2149,335 @@ for (x in wd) {
                     readable = TRUE)
   
   go_data_up <- data.frame(GO.up)
-  go_data_down <- data.frame(GO.up)
+  go_data_down <- data.frame(GO.down)
   
   # Save outputs
   write.csv(go_data_up, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Data/scRNAseq/updated analysis/ORA/UP/%s.csv", sample_name), row.names = FALSE)
   write.csv(go_data_down, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Data/scRNAseq/updated analysis/ORA/DOWN/%s.csv", sample_name), row.names = FALSE)
   }
 
-for (x in wd) {
-  sample_name <- str_split_fixed(x, "/", n=12)[12]
-  # Gene list of genes going UP
-  sig_df_up <- dplyr::filter(x, p_val < 0.05 & avg_log2FC > 0.26303) # >1.2x
-  sig_genes_up <- rownames(sig_df_up)
-  
-  # Gene list of genes going DOWN
-  sig_df_down <- dplyr::filter(x, p_val < 0.05 & avg_log2FC < -0.32192) # <0.8x
-  sig_genes_down <- rownames(sig_df_down)
-  
-  # All genes
-  all_genes <- rownames(x)
-  
-  # Run GO enrichment analysis genes up
-  GO.up <- enrichGO(gene = sig_genes_up, 
-                    universe = all_genes, 
-                    keyType = "GENENAME", #keytypes(org.Hs.eg.db)
-                    OrgDb = org.Hs.eg.db, 
-                    ont = "BP", 
-                    pAdjustMethod = "BH", pvalueCutoff = 0.05, 
-                    readable = TRUE)
-  
-  # Run GO enrichment analysis genes down
-  GO.down <- enrichGO(gene = sig_genes_down, 
-                      universe = all_genes, 
-                      keyType = "GENENAME", #keytypes(org.Hs.eg.db)
-                      OrgDb = org.Hs.eg.db, 
-                      ont = "BP", 
-                      pAdjustMethod = "BH", pvalueCutoff = 0.05, 
-                      readable = TRUE)
-  
-  # Save outputs
-  saveRDS(GO.up, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Data/scRNAseq/updated analysis/ORA/%s.rds", sample_name))
-  saveRDS(GO.down, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Data/scRNAseq/updated analysis/ORA/%s.rds", sample_name))
-}
-
-
-
-
-
-
-
-
-
-
-
 # Save/Load files
-saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
-pancreas.combined <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+# saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+pancreas.combined.h.s <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+
+# Escape
+# molecular Signature database for msigdb
+gene.sets <- getGenesets(org = "hsa",
+                         db = c("msigdb"), #https://rdrr.io/bioc/EnrichmentBrowser/man/getGenesets.html
+                         gene.id.type = "SYMBOL", #idTypes(org = "hsa")
+                         cat = c("C5"), # C5 is gene ontology
+                         #lib = c("GO_Biological_Process_2021", "GO_Cellular_Component_2021", "GO_Molecular_Function_2021"), 
+                         cache = TRUE, 
+                         return.type = "list")
+
+# Set correct seurat identity
+Idents(pancreas.combined.h.s) <- "celltype.sample"
+table(Idents(pancreas.combined.h.s))
+
+# Enrichment
+ES <- enrichIt(obj = pancreas.combined.h.s, 
+               gene.sets = gene.sets, 
+               groups = 1000, 
+               cores = 2, 
+               min.size = NULL)
+
+
+
+
+
+
+# Discovery based Plotting
+DefaultAssay(pancreas.combined.h.s) <- "SCT"
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("GCG", "INS", "SST", "PPY", "GHRL"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("VWF", "SDS", "CD8A", "TRAC", "TPSAB1"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("PDGFRA", "RGS5", "REG1A", "SPP1", "CFTR", "SOX10"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+FeaturePlot(object = pancreas.combined.h.s,
+            features = c("MKI67"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            #max.cutoff = 100,
+            slot = 'counts',
+            order = TRUE)
+
+Idents(pancreas.combined.h.s) <- "ancestry_sex"
+VlnPlot(
+  object = pancreas.combined.h.s,
+  features = c("DDX3Y", "XIST"),
+  assay = 'RNA',
+  slot = 'counts',
+  cols = c("darkturquoise",
+                          "lightgreen",
+                          "springgreen4",
+                          "lightgoldenrod3",
+                          "green3",
+                          "grey56",
+                          "grey80",
+                          "deeppink",
+                          "violet",
+                          "purple",
+                          "coral2",
+                          "magenta",
+                          "red4",
+                          "black",
+                          "red"),
+                          #y.max = 3,
+  pt.size = 0
+)
+
+Idents(pancreas.combined.h.s) <- "sex"
+VlnPlot(
+  object = pancreas.combined.h.s,
+  features = c("DDX3Y"),
+  assay = 'RNA',
+  slot = 'counts',
+  cols = c("darkturquoise",
+           "lightgreen",
+           "springgreen4",
+           "lightgoldenrod3",
+           "green3",
+           "grey56",
+           "grey80",
+           "deeppink",
+           "violet",
+           "purple",
+           "coral2",
+           "magenta",
+           "red4",
+           "black",
+           "red"),
+           #y.max = 3,
+  pt.size = 0
+)
+
+# Observing cells
+DimPlot(pancreas.combined.h.s, 
+        split.by = "ancestry_sex", group.by = "celltype", 
+        label = FALSE, 
+        ncol = 2,
+        cols = c("darkturquoise",
+                 "lightgreen",
+                 "springgreen4",
+                 "lightgoldenrod3",
+                 "green3",
+                 "grey56",
+                 "grey80",
+                 "deeppink",
+                 "violet",
+                 "purple",
+                 "coral2",
+                 "magenta",
+                 "red4",
+                 "black",
+                 "red")
+                 #y.max = 3,
+        )
+
+DimPlot(pancreas.combined.h.s, 
+        group.by = "celltype", 
+        label = FALSE, 
+        ncol = 1,
+        cols = c("darkturquoise",
+                                "lightgreen",
+                                "springgreen4",
+                                "lightgoldenrod3",
+                                "green3",
+                                "grey56",
+                                "grey80",
+                                "deeppink",
+                                "violet",
+                                "purple",
+                                "coral2",
+                                "magenta",
+                                "red4",
+                                "black",
+                                "red")
+                                #y.max = 3,
+)
+
+# Cluster specific markers
+DefaultAssay(object = pancreas.combined.h.s) <- "SCT"
+Idents(pancreas.combined.h.s) <- "celltype"
+markers <- FindAllMarkers(pancreas.combined.h.s, 
+                          assay = "SCT",
+                          logfc.threshold = 1,
+                          test.use = "wilcox",
+                          slot = "data",
+                          min.pct = 0.5)
+
+# Re select organized idents
+Idents(pancreas.combined.h.s) <- "celltype.sample"
+Idents(pancreas.combined.h.s) <- "celltype"
+DefaultAssay(object = pancreas.combined.h.s) <- "RNA"
+
+# Selected genes
+markers.to.plot <- c("CDH19", "TPSB2", "CCL5", "ACP5", "PLVAP", "RGS5", "INHBA", "REG1A", "KRT19", "GHRL", "PPY", "SST", "GCG", "INS")
+
+# Dotplot #700x460
+DotPlot(pancreas.combined.h.s,  
+        dot.scale = 8,
+        col.min = 0, #minimum level
+        col.max = 1,  #maximum level
+        features = rev(markers.to.plot)) + 
+  geom_point(aes(size=pct.exp), shape = 21, stroke=0.5) +
+  theme_light() +
+  #facet_wrap(~??? what metadata should be here??)
+  #coord_flip() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(plot.title = element_text(size = 10, face = "bold"),
+        legend.title=element_text(size=12, face = "bold"), 
+        legend.text=element_text(size=12, face = "bold")) +
+  scale_colour_gradient2(low =c("dodgerblue"), mid = c("white"), high =c("red3")) +
+  guides(color = guide_colorbar(title = 'Average Expression'))
+
+
 
 ###################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3996,17 +4289,27 @@ DefaultAssay(object = pancreas.combined) <- "SCT"
 table(Idents(pancreas.combined))
 
 
-Idents(pancreas.combined) <- "ancestry_sex"
+Idents(pancreas.combined) <- "celltype"
 VlnPlot(
   object = pancreas.combined,
   features = c("DDX3Y"),
   assay = 'RNA',
   slot = 'counts',
-  # cols = c("red4", "red3", "grey40", "orange", "lightgoldenrod3", "yellow4", "indianred", "orangered", "black",
-  #          "royalblue2", "steelblue1", "darkcyan",
-  #          "springgreen4", "green3", "darkturquoise",
-  #          "purple4", "purple", "deeppink",
-  #          "violetred", "violet"),
+  cols = c("darkturquoise",
+  "lightgreen",
+  "springgreen4",
+  "lightgoldenrod3",
+  "green3",
+  "grey56",
+  "grey80",
+  "deeppink",
+  "violet",
+  "purple",
+  "coral2",
+  "magenta",
+  "red4",
+  "black",
+  "red"),
   #y.max = 3,
   pt.size = 0
 )
