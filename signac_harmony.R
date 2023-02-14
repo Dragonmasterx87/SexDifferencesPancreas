@@ -108,6 +108,7 @@ packageVersion("scDblFinder")
 set.seed(1234)
 
 # Calculation of Doublets https://bioconductor.org/packages/devel/bioc/vignettes/scDblFinder/inst/doc/scATAC.html
+# https://bioconductor.org/packages/devel/bioc/vignettes/scDblFinder/inst/doc/scATAC.html#using-the-amulet-method
 # Provide GRanges of repeat elements for exclusion:
 suppressPackageStartupMessages(library(GenomicRanges))
 repeats <- GRanges("chr6", IRanges(1000,2000))
