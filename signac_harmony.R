@@ -108,7 +108,6 @@ packageVersion("scDblFinder")
 set.seed(1234)
 
 # Calculation of Doublets https://bioconductor.org/packages/devel/bioc/vignettes/scDblFinder/inst/doc/scATAC.html
-# https://bioconductor.org/packages/devel/bioc/vignettes/scDblFinder/inst/doc/scATAC.html#using-the-amulet-method
 # Provide GRanges of repeat elements for exclusion:
 suppressPackageStartupMessages(library(GenomicRanges))
 repeats <- GRanges("chr6", IRanges(1000,2000))
@@ -120,7 +119,7 @@ otherChroms <- GRanges(c("M","chrM","MT","X","Y","chrX","chrY"),IRanges(1L,width
 toExclude <- suppressWarnings(c(repeats, otherChroms))
 
 # Running amulet method
-
+{
   fragfile.HP2022801 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\1_220628_Fahd_snATAC1_HP-20228-01\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.SAMN15877725 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\2_220701_Fahd_snATAC2_SAMN15877725\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.HP2024001 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\3_220701_Fahd_snATAC3_HP-20240-01\fragments.tsv.gz)", regionsToExclude=toExclude)
@@ -131,31 +130,73 @@ toExclude <- suppressWarnings(c(repeats, otherChroms))
   fragfile.HP2107901 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\9_210628_snATAC_F9a_HP-21079-01\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.HP2108601 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\10_210628_snATAC_F10a_HP-21086-01\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.HP2108901 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\11_210714_snATAC_F11a_HP-21089-01\fragments.tsv.gz)", regionsToExclude=toExclude)
-  fragfile.HP2110001 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\12_210714 snATAC_F12a_HP-21100-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+  fragfile.HP2110001 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\12_210714_snATAC_F12a_HP-21100-01\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.HP2121601 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\13_211208_snATAC_F13_HP-21216-01\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.HP2123201 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\14_211208_snATAC_F14_HP-21232-01\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.HP2132801 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\15_220303_snATAC_F15a_HP-21328-01\fragments.tsv.gz)", regionsToExclude=toExclude)
   fragfile.HP2202101 <- amulet(r"(D:\1.SexbasedStudyrawdata\Cellranger_raw_data\snATACseq\16_220630_Fahd_snATAC16_HP-22021-01\fragments.tsv.gz)", regionsToExclude=toExclude)
+}
   
+# Adding sampleID to barcode nomenclature
+head(combined_atac) # shows that config of cell nomenclature is SAMPLEID_barcode [yeah I know, this shouldnt but hey live dangerous.]
+{
+  rownames(fragfile.HP2022801) <- paste0('HP2022801_', rownames(fragfile.HP2022801))
+  rownames(fragfile.SAMN15877725) <- paste0('SAMN15877725_', rownames(fragfile.SAMN15877725))
+  rownames(fragfile.HP2024001) <- paste0('HP2024001_', rownames(fragfile.HP2024001))
+  rownames(fragfile.HP2031401) <- paste0('HP2031401_', rownames(fragfile.HP2031401))
+  rownames(fragfile.HP2105501) <- paste0('HP2105501_', rownames(fragfile.HP2105501))
+  rownames(fragfile.HP2106201) <- paste0('HP2106201_', rownames(fragfile.HP2106201))
+  rownames(fragfile.HP2107001) <- paste0('HP2107001_', rownames(fragfile.HP2107001))
+  rownames(fragfile.HP2107901) <- paste0('HP2107901_', rownames(fragfile.HP2107901))
+  rownames(fragfile.HP2108601) <- paste0('HP2108601_', rownames(fragfile.HP2108601))
+  rownames(fragfile.HP2108901) <- paste0('HP2108901_', rownames(fragfile.HP2108901))
+  rownames(fragfile.HP2110001) <- paste0('HP2110001_', rownames(fragfile.HP2110001))
+  rownames(fragfile.HP2121601) <- paste0('HP2121601_', rownames(fragfile.HP2121601))
+  rownames(fragfile.HP2123201) <- paste0('HP2123201_', rownames(fragfile.HP2123201))
+  rownames(fragfile.HP2132801) <- paste0('HP2132801_', rownames(fragfile.HP2132801))
+  rownames(fragfile.HP2202101) <- paste0('HP2202101_', rownames(fragfile.HP2202101))
+}
+
+combined_atac_doublet <- do.call('rbind', list(fragfile.HP2022801, fragfile.SAMN15877725, fragfile.HP2024001, fragfile.HP2031401,
+                                               fragfile.HP2105501, fragfile.HP2106201, fragfile.HP2107001, fragfile.HP2107901,
+                                               fragfile.HP2108601, fragfile.HP2108901, fragfile.HP2110001, fragfile.HP2121601,
+                                               fragfile.HP2123201, fragfile.HP2132801, fragfile.HP2202101))
 
 #Save file
-saveRDS(fragfile.HP2022801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2022801.rds)")
-saveRDS(fragfile.SAMN15877725, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.SAMN15877725.rds)")
-saveRDS(fragfile.HP2024001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2024001.rds)")
-saveRDS(fragfile.HP2031401, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2031401.rds)")
-saveRDS(fragfile.HP2105501, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2105501.rds)")
-saveRDS(fragfile.HP2106201, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2106201.rds)")
-saveRDS(fragfile.HP2107001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107001.rds)")
-saveRDS(fragfile.HP2107901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107901.rds)")
-saveRDS(fragfile.HP2108601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108601.rds)")
-saveRDS(fragfile.HP2108901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108901.rds)")
-saveRDS(fragfile.HP2110001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2110001.rds)")
-saveRDS(fragfile.HP2121601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2121601.rds)")
-saveRDS(fragfile.HP2123201, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2123201.rds)")
-saveRDS(fragfile.HP2132801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2132801.rds)")
-saveRDS(fragfile.HP2202101, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2202101.rds)")
-#combined_atac <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
+# saveRDS(fragfile.HP2022801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2022801.rds)")
+# saveRDS(fragfile.SAMN15877725, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.SAMN15877725.rds)")
+# saveRDS(fragfile.HP2024001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2024001.rds)")
+# saveRDS(fragfile.HP2031401, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2031401.rds)")
+# saveRDS(fragfile.HP2105501, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2105501.rds)")
+# saveRDS(fragfile.HP2106201, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2106201.rds)")
+# saveRDS(fragfile.HP2107001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107001.rds)")
+# saveRDS(fragfile.HP2107901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107901.rds)")
+# saveRDS(fragfile.HP2108601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108601.rds)")
+# saveRDS(fragfile.HP2108901, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108901.rds)")
+# saveRDS(fragfile.HP2110001, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2110001.rds)")
+# saveRDS(fragfile.HP2121601, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2121601.rds)")
+# saveRDS(fragfile.HP2123201, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2123201.rds)")
+# saveRDS(fragfile.HP2132801, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2132801.rds)")
+# saveRDS(fragfile.HP2202101, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2202101.rds)")
+# saveRDS(combined_atac_doublet, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac_doublet.rds)")
 
+# Load
+# fragfile.HP2022801 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2022801.rds)")
+# fragfile.SAMN15877725 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.SAMN15877725.rds)")
+# fragfile.HP2024001 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2024001.rds)")
+# fragfile.HP2031401 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2031401.rds)")
+# fragfile.HP2105501 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2105501.rds)")
+# fragfile.HP2106201 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2106201.rds)")
+# fragfile.HP2107001 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107001.rds)")
+# fragfile.HP2107901 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2107901.rds)")
+# fragfile.HP2108601 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108601.rds)")
+# fragfile.HP2108901 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2108901.rds)")
+# fragfile.HP2110001 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2110001.rds)")
+# fragfile.HP2121601 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2121601.rds)")
+# fragfile.HP2123201 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2123201.rds)")
+# fragfile.HP2132801 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2132801.rds)")
+# fragfile.HP2202101 <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\fragfile.HP2202101.rds)")
+combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac_doublet.rds)")
 
 
 # OBJECT SETUP AND NORMALIZATION ####
@@ -1415,6 +1456,7 @@ saveRDS(fragfile.HP2202101, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding S
   #Save file
   #saveRDS(combined_atac, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
   combined_atac <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
+  combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac_doublet.rds)")
   
 
   # Run TFDIF  
@@ -1430,10 +1472,35 @@ saveRDS(fragfile.HP2202101, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding S
   hm.integrated <- RunUMAP(hm.integrated, dims = 2:30, reduction = 'harmony')
   DimPlot(hm.integrated, group.by = 'ancestry_sex', pt.size = 0.1)
   
+  # We need to subset out all of those cell IDs in our doublet calculated data which are present in actual ATAC data
+  #create cell names as metadata colum
+  atac_cellnames <- colnames(combined_atac)
   
+  #subset the doublet file to have only those barcodes that have been identified as high quality cells
+  combined_atac_doublet <- subset(combined_atac_doublet, rownames(combined_atac_doublet) %in% atac_cellnames)
   
+  # Adding a column to define multiplet vs singlet
+  combined_atac_doublet$doublets <- ifelse(combined_atac_doublet$q.value >= 0.01, "singlet", "multiplet" )
   
+  # Check number of singlets and multiplets
+  sum(combined_atac_doublet$doublets == "singlet")
+  sum(combined_atac_doublet$doublets == "multiplet")
   
+  #Some more checking because AddMetadata was driving me INSANE
+  #cells_seuratobj <- Cells(combined_atac)
+  #cells_netadatobj <- rownames(combined_atac_doublet)
+  #setequal(cells_seuratobj, cells_netadatobj)
+  
+  # subset out the columns you wish to add only, here we are only adding the doublets column
+  doubletdat <- subset(combined_atac_doublet, select = c("doublets"))
+  
+  # Add doublet metadata to seurat object
+  hm.integrated <- AddMetaData(object = hm.integrated, metadata = doubletdat, col.name = 'doublets')
+  table(hm.integrated$doublets) #party time
+  
+  # Check doublets
+  #Idents(combined_atac) <- "doublets"
+  DimPlot(hm.integrated, group.by = 'doublets', pt.size = 0.1)
   
   
   
