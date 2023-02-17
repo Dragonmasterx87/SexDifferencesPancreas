@@ -1455,17 +1455,15 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   
   #Save file
   #saveRDS(combined_atac, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
+  #Load file you need to also load the combined_atac_doublet file to proceed
   combined_atac <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
-  combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac_doublet.rds)")
   
-
   # Run TFDIF  
   combined_atac <- FindTopFeatures(combined_atac, min.cutoff = 20)
   combined_atac <- RunTFIDF(combined_atac)
   combined_atac <- RunSVD(combined_atac)
   combined_atac <- RunUMAP(combined_atac, dims = 2:30, reduction = 'lsi')
   DimPlot(combined_atac, group.by = 'ancestry_sex', pt.size = 0.1)
-  
   
   # Batch correction using Harmony
   hm.integrated <- RunHarmony(object = combined_atac, group.by.vars = 'sample', reduction = 'lsi', assay.use = 'ATAC', project.dim = FALSE)
@@ -1480,7 +1478,7 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   combined_atac_doublet <- subset(combined_atac_doublet, rownames(combined_atac_doublet) %in% atac_cellnames)
   
   # Adding a column to define multiplet vs singlet
-  combined_atac_doublet$doublets <- ifelse(combined_atac_doublet$q.value >= 0.01, "singlet", "multiplet" )
+  combined_atac_doublet$doublets <- ifelse(combined_atac_doublet$p.value >= 0.05, "singlet", "multiplet" )
   
   # Check number of singlets and multiplets
   sum(combined_atac_doublet$doublets == "singlet")
@@ -1499,8 +1497,162 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   table(hm.integrated$doublets) #party time
   
   # Check doublets
-  #Idents(combined_atac) <- "doublets"
+  #Idents(hm.integrated) <- "doublets"
   DimPlot(hm.integrated, group.by = 'doublets', pt.size = 0.1)
+  
+  # Remove doublets
+  Idents(hm.integrated) <- "doublets" 
+  hm.integrated.dfree <- subset(hm.integrated, idents = c("singlet"))
+  hm.integrated.dfree
+  
+  # Re-Run TFDIF  
+  hm.integrated.dfree <- FindTopFeatures(hm.integrated.dfree, min.cutoff = 20)
+  hm.integrated.dfree <- RunTFIDF(hm.integrated.dfree)
+  hm.integrated.dfree <- RunSVD(hm.integrated.dfree)
+  hm.integrated.dfree <- RunUMAP(hm.integrated.dfree, dims = 2:30, reduction = 'lsi')
+  DimPlot(hm.integrated.dfree, group.by = 'ancestry_sex', pt.size = 0.1)
+  
+  # Batch correction using Harmony
+  hm.integrated.dfree <- RunHarmony(object = hm.integrated.dfree, group.by.vars = 'sample', reduction = 'lsi', assay.use = 'ATAC', project.dim = FALSE)
+  hm.integrated.dfree <- RunUMAP(hm.integrated.dfree, dims = 2:30, reduction = 'harmony')
+  DimPlot(hm.integrated.dfree, group.by = 'ancestry_sex', pt.size = 0.1)
+  
+  # Normalize gene activities
+  DefaultAssay(hm.integrated.dfree) <- "RNA"
+  hm.integrated.dfree <- NormalizeData(hm.integrated.dfree)
+  hm.integrated.dfree <- ScaleData(hm.integrated.dfree, features = rownames(hm.integrated.dfree))
+  
+  #Save file
+  #saveRDS(hm.integrated.dfree, file = r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\hm.integrated.dfree.rds)")
+  
+  # Open necessary scRNAseq and snATAC data
+  hm.integrated.dfree <- readRDS(file = r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\hm.integrated.dfree.rds)")
+  pancreas.combined.h.s <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\pancreas.combined.h.s.rds)")
+  
+  # Identify anchors
+  # Read in RNA data
+  DefaultAssay(pancreas.combined.h.s) <- 'RNA'
+  transfer.anchors <- FindTransferAnchors(reference = pancreas.combined.h.s, 
+                                          query = hm.integrated.dfree, 
+                                          features = pancreas.combined.h.s@assays$RNA@var.features,
+                                          reference.assay = "RNA", 
+                                          query.assay = "RNA", 
+                                          reduction = "cca")
+  
+  # Save
+  #saveRDS(transfer.anchors, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\transfer.anchors.rds)")
+  transfer.anchors <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\transfer.anchors.rds)")
+  
+  # Annotation of scATAC cells via label transfer  
+  # map query onto the reference dataset
+  DefaultAssay(pancreas.combined.h.s) <- "SCT"
+  DimPlot(pancreas.combined.h.s, reduction = "umap", group.by = "celltype", label = TRUE, repel = TRUE)
+  pancreas.combined.h.s <- RunUMAP(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30, return.model = TRUE) # return model = TRUE
+  
+  # Clusterning UMAP was created on basis of ATAC profile
+  DefaultAssay(hm.integrated.dfree) <- "ATAC"
+  hm.integrated.dfree <- FindNeighbors(object = hm.integrated.dfree, reduction = 'harmony', dims = 2:30)
+  hm.integrated.dfree <- FindClusters(object = hm.integrated.dfree, verbose = FALSE, resolution = 0.5, graph.name = "ATAC_snn")
+  DimPlot(object = hm.integrated.dfree, label = TRUE)
+  
+  # Running map query shows that 11, 12, 13, 15 are streak clusters Eliminating them
+  Idents(hm.integrated.dfree) <- "ATAC_snn_res.0.5"
+  hm.integrated.dfree <- subset(hm.integrated.dfree, idents = c('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '14', '16', '17', '18'))
+  
+  # Re-Run TFDIF  
+  hm.integrated.dfree <- FindTopFeatures(hm.integrated.dfree, min.cutoff = 20)
+  hm.integrated.dfree <- RunTFIDF(hm.integrated.dfree)
+  hm.integrated.dfree <- RunSVD(hm.integrated.dfree)
+  hm.integrated.dfree <- RunUMAP(hm.integrated.dfree, dims = 2:30, reduction = 'lsi')
+  DimPlot(hm.integrated.dfree, group.by = 'ancestry_sex', pt.size = 0.1)
+  
+  # Batch correction using Harmony
+  hm.integrated.dfree <- RunHarmony(object = hm.integrated.dfree, group.by.vars = 'sample', reduction = 'lsi', assay.use = 'ATAC', project.dim = FALSE)
+  hm.integrated.dfree <- RunUMAP(hm.integrated.dfree, dims = 2:30, reduction = 'harmony')
+  DimPlot(hm.integrated.dfree, group.by = 'ancestry_sex', pt.size = 0.1)
+  
+  # Normalize gene activities
+  DefaultAssay(hm.integrated.dfree) <- "RNA"
+  hm.integrated.dfree <- NormalizeData(hm.integrated.dfree)
+  hm.integrated.dfree <- ScaleData(hm.integrated.dfree, features = rownames(hm.integrated.dfree))
+  
+  # Identify anchors
+  # Read in RNA data
+  DefaultAssay(pancreas.combined.h.s) <- 'RNA'
+  transfer.anchors <- FindTransferAnchors(reference = pancreas.combined.h.s, 
+                                          query = hm.integrated.dfree, 
+                                          features = pancreas.combined.h.s@assays$RNA@var.features,
+                                          reference.assay = "RNA", 
+                                          query.assay = "RNA", 
+                                          reduction = "cca")
+  
+  # Save
+  #saveRDS(transfer.anchors, file = r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\transfer.anchors_stage2.rds)")
+  transfer.anchors <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\transfer.anchors.rds)")
+  
+  
+  
+  
+  # Plotting
+  DefaultAssay(hm.integrated.dfree) <- "RNA"
+  FeaturePlot(
+    object = hm.integrated.dfree,
+    features = c('SST', 'INS'),
+    pt.size = 0.1,
+    max.cutoff = 'q95',
+    reduction = "umap",
+    ncol = 3
+  )
+  
+  
+  hm.integrated.dfree <- MapQuery(
+    anchorset = transfer.anchors,
+    reference = pancreas.combined.h.s, #scRNA
+    query = hm.integrated.dfree, #snATAC
+    refdata = pancreas.combined.h.s$celltype,
+    reference.reduction = "harmony",
+    new.reduction.name = "ref.lsi",
+    reduction.model = 'umap'
+  )
+  
+  celltype.predictions <- TransferData(anchorset = transfer.anchors, 
+                                       refdata = pancreas.combined.h.s$celltype,
+                                       weight.reduction = hm.integrated.dfree[["harmony"]], 
+                                       dims = 2:30)
+  
+  hm.integrated.dfree <- AddMetaData(hm.integrated.dfree, metadata = celltype.predictions)
+  
+  DimPlot(hm.integrated.dfree, group.by = "predicted.id", reduction = "umap", label = TRUE) + ggtitle("Predicted annotation")
+  DimPlot(hm.integrated.dfree, group.by = "ATAC_snn_res.0.5", reduction = "umap", label = TRUE) + ggtitle("Res")# + nolegend()
+  DimPlot(pancreas.combined.h.s, group.by = "celltype", reduction = "umap", label = TRUE) + ggtitle("Celltype Classification")
+  p1+p2
+  
+  # Clusterning
+  hm.integrated.dfree <- FindNeighbors(object = hm.integrated.dfree, reduction = 'lsi', dims = 2:30)
+  hm.integrated.dfree <- FindClusters(object = hm.integrated.dfree, verbose = FALSE, algorithm = 3)
+  DimPlot(object = hm.integrated.dfree, label = TRUE) + NoLegend()
+  
+  
+  #Save file
+  #saveRDS(combined_atac, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
+  #combined_atac <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\snATACseq\combined_atac.rds)")
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
