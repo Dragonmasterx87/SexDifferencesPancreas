@@ -1588,7 +1588,7 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   
   # Save
   #saveRDS(transfer.anchors, file = r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\transfer.anchors_stage2.rds)")
-  transfer.anchors <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\transfer.anchors_stage2.rds)")
+  transfer.anchors2 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\atac\transfer.anchors_stage2.rds)")
   
   # Annotation of scATAC cells via label transfer  
   # map query onto the reference dataset
@@ -1599,7 +1599,7 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   # Clusterning UMAP was created on basis of ATAC profile
   # Add predicted ID data to the new Signac seurat object
   DefaultAssay(hm.integrated.dfree) <- "ATAC"
-  celltype.predictions <- TransferData(anchorset = transfer.anchors, 
+  celltype.predictions <- TransferData(anchorset = transfer.anchors2, 
                                        refdata = pancreas.combined.h.s$celltype,
                                        weight.reduction = hm.integrated.dfree[["harmony"]], 
                                        dims = 2:30)
@@ -1658,6 +1658,7 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   table(Idents(hm.integrated.dfree))
   
   # Observing cells
+  Idents(hm.integrated.dfree) <- "celltype"
   DimPlot(hm.integrated.dfree, 
           split.by = "ancestry_sex", 
           #group.by = "celltype", 
@@ -2343,6 +2344,201 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
     }
   }
   
+  # Advanced Differential Gene testing
+  # Create a new metadata slot containing combined info, segregating clusters and samples
+  Idents(object = hm.integrated.dfree) <- "celltype"
+  hm.integrated.dfree$celltype.sex <- paste(Idents(hm.integrated.dfree), hm.integrated.dfree$sex, sep = "_")
+  table(hm.integrated.dfree@meta.data$celltype.sex)
+  
+  # New metadata column is not paired, so we need to pair
+  my_levels2 <- c("Beta_male", "Beta_female",
+                  "Alpha_male", "Alpha_female",
+                  "Delta_male", "Delta_female",
+                  "Gamma_male", "Gamma_female",
+                  "Ductal_male", "Ductal_female",
+                  "Acinar_male", "Acinar_female",
+                  "Activated Stellate_male", "Activated Stellate_female",
+                  "Quiescent Stellate_male", "Quiescent Stellate_female",
+                  "Endothelial_male", "Endothelial_female",
+                  "Macrophage_male", "Macrophage_female",
+                  "Lymphocyte_male", "Lymphocyte_female"
+  )
+  
+  # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+  hm.integrated.dfree@meta.data$celltype.sex <- factor(x = hm.integrated.dfree@meta.data$celltype.sex, levels = my_levels2)
+  table(hm.integrated.dfree@meta.data$celltype.sex)
+  
+  # Change back to peak data
+  DefaultAssay(hm.integrated.dfree) <- "ATAC"
+  Idents(hm.integrated.dfree) <- "celltype.sex"
+  
+  {
+    {
+      # 1.Beta-cells ####
+      # MALE VS. FEMALE
+      beta.mvsf <- FindMarkers(hm.integrated.dfree, 
+                               ident.1 = "Beta_male", ident.2 = "Beta_female", 
+                               assay = "ATAC",
+                               test.use = "LR",
+                               latent.vars = 'peak_region_fragments',
+                               #min.cells.feature = 100,
+                               #min.pct = 0,
+                               #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                               verbose = TRUE)
+      head(beta.mvsf, n = 15)
+      write.csv(beta.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\beta.mvsf.csv)")
+    }
+    {
+      # 2.Alpha-cells ####
+      # WHITE MALE VS. BLACK MALE
+      Alpha.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                ident.1 = "Alpha_male", ident.2 = "Alpha_female", 
+                                assay = "ATAC",
+                                test.use = "LR",
+                                latent.vars = 'peak_region_fragments',
+                                #min.cells.feature = 100,
+                                #min.pct = 0,
+                                #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                verbose = TRUE)
+      head(Alpha.mvsf, n = 15)
+      write.csv(Alpha.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\Alpha.mvsf.csv)")
+    }
+    {
+      # 3.Delta-cells (SST) ####
+      # WHITE MALE VS. BLACK MALE
+      Delta.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                ident.1 = "Delta_male", ident.2 = "Delta_female", 
+                                assay = "ATAC",
+                                test.use = "LR",
+                                latent.vars = 'peak_region_fragments',
+                                #min.cells.feature = 100,
+                                #min.pct = 0,
+                                #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                verbose = TRUE)
+      head(Delta.mvsf, n = 15)
+      write.csv(Delta.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\Delta.mvsf.csv)")
+    }
+    {
+      # 4.Gamma-cells (PPY) ####
+      # WHITE MALE VS. BLACK MALE
+      Gamma.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                ident.1 = "Gamma_male", ident.2 = "Gamma_female", 
+                                assay = "ATAC",
+                                test.use = "LR",
+                                latent.vars = 'peak_region_fragments',
+                                #min.cells.feature = 100,
+                                #min.pct = 0,
+                                #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                verbose = TRUE)
+      head(Gamma.mvsf, n = 15)
+      write.csv(Gamma.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\Gamma.mvsf.csv)")
+    }
+    {
+      # 5.Ductal-cells (KRT19) ####
+      # WHITE MALE VS. BLACK MALE
+      Ductal.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                 ident.1 = "Ductal_male", ident.2 = "Ductal_female", 
+                                 assay = "ATAC",
+                                 test.use = "LR",
+                                 latent.vars = 'peak_region_fragments',
+                                 #min.cells.feature = 100,
+                                 #min.pct = 0,
+                                 #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                 verbose = TRUE)
+      head(Ductal.mvsf, n = 15)
+      write.csv(Ductal.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\Ductal.mvsf.csv)")
+    }
+    {
+      # 6.Acinar cells ####
+      # WHITE MALE VS. BLACK MALE
+      acinar.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                 ident.1 = "Acinar_male", ident.2 = "Acinar_female", 
+                                 assay = "ATAC",
+                                 test.use = "LR",
+                                 latent.vars = 'peak_region_fragments',
+                                 #min.cells.feature = 100,
+                                 #min.pct = 0,
+                                 #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                 verbose = TRUE)
+      head(acinar.mvsf, n = 15)
+      write.csv(acinar.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\acinar.mvsf.csv)")
+    }
+    {
+      # 7.Quiescent-Stellate cells ####
+      # WHITE MALE VS. BLACK MALE
+      quiescetstellate.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                           ident.1 = "Quiescent Stellate_male", ident.2 = "Quiescent Stellate_female", 
+                                           assay = "ATAC",
+                                           test.use = "LR",
+                                           latent.vars = 'peak_region_fragments',
+                                           #min.cells.feature = 100,
+                                           #min.pct = 0,
+                                           #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                           verbose = TRUE)
+      head(quiescetstellate.mvsf, n = 15)
+      write.csv(quiescetstellate.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\quiescetstellate.mvsf.csv)")
+    }
+    {
+      # 8.Activated-Stellate cells ####
+      # WHITE MALE VS. BLACK MALE
+      Activated.Stellate.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                             ident.1 = "Activated Stellate_male", ident.2 = "Activated Stellate_female", 
+                                             assay = "ATAC",
+                                             test.use = "LR",
+                                             latent.vars = 'peak_region_fragments',
+                                             #min.cells.feature = 100,
+                                             #min.pct = 0,
+                                             #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                             verbose = TRUE)
+      head(Activated.Stellate.mvsf, n = 15)
+      write.csv(Activated.Stellate.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\Activated.Stellate.mvsf.csv)")
+    }
+    {
+      # 9.Macrophages cells ####
+      # WHITE MALE VS. BLACK MALE
+      Macrophages.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                      ident.1 = "Macrophage_male", ident.2 = "Macrophage_female", 
+                                      assay = "ATAC",
+                                      test.use = "LR",
+                                      latent.vars = 'peak_region_fragments',
+                                      #min.cells.feature = 100,
+                                      #min.pct = 0,
+                                      #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                      verbose = TRUE)
+      head(Macrophages.mvsf, n = 15)
+      write.csv(Macrophages.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\Macrophages.mvsf.csv)")
+    }
+    {
+      # 10.Lymphocytes ####
+      # WHITE MALE VS. BLACK MALE
+      Lymphocyte.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                     ident.1 = "Lymphocyte_male", ident.2 = "Lymphocyte_female", 
+                                     assay = "ATAC",
+                                     test.use = "LR",
+                                     latent.vars = 'peak_region_fragments',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0,
+                                     #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     verbose = TRUE)
+      head(Lymphocyte.mvsf, n = 15)
+      write.csv(Lymphocyte.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\Lymphocyte.mvsf.csv)")
+    }
+    {
+      # 11.Endothelial-cells ####
+      # WHITE MALE VS. BLACK MALE
+      endothelial.mvsf <- FindMarkers(hm.integrated.dfree, 
+                                      ident.1 = "Endothelial_male", ident.2 = "Endothelial_female", 
+                                      assay = "ATAC",
+                                      test.use = "LR",
+                                      latent.vars = 'peak_region_fragments',
+                                      #min.cells.feature = 100,
+                                      #min.pct = 0,
+                                      #logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                      verbose = TRUE)
+      head(endothelial.mvsf, n = 15)
+      write.csv(endothelial.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\endothelial.mvsf.csv)")
+    }
+  }
   
   ####
   
