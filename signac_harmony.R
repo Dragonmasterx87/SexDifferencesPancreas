@@ -1746,7 +1746,7 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   DefaultAssay(hm.integrated.dfree) <- "ATAC"
   Idents(hm.integrated.dfree) <- "celltype.sample"
   
-  
+  # DE testing accessible sites sex_ancestry_celltype
   {
     {
       # 1.Beta-cells ####
@@ -2372,6 +2372,7 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
   DefaultAssay(hm.integrated.dfree) <- "ATAC"
   Idents(hm.integrated.dfree) <- "celltype.sex"
   
+  # DE testing accessible sites sex_celltype
   {
     {
       # 1.Beta-cells ####
@@ -2538,6 +2539,123 @@ combined_atac_doublet <- readRDS(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
       head(endothelial.mvsf, n = 15)
       write.csv(endothelial.mvsf, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\endothelial.mvsf.csv)")
     }
+  }
+  
+  # translating Differential accessibility to nearby accessible genes 
+  # Create a list of all files in directory
+  dalist <- list.files(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites)", 
+                        all.files = FALSE, 
+                        full.names = FALSE, 
+                        pattern = "*.csv")
+  
+  # Point towards WD using a function
+  for (sample in dalist){
+    wd <- sprintf('C:/Users/mqadir/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/snATAC/DE_accessible_sites/%s', dalist)
+  }
+  
+  # Run iterative function to perform GO on all data
+  for (x in wd) {
+    sample_name <- str_split_fixed(x, "/", n=11)[11]
+    datfile <- read.csv(file.path(x), row.names = 1)
+    
+    # Gene list of genes going UP
+    sig_df_up <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC > 0.26303) # >1.2x
+    sig_genes_up <- rownames(sig_df_up)
+    
+    # Gene list of genes going UP
+    sig_df_down <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC < -0.32192) # <0.8x
+    sig_genes_down <- rownames(sig_df_down)
+    
+    # All genes
+    all_genes <- rownames(datfile)
+    
+    # Run GO enrichment analysis genes up
+    genes.up <- ClosestFeature(hm.integrated.dfree, sig_genes_up)
+      
+    # Run GO enrichment analysis genes down
+    genes.down <- ClosestFeature(hm.integrated.dfree, sig_genes_down)
+    
+    data_up <- data.frame(genes.up)
+    data_down <- data.frame(genes.down)
+    
+    # Save outputs
+    write.csv(data_up, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/snATACseq/updated_analysis/DA/UP/%s.csv", sample_name), row.names = FALSE)
+    write.csv(data_down, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/snATACseq/updated_analysis/DA/DOWN/%s.csv", sample_name), row.names = FALSE)
+  }
+  
+  daolist <- list.files(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites)", 
+                        all.files = FALSE, 
+                         full.names = FALSE, 
+                         pattern = "*.csv")
+  
+  # Point towards WD using a function
+  for (sample in dalist){
+    wd <- sprintf('C:/Users/mqadir/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/snATAC/DE_accessible_sites/%s', dalist)
+  }
+  
+  # Run iterative function to perform GO on all data
+  for (x in wd) {
+    sample_name <- str_split_fixed(x, "/", n=11)[11]
+    datfile <- read.csv(file.path(x), row.names = 1)
+    
+    # Gene list of genes going UP
+    sig_df_up <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC > 0.26303) # >1.2x
+    sig_accessibility_up <- rownames(sig_df_up)
+    
+    # Gene list of genes going UP
+    sig_df_down <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC < -0.32192) # <0.8x
+    sig_accessibility_down <- rownames(sig_df_down)
+    
+    # All genes
+    all_genes <- rownames(datfile)
+    
+    # All accessibility
+    sig_accessibility <- rownames(datfile)
+    all.accessibility <- ClosestFeature(hm.integrated.dfree, sig_accessibility)
+    all_accessible_genes <- all.accessibility$gene_name
+    
+    # Run GO enrichment analysis genes up
+    genes.up <- ClosestFeature(hm.integrated.dfree, sig_accessibility_up)
+    
+    # Run GO enrichment analysis genes down
+    genes.down <- ClosestFeature(hm.integrated.dfree, sig_accessibility_down)
+    
+    # Save files to a df
+    data_up <- data.frame(genes.up)
+    data_down <- data.frame(genes.down)
+    
+    # Pull gene names from DF
+    genes.names.up <- data_up$gene_name
+    genes.names.down <- data_down$gene_name
+    
+    # Run GO enrichment analysis genes up
+    GO.up <- enrichGO(gene = genes.names.up, 
+                      universe = all_accessible_genes, 
+                      keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                      OrgDb = org.Hs.eg.db, 
+                      ont = c("ALL"), 
+                      pAdjustMethod = "BH", 
+                      pvalueCutoff = 1, 
+                      qvalueCutoff = 1, #if not set default is at 0.05
+                      readable = TRUE)
+    
+    # Run GO enrichment analysis genes down
+    GO.down <- enrichGO(gene = all_accessible_genes, 
+                        universe = all_genes, 
+                        keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                        OrgDb = org.Hs.eg.db, 
+                        ont = c("ALL"), 
+                        pAdjustMethod = "BH", 
+                        pvalueCutoff = 1, 
+                        qvalueCutoff = 1, #if not set default is at 0.05
+                        readable = TRUE)
+    
+    go_data_up <- data.frame(GO.up)
+    go_data_down <- data.frame(GO.down)
+    
+    # Save outputs
+    write.csv(go_data_up, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/snATACseq/updated_analysis/ORA/UP/%s.csv", sample_name), row.names = FALSE)
+    write.csv(go_data_down, file = sprintf("C:/Users/mqadir/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/snATACseq/updated_analysis/ORA/DOWN/%s.csv", sample_name), row.names = FALSE)
   }
   
   ####
