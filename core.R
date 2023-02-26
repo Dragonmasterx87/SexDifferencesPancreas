@@ -41,6 +41,8 @@ BiocManager::install("clusterProfiler")
 BiocManager::install("DOSE")
 BiocManager::install("dittoSeq")
 BiocManager::install("escape")
+BiocManager::install("ComplexHeatmap")
+BiocManager::install(c("DropletUtils", "Nebulosa"))
 
 # install Seurat from Github (automatically updates sctransform)
 setRepositories(ind=1:3) # needed to automatically install Bioconductor dependencies
@@ -50,9 +52,16 @@ BiocManager::install(c('BSgenome.Hsapiens.UCSC.hg38', 'EnsDb.Hsapiens.v86'))
 devtools::install_github("satijalab/seurat", ref = "develop")
 devtools::install_github("satijalab/sctransform", ref = "develop", force = TRUE)
 devtools::install_github('cole-trapnell-lab/monocle3')
+devtools::install_github("yanlinlin82/ggvenn")
+devtools::install_github("gaospecial/ggVennDiagram")
 remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
 install.packages("harmony")
 BiocManager::install("EnrichmentBrowser")
+install.packages('SoupX')
+install.packages('tidyverse')
+install.packages("viridis")
+install.packages("circlize")
+install.packages("scCustomize")
 
 
 # Run the following code once you have Seurat installed
@@ -60,7 +69,7 @@ suppressWarnings(
   {
     library(leiden)
     library(stringr)
-    library(hdf5r)
+    #library(hdf5r)
     library(SoupX)
     library(Rcpp)
     library(ggplot2)
@@ -94,6 +103,15 @@ suppressWarnings(
     library(dittoSeq)
     library(escape)
     library(EnrichmentBrowser)
+    library(viridisLite)
+    library(viridis)
+    library(ComplexHeatmap)
+    library(circlize)
+    library(scCustomize)
+    library(Nebulosa)
+    library(DropletUtils)
+    library(ggvenn)
+    library(ggVennDiagram)
     }
 )
 
@@ -635,7 +653,7 @@ pancreas.combined.h.s <- RunHarmony(object = pancreas.combined.h.s,
                                     plot_convergence = TRUE)
 
 # Calculate UMAP, and find neighbours
-pancreas.combined.h.s <- RunUMAP(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30)
+pancreas.combined.h.s <- RunUMAP(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30, return.model = TRUE)
 pancreas.combined.h.s <- FindNeighbors(object = pancreas.combined.h.s, assay = "SCT", reduction = "harmony", dims = 1:30)
 
 # Find clusters
@@ -786,7 +804,8 @@ DimPlot(pancreas.combined.h.s,
                                                                                                                  
 DimPlot(pancreas.combined.h.s, 
         #split.by = "ancestry_sex", 
-        group.by = "celltype", 
+        group.by = "celltype",
+        reduction = "umap",
         label = FALSE, 
         ncol = 1,  
         cols = c("darkturquoise",
@@ -898,8 +917,9 @@ pancreas.combined.h.s <- PrepSCTFindMarkers(pancreas.combined.h.s)
 
 # Save/Load files
 # saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
-pancreas.combined.h.s <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+pancreas.combined.h.s <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\pancreas.combined.h.s.rds)")
 
+# Differential Gene expression analysis
 {
   # 1.Beta-cells ####
   # WHITE MALE VS. BLACK MALE
@@ -1854,6 +1874,7 @@ table(pancreas.combined.h.s@meta.data$celltype.sex)
 Idents(pancreas.combined.h.s) <- "celltype.sex"
 DefaultAssay(object = pancreas.combined.h.s) <- "SCT"
 
+# Differential Gene expression analysis MvF
 {
   # 1.Beta-cells (INS Hi) ####
   # MALE VS. FEMALE
@@ -2157,8 +2178,13 @@ for (x in wd) {
   }
 
 # Save/Load files
-# saveRDS(pancreas.combined.h.s, file = r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
-pancreas.combined.h.s <- readRDS(r"(C:\Users\mqadir\Documents\R_files\pancreas.combined.h.s.rds)")
+# saveRDS(pancreas.combined.h.s, file = r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\pancreas.combined.h.s.rds)")
+pancreas.combined.h.s <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\pancreas.combined.h.s.rds)")
+
+# Escape
+# Set correct seurat identity
+Idents(pancreas.combined.h.s) <- "celltype.sample"
+table(Idents(pancreas.combined.h.s))
 
 # Escape
 # molecular Signature database for msigdb
@@ -2167,25 +2193,200 @@ gene.sets <- getGenesets(org = "hsa",
                          gene.id.type = "SYMBOL", #idTypes(org = "hsa")
                          cat = c("C5"), # C5 is gene ontology
                          #lib = c("GO_Biological_Process_2021", "GO_Cellular_Component_2021", "GO_Molecular_Function_2021"), 
-                         cache = TRUE, 
+                         cache = FALSE, 
                          return.type = "list")
 
 # Set correct seurat identity
 Idents(pancreas.combined.h.s) <- "celltype.sample"
+DefaultAssay(pancreas.combined.h.s) <- "SCT"
 table(Idents(pancreas.combined.h.s))
 
+# Extract SCT normalised data
+expr.matrix <- pancreas.combined.h.s@assays[["SCT"]]@counts
+
 # Enrichment
-ES <- enrichIt(obj = pancreas.combined.h.s, 
+ES <- enrichIt(obj = expr.matrix, #normalised data
                gene.sets = gene.sets, 
                groups = 1000, 
-               cores = 2, 
-               min.size = NULL)
+               cores = 4,
+               ssGSEA.norm = T,
+               min.size = 5)
+
+# Save/Load files
+# saveRDS(ES, file = r"(C:\Users\QadirMirzaMuhammadFa\Documents\R_files\Sex_based_study\RDS files\ES.rds)")
+ES <- readRDS(r"(F:\ES.rds)")
+
+# Contains duplicates
+any(duplicated(names(ES)))
+head(ES)
+
+# add Escape ssGSEA metadata to seurat object
+pancreas.combined.h.s.es <- AddMetaData(object = pancreas.combined.h.s, 
+                                        metadata = ES)
+#head(ES)
+
+# Define Color Pallette
+customcolor_vector <- colorRampPalette(rev(c("#005D76", "#FFFFFF", "#AF0000")))
+colorblind_vector <- colorRampPalette(rev(c("#0D0887FF", "#47039FFF", "#7301A8FF", 
+                                                       "#9C179EFF", "#BD3786FF", "#D8576BFF",
+                                                       "#ED7953FF","#FA9E3BFF", "#FDC926FF", 
+                                                       "#F0F921FF")))
+# average metadata for easy vieweing
+seurat.meta <- pancreas.combined.h.s.es@meta.data
+summary <- seurat.meta %>%
+  group_by(celltype) %>%
+  summarise(across(colnames(ES), median))
+
+#You can make this ggplot friendly with
+summary.melt <- reshape2::melt(summary)
+
+# In order to select names with a certain "string" name
+datato.map <- colnames(ES[,grepl("OXIDATIVE_STRESS", colnames(ES))])
+datato.map <- colnames(ES[,grepl("UNFOLDED", colnames(ES))])
+datato.map <- colnames(ES[,grepl("INSULIN", colnames(ES))])
+datato.map <- colnames(ES[,grepl("TRANSLATION", colnames(ES))])
+datato.map
+                                                       
+#Using Dittoseq to show heatmap of GO under construction for average                                         
+# dittoHeatmap(pancreas.combined.h.s.es, 
+#              genes = NULL, 
+#              metas = datato.map, # Need to have atleast 2 otherwise throws a error
+#              heatmap.colors = rev(customcolor_vector(50)),
+#              annot.by = c("ancestry", "celltype", "sex"),
+#              order.by = c("celltype", "ancestry", "sex"),
+#              cluster_cols = FALSE,
+#              fontsize = 8)
+
+Idents(pancreas.combined.h.s.es) <- "celltype"
+beta <- subset(pancreas.combined.h.s.es, idents = c("Beta"))
+
+#Using dittoplot
+dittoDotPlot(beta, 
+             vars = datato.map, 
+             group.by = c("celltype.sample"),
+             #min = -5,
+             #max = +5,
+             min.color = "#FFFFFF",
+             max.color = "#AF0000",) + coord_flip()
+
+dittoDotPlot(beta, 
+             vars = datato.map, 
+             group.by = c("ancestry_sex"),
+             #min = -5,
+             #max = +5,
+             min.color = "#FFFFFF",
+             max.color = "#AF0000",) + coord_flip()
+
+#Ridge
+ES2 <- data.frame(pancreas.combined.h.s.es[[]], Idents(pancreas.combined.h.s.es))
+colnames(ES2)[ncol(ES2)] <- "cluster"
+ridgeEnrichment(ES2, 
+                gene.set = "M10906_GOBP_INSULIN_SECRETION", 
+                group = "celltype", 
+                facet = "ancestry_sex", 
+                add.rug = TRUE,
+                colors = c("darkturquoise", "lightgreen", "springgreen4", "lightgoldenrod3", "green3", "grey56", "grey80", "deeppink", "violet",
+                         "purple", "coral2", "magenta", "red4", "black", "red"))
+
+#Using Dittoseq to show heatmap of genes
+dittoHeatmap(pancreas.combined.h.s.es, 
+             genes = c("INS", "GCG"),
+             assay = "SCT",
+             annot.by = c("ancestry_sex", "celltype"),
+             cluster_cols = TRUE,
+             fontsize = 7)
 
 
+# Create a ES2 object
+ES2 <- data.frame(pancreas.combined.h.s.es[[]], Idents(pancreas.combined.h.s.es))
+is.data.frame(ES) # check for dataframes
+sum(is.na(ES$M10009_GOBP_MYELOID_CELL_DIFFERENTIATION)) #check for NA values
+any(duplicated(names(ES2))) # Check for duplicates
 
+# Rideplot
+ridgeEnrichment(ES2, gene.set = "M11907_GOBP_HISTONE_DEUBIQUITINATION", group = "celltype", facet = "ancestry_sex", add.rug = TRUE) +
+  scale_fill_manual(values = colorblind_vector(20))
 
+# Significance testing
+significant_pathways <- getSignificance(ES2, group = "celltype.sample", fit = "ANOVA") # Extremely computationally intensive to run on all samples subset celltypes
 
+# make subsets of all cell types to reduce computational complexity
+Idents(pancreas.combined.h.s.es) <- "celltype"
+schwann <- subset(pancreas.combined.h.s.es, idents= c("Schwann"))
+mast <- subset(pancreas.combined.h.s.es, idents= c("Mast"))
+lymphocyte <- subset(pancreas.combined.h.s.es, idents= c("Lymphocyte"))
+macrophage <- subset(pancreas.combined.h.s.es, idents= c("Macrophage"))
+endothelial <- subset(pancreas.combined.h.s.es, idents= c("Endothelial"))
+endmt <- subset(pancreas.combined.h.s.es, idents= c("EndMT"))
+qstellate <- subset(pancreas.combined.h.s.es, idents= c("Quiescent Stellate"))
+astellate <- subset(pancreas.combined.h.s.es, idents= c("Activated Stellate"))
+acinar <- subset(pancreas.combined.h.s.es, idents= c("Acinar"))
+ductal <- subset(pancreas.combined.h.s.es, idents= c("Ductal"))
+epsilon <- subset(pancreas.combined.h.s.es, idents= c("Epsilon"))
+gamma <- subset(pancreas.combined.h.s.es, idents= c("Gamma"))
+delta <- subset(pancreas.combined.h.s.es, idents= c("Delta"))
+alpha <- subset(pancreas.combined.h.s.es, idents= c("Alpha"))
+beta <- subset(pancreas.combined.h.s.es, idents= c("Beta"))
 
+#Free RAM
+gc()
+gc()
+
+# Create independant ES2 objects
+schwann_ES2 <- data.frame(schwann[[]], Idents(schwann))
+mast_ES2 <- data.frame(mast[[]], Idents(mast))
+lymphocyte_ES2 <- data.frame(lymphocyte[[]], Idents(lymphocyte))
+macrophage_ES2 <- data.frame(macrophage[[]], Idents(macrophage))
+endothelial_ES2 <- data.frame(endothelial[[]], Idents(endothelial))
+endmt_ES2 <- data.frame(endmt[[]], Idents(endmt))
+qstellate_ES2 <- data.frame(qstellate[[]], Idents(qstellate))
+astellate_ES2 <- data.frame(astellate[[]], Idents(astellate))
+acinar_ES2 <- data.frame(acinar[[]], Idents(acinar))
+ductal_ES2 <- data.frame(ductal[[]], Idents(ductal))
+epsilon_ES2 <- data.frame(epsilon[[]], Idents(epsilon))
+gamma_ES2 <- data.frame(gamma[[]], Idents(gamma))
+delta_ES2 <- data.frame(delta[[]], Idents(delta))
+alpha_ES2 <- data.frame(alpha[[]], Idents(alpha))
+beta_ES2 <- data.frame(beta[[]], Idents(beta))
+
+# Significance testing
+sigpaths_schwann <- getSignificance(schwann_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+#sigpaths_schwann <- getSignificance(schwann_ES2, group = "ancestry_sex", fit = "ANOVA")
+sigpaths_mast <- getSignificance(mast_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_lymphocyte <- getSignificance(lymphocyte_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_macrophage <- getSignificance(macrophage_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_endothelial <- getSignificance(endothelial_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_endmt <- getSignificance(endmt_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_qstellate <- getSignificance(qstellate_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_astellate <- getSignificance(astellate_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_acinar <- getSignificance(acinar_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_ductal <- getSignificance(ductal_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_epsilon <- getSignificance(epsilon_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_gamma <- getSignificance(gamma_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_delta <- getSignificance(delta_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_alpha <- getSignificance(alpha_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+sigpaths_beta <- getSignificance(beta_ES2, group = "ancestry_sex", gene.sets = names(gene.sets), fit = "ANOVA")
+
+# Save files
+{
+  write.csv(sigpaths_schwann, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_schwann.csv)")
+  write.csv(sigpaths_mast, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_mast.csv)")
+  write.csv(sigpaths_lymphocyte, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_lymphocyte.csv)")
+  write.csv(sigpaths_macrophage, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_macrophage.csv)")
+  write.csv(sigpaths_endothelial, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_endothelial.csv)")
+  write.csv(sigpaths_endmt, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_endmt.csv)")
+  write.csv(sigpaths_qstellate, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_qstellate.csv)")
+  write.csv(sigpaths_astellate, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_astellate.csv)")
+  write.csv(sigpaths_acinar, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_acinar.csv)")
+  write.csv(sigpaths_ductal, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_ductal.csv)")
+  write.csv(sigpaths_epsilon, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_epsilon.csv)")
+  write.csv(sigpaths_gamma, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_gamma.csv)")
+  write.csv(sigpaths_delta, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_delta.csv)")
+  write.csv(sigpaths_alpha, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_alpha.csv)")
+  write.csv(sigpaths_beta, r"(C:\Users\QadirMirzaMuhammadFa\Box\!FAHD\4. Sex and Race Based Study Project\Data\scRNAseq\updated analysis\ORA\ssGSEA_ESCAPE output\sigpaths_beta.csv)")
+}
+
+# DATA PLOTTING
 # Discovery based Plotting
 DefaultAssay(pancreas.combined.h.s) <- "SCT"
 FeaturePlot(object = pancreas.combined.h.s,
@@ -2323,6 +2524,26 @@ DimPlot(pancreas.combined.h.s,
                                 #y.max = 3,
 )
 
+# Cell population
+cluster_order <- match(levels(pancreas.combined.h.s@meta.data[["celltype"]]), metaLevels("celltype", pancreas.combined.h.s))
+dittoBarPlot(pancreas.combined.h.s, var = "celltype", group.by = "sample", var.labels.reorder = cluster_order) +
+  scale_fill_manual(values = c("darkturquoise",
+                               "lightgreen",
+                               "springgreen4",
+                               "lightgoldenrod3",
+                               "green3",
+                               "grey56",
+                               "grey80",
+                               "deeppink",
+                               "violet",
+                               "purple",
+                               "coral2",
+                               "magenta",
+                               "red4",
+                               "black",
+                               "red"))
+table(pancreas.combined.h.s$celltype)     
+
 # Cluster specific markers
 DefaultAssay(object = pancreas.combined.h.s) <- "SCT"
 Idents(pancreas.combined.h.s) <- "celltype"
@@ -2359,6 +2580,157 @@ DotPlot(pancreas.combined.h.s,
   scale_colour_gradient2(low =c("dodgerblue"), mid = c("white"), high =c("red3")) +
   guides(color = guide_colorbar(title = 'Average Expression'))
 
+# Sccustomize
+Clustered_DotPlot(
+  pancreas.combined.h.s,
+  features = markers.to.plot,
+  colors_use_exp = c("dodgerblue", "white", "red3"),
+  exp_color_min = -2,
+  exp_color_middle = 0,
+  exp_color_max = 2,
+  print_exp_quantiles = FALSE,
+  colors_use_idents = c("darkturquoise",
+                                       "lightgreen",
+                                       "springgreen4",
+                                       "lightgoldenrod3",
+                                       "green3",
+                                       "grey56",
+                                       "grey80",
+                                       "deeppink",
+                                       "violet",
+                                       "purple",
+                                       "coral2",
+                                       "magenta",
+                                       "red4",
+                                       "black",
+                                       "red"),
+  x_lab_rotate = TRUE,
+  flip = FALSE,
+  k = 1,
+  feature_km_repeats = 1000,
+  ident_km_repeats = 1000,
+  row_label_size = 8,
+  raster = FALSE,
+  plot_km_elbow = TRUE,
+  elbow_kmax = NULL,
+  assay = "SCT",
+  group.by = NULL,
+  idents = NULL,
+  show_parent_dend_line = FALSE,
+  ggplot_default_colors = FALSE,
+  color_seed = 123,
+  seed = 123)
+
+
+# Dotplots for grant
+# Subset only beta
+Idents(pancreas.combined.h.s) <- "celltype"
+markers.to.plot <- c("CDH19", "TPSB2", "CCL5", "ACP5", "PLVAP", "RGS5", "INHBA", "REG1A", "KRT19", "GHRL", "PPY", "SST", "GCG", "INS")
+
+# Dotplot
+DotPlot(pancreas.combined.h.s,
+        dot.scale = 10,
+        col.min = -0.2, #minimum level
+        col.max = 0.2,  #maximum level
+        features = rev(markers.to.plot)) + 
+  geom_point(aes(size=pct.exp), shape = 21, stroke=0.5) +
+  theme_light() +
+  #facet_wrap(~??? what metadata should be here??)
+  #coord_flip() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(plot.title = element_text(size = 10, face = "bold"),
+        legend.title=element_text(size=12, face = "bold"), 
+        legend.text=element_text(size=12, face = "bold")) +
+  scale_colour_gradient2(low =c("dodgerblue"), mid = c("white"), high =c("red3")) +
+  guides(color = guide_colorbar(title = 'Average Expression'))
+
+
+VlnPlot(plot.dat, features = markers.to.plot, slot = "counts", #"data" 
+        split.by = 'treatment', ncol = 1)
+genes <- c("CA1")
+
+avgexp <- AverageExpression(plot.dat, assay = "RNA", return.seurat = T)
+avgexp$treatment <- Idents(avgexp)
+
+avgexp.hi <- AverageExpression(plot.dat.hi, assay = "RNA", return.seurat = T)
+avgexp.hi$treatment <- Idents(avgexp.hi)
+
+avgexp.low <- AverageExpression(plot.dat.low, assay = "RNA", return.seurat = T)
+avgexp.low$treatment <- Idents(avgexp.low)
+
+dittoHeatmap(avgexp.hi, 
+             genes, anot.by = c('treatment'), 
+             scale = "none",
+             scaled.to.max = TRUE, 
+             annot.by = c("treatment"),
+             #heatmap.colors.max.scaled = viridis(100),
+             main = "Beta INS-hi",
+             border_color = "black"
+)
+
+dittoHeatmap(avgexp.low, 
+             genes, anot.by = c('treatment'), 
+             scale = "none",
+             scaled.to.max = TRUE, 
+             annot.by = c("treatment"),
+             #heatmap.colors.max.scaled = viridis(100),
+             main = "Beta INS-low",
+             border_color = "black"
+)
+
+dittoHeatmap(avgexp, 
+             genes, anot.by = c('treatment'), 
+             scale = "none",
+             scaled.to.max = TRUE, 
+             annot.by = c("treatment"),
+             #heatmap.colors.max.scaled = viridis(100),
+             main = "Beta INS",
+             border_color = "black"
+)
+
+print(d1 + d2)
+DoHeatmap(avgexp, 
+          assay = "RNA",
+          features = c("CA1", "CA2", "CA3", "CA4", "CA5A", "CA6", "CA7", "CA9", "CA12", "CA13", "CA14"))
+
+#Heatmap visualization - DittoHeatmap
+
+
+
+
+
+
+genes <- c("CDH19", "TPSB2", "CCL5", "ACP5", "PLVAP", "RGS5", "INHBA", "REG1A", "KRT19", "GHRL", "PPY", "SST", "GCG", "INS")
+
+dittoHeatmap(pancreas.combined.h.s, genes = getGenes(pancreas.combined.h.s, "SCT"),
+             annot.by = c("celltype", "ancestry_sex"),
+             scaled.to.max = TRUE,
+             show_colnames = FALSE,
+             show_rownames = TRUE,
+             annotation_colors = list(celltype = c("darkturquoise",
+                                                   "lightgreen",
+                                                   "springgreen4",
+                                                   "lightgoldenrod3",
+                                                   "green3",
+                                                   "grey56",
+                                                   "grey80",
+                                                   "deeppink",
+                                                   "violet",
+                                                   "purple",
+                                                   "coral2",
+                                                   "magenta",
+                                                   "red4",
+                                                   "black",
+                                                   "red"),
+                                      ancestry = c("darkturquoise",
+                                                   "lightgreen",
+                                                   "black",
+                                                   "red"),
+                                      sex = c("darkturquoise",
+                                              "red")
+                                              )
+             )
 
 
 ###################
