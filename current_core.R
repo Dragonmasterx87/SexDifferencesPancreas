@@ -249,14 +249,15 @@ pancreas.list.use <- lapply(X = pancreas.list.use,
                                                return.only.var.genes = FALSE, 
                                                vst.flavor = "v2")
                             })
-})
+
 
 #Save point
-#saveRDS(pancreas.list.use, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
+saveRDS(pancreas.list.use, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
+})
 
 system.time({
-  #user    system elapsed 
-  #-----   ------ ------- (~50min)
+  #user system elapsed 
+  #4129 275.1  4406 (~73min)
 {
   HP2022801 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2022801.rds)")
   SAMN15877725 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\SAMN15877725.rds)")
@@ -274,7 +275,6 @@ system.time({
   HP2132801 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2132801.rds)")
   HP2202101 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2202101.rds)")
 }
-
 
 
 # Adjust and add metadata
@@ -430,9 +430,11 @@ merged_data <- merge(pancreas_combined[[sampleset[[1]]]],
                      merge.data = TRUE)
 
 #Save point
-#saveRDS(merged_data, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
-pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+saveRDS(merged_data, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
 })
+
+#Load data
+pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
 
 # Inspect data
 Idents(pancreas_rna) <- "Tissue Source"
