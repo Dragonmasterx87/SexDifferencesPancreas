@@ -1,6 +1,9 @@
 # NAalysis of Ruth's data
 # Hpap dataset
-hpap <- readRDS(file=r"(C:\Users\mqadir\Downloads\hpap_islet_scRNAseq.rds)")
+system.time({
+  #user    system elapsed 
+  #2720.75 262.65 2995.66 (~50min)
+hpap <- readRDS(file=r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\Raw_hpap_file\hpap_islet_scRNAseq.rds)")
 table(hpap@meta.data[["Library"]])
 
 Idents(hpap) <- "Library"
@@ -72,74 +75,75 @@ hpap$ancestry <- plyr::mapvalues(
            "HPAP-108",
            "HPAP-109"),
   to = c("white", #"HPAP-019",
-         "white", #"HPAP-020",
-         "white", #"HPAP-021",
-         "white", #"HPAP-022",
-         "white", #"HPAP-023",
-         "white", #"HPAP-024",
-         "white", #"HPAP-026",
-         "white", #"HPAP-028",
-         "white", #"HPAP-029",
-         "white", #"HPAP-032",
-         "white", #"HPAP-034",
-         "white", #"HPAP-035",
-         "white", #"HPAP-036",
-         "white", #"HPAP-037",
-         "white", #"HPAP-038",
-         "white", #"HPAP-039",
-         "white", #"HPAP-040",
-         "white", #"HPAP-042",
-         "hispanic", #"HPAP-043",
-         "white", #"HPAP-044",
-         "white", #"HPAP-045",
-         "white", #"HPAP-047",
-         "white",  #"HPAP-049",
-         "hispanic", #"HPAP-050",
-         "black", #"HPAP-051",
-         "black", #"HPAP-052",
-         "white", #"HPAP-053",
-         "white", #"HPAP-054",
-         "hispanic", #"HPAP-055",
-         "white", #"HPAP-056",
-         "white", #"HPAP-057",
-         "black", #"HPAP-058",
-         "white", #"HPAP-059",
-         "black", #"HPAP-061",
-         "white", #"HPAP-063",
-         "black", #"HPAP-064",
-         "white", #"HPAP-065",
-         "black", #"HPAP-070",
-         "white", #"HPAP-071",
-         "hispanic", #"HPAP-072",
-         "white", #"HPAP-074",
-         "white", #"HPAP-075",
-         "white", #"HPAP-077",
-         "hispanic", #"HPAP-079",
-         "hispanic", #"HPAP-080",
-         "white", #"HPAP-081",
-         "white", #"HPAP-082",
-         "black", #"HPAP-083",
-         "white", #"HPAP-084",
-         "white", #"HPAP-085",
-         "white", #"HPAP-087",
-         "white", #"HPAP-088",
-         "white", #"HPAP-090",
-         "hispanic", #"HPAP-091",
-         "hispanic", #"HPAP-092",
-         "hispanic",  #"HPAP-099",
-         "white", #"HPAP-100",
-         "hispanic", #"HPAP-101",
-         "white", #"HPAP-103",
-         "hispanic", #"HPAP-104",
-         "hispanic", #"HPAP-105",
-         "white", #"HPAP-106",
-         "white", #"HPAP-107",
-         "black", #"HPAP-108",
-         "hispanic" #"HPAP-109"
+                "white", #"HPAP-020",
+                "white", #"HPAP-021",
+                "white", #"HPAP-022",
+                "white", #"HPAP-023",
+                "white", #"HPAP-024",
+                "white", #"HPAP-026",
+                "white", #"HPAP-028",
+                "white", #"HPAP-029",
+                "white", #"HPAP-032",
+                "white", #"HPAP-034",
+                "white", #"HPAP-035",
+                "white", #"HPAP-036",
+                "white", #"HPAP-037",
+                "white", #"HPAP-038",
+                "white", #"HPAP-039",
+                "white", #"HPAP-040",
+                "white", #"HPAP-042",
+                "hispanic", #"HPAP-043",
+                "white", #"HPAP-044",
+                "white", #"HPAP-045",
+                "white", #"HPAP-047",
+                "white",  #"HPAP-049",
+                "hispanic", #"HPAP-050",
+                "black", #"HPAP-051",
+                "black", #"HPAP-052",
+                "white", #"HPAP-053",
+                "white", #"HPAP-054",
+                "hispanic", #"HPAP-055",
+                "white", #"HPAP-056",
+                "white", #"HPAP-057",
+                "black", #"HPAP-058",
+                "white", #"HPAP-059",
+                "black", #"HPAP-061",
+                "white", #"HPAP-063",
+                "black", #"HPAP-064",
+                "white", #"HPAP-065",
+                "black", #"HPAP-070",
+                "white", #"HPAP-071",
+                "hispanic", #"HPAP-072",
+                "white", #"HPAP-074",
+                "white", #"HPAP-075",
+                "white", #"HPAP-077",
+                "hispanic", #"HPAP-079",
+                "hispanic", #"HPAP-080",
+                "white", #"HPAP-081",
+                "white", #"HPAP-082",
+                "black", #"HPAP-083",
+                "white", #"HPAP-084",
+                "white", #"HPAP-085",
+                "white", #"HPAP-087",
+                "white", #"HPAP-088",
+                "white", #"HPAP-090",
+                "hispanic", #"HPAP-091",
+                "hispanic", #"HPAP-092",
+                "hispanic",  #"HPAP-099",
+                "white", #"HPAP-100",
+                "hispanic", #"HPAP-101",
+                "white", #"HPAP-103",
+                "hispanic", #"HPAP-104",
+                "hispanic", #"HPAP-105",
+                "white", #"HPAP-106",
+                "white", #"HPAP-107",
+                "black", #"HPAP-108",
+                "hispanic" #"HPAP-109"
   )
 )
 
 table(hpap@meta.data[["Library"]])
+table(hpap@meta.data[["Sex"]])
 table(hpap@meta.data[["ancestry"]])
 
 # Subsetting data
@@ -225,73 +229,74 @@ pancreas.list <- list("HPAP_019" = HPAP_019, "HPAP_020" = HPAP_020, "HPAP_021" =
                       "HPAP_087" = HPAP_087, "HPAP_088" = HPAP_088, "HPAP_090" = HPAP_090, "HPAP_091" = HPAP_091, "HPAP_092" = HPAP_092,
                       "HPAP_099" = HPAP_099, "HPAP_100" = HPAP_100, "HPAP_101" = HPAP_101, "HPAP_103" = HPAP_103, "HPAP_104" = HPAP_104,
                       "HPAP_105" = HPAP_105, "HPAP_106" = HPAP_106, "HPAP_107" = HPAP_107, "HPAP_108" = HPAP_108, "HPAP_109" = HPAP_109
-                      )
-
-pancreas.list <- lapply(X = pancreas.list, 
-                        FUN = function(x){
-                          x[['percent.mt']] <- PercentageFeatureSet(x, 
-                                                                    pattern = '^MT-')
-                          x <- SCTransform(x,
-                                           vars.to.regress = "percent.mt", 
-                                           verbose = TRUE, 
-                                           return.only.var.genes = FALSE, 
-                                           vst.flavor = "v2")
-                          })
-
-# Save file because it takes ages to run
-# saveRDS(pancreas.list, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_list.rds)")
-# pancreas.list <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_list.rds)")
+)
 
 # Pulling data for analysis
-pancreas.list.use <- pancreas.list[c("HPAP_019", "HPAP-022", "HPAP_024", "HPAP_026", "HPAP_029", "HPAP_035", "HPAP_036", "HPAP_037",
-                                     "HPAP_040", "HPAP_043", "HPAP_044", "HPAP_045", "HPAP_049", "HPAP_050", "HPAP_051", "HPAP_052",
-                                     "HPAP_053", "HPAP_054", "HPAP_056", "HPAP_057", "HPAP_058", "HPAP_059", "HPAP_061", "HPAP_063",
-                                     "HPAP_065", "HPAP_070", "HPAP_074", "HPAP_075", "HPAP_077", "HPAP_079", "HPAP_080", "HPAP_081",
-                                     "HPAP_082", "HPAP_083", "HPAP_085", "HPAP_088", "HPAP_090", "HPAP_091", "HPAP_099", "HPAP_100", 
-                                     "HPAP_101", "HPAP_103", "HPAP_105", "HPAP_106", "HPAP_108", "HPAP_109")
-                                   ]
+pancreas.list.use <- pancreas.list[c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP_040", "HPAP_044", "HPAP_051", 
+                                     "HPAP_052", "HPAP_053", "HPAP_054", "HPAP_056", "HPAP_057", "HPAP_058", "HPAP_059", "HPAP_061", 
+                                     "HPAP_063", "HPAP_065", "HPAP_070", "HPAP_074", "HPAP_075", "HPAP_077", "HPAP_079", "HPAP_080", 
+                                     "HPAP_081", "HPAP_082", "HPAP_083", "HPAP_085", "HPAP_088", "HPAP_090", "HPAP_091", "HPAP_099",
+                                     "HPAP_100", "HPAP_101", "HPAP_103", "HPAP_105", "HPAP_106", "HPAP_108", "HPAP_109")
+]
+
+pancreas.list.use <- lapply(X = pancreas.list.use, 
+                            FUN = function(x){
+                              x[['percent.mt']] <- PercentageFeatureSet(x, 
+                                                                        pattern = '^MT-')
+                              x <- SCTransform(x,
+                                               vars.to.regress = "percent.mt", 
+                                               verbose = TRUE, 
+                                               return.only.var.genes = FALSE, 
+                                               vst.flavor = "v2")
+                            })
+})
 
 #Save point
-#saveRDS(pancreas.list.use, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_list_subset.rds)")
+#saveRDS(pancreas.list.use, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
 
+system.time({
+  #user    system elapsed 
+  #-----   ------ ------- (~50min)
 {
-  HP2022801 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2022801.rds)")
-  SAMN15877725 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\SAMN15877725.rds)")
-  HP2024001 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2024001.rds)")
-  HP2031401 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2031401.rds)")
-  HP2105501 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2105501.rds)")
-  HP2106201 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2106201.rds)")
-  HP2107001 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2107001.rds)")
-  HP2107901 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2107901.rds)")
-  HP2108601 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2108601.rds)")
-  HP2108901 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2108901.rds)")
-  HP2110001 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2110001.rds)")
-  HP2121601 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2121601.rds)")
-  HP2123201 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2123201.rds)")
-  HP2132801 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2132801.rds)")
-  HP2202101 <- readRDS(r"(D:\3.CodingScriptsandData\SexBasedstudy\RDS files\rna\CoreArch_CurrentR\HP Files after doubletfinder\HP2202101.rds)")
+  HP2022801 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2022801.rds)")
+  SAMN15877725 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\SAMN15877725.rds)")
+  HP2024001 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2024001.rds)")
+  HP2031401 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2031401.rds)")
+  HP2105501 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2105501.rds)")
+  HP2106201 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2106201.rds)")
+  HP2107001 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2107001.rds)")
+  HP2107901 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2107901.rds)")
+  HP2108601 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2108601.rds)")
+  HP2108901 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2108901.rds)")
+  HP2110001 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2110001.rds)")
+  HP2121601 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2121601.rds)")
+  HP2123201 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2123201.rds)")
+  HP2132801 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2132801.rds)")
+  HP2202101 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2202101.rds)")
 }
+
+
 
 # Adjust and add metadata
 # Sex specific Metadata addition
 {
-  HP2022801$sex <- "M"
-  SAMN15877725$sex <- "M"
-  HP2024001$sex <- "F"
-  HP2031401$sex <- "M"
-  HP2105501$sex <- "F"
-  HP2106201$sex <- "F"
-  HP2107001$sex <- "M"
-  HP2107901$sex <- "M"
-  HP2108601$sex <- "F"
-  HP2108901$sex <- "F"
-  HP2110001$sex <- "M"
-  HP2121601$sex <- "F"
-  HP2123201$sex <- "M"
-  HP2132801$sex <- "F"
-  HP2202101$sex <- "F"
-
-
+  HP2022801$Sex <- "M"
+  SAMN15877725$Sex <- "M"
+  HP2024001$Sex <- "F"
+  HP2031401$Sex <- "M"
+  HP2105501$Sex <- "F"
+  HP2106201$Sex <- "F"
+  HP2107001$Sex <- "M"
+  HP2107901$Sex <- "M"
+  HP2108601$Sex <- "F"
+  HP2108901$Sex <- "F"
+  HP2110001$Sex <- "M"
+  HP2121601$Sex <- "F"
+  HP2123201$Sex <- "M"
+  HP2132801$Sex <- "F"
+  HP2202101$Sex <- "F"
+  
+  
   HP2022801@meta.data[["Tissue Source"]] <- "Tulane"
   SAMN15877725@meta.data[["Tissue Source"]] <- "Tulane"
   HP2024001@meta.data[["Tissue Source"]] <- "Tulane"
@@ -307,8 +312,8 @@ pancreas.list.use <- pancreas.list[c("HPAP_019", "HPAP-022", "HPAP_024", "HPAP_0
   HP2123201@meta.data[["Tissue Source"]] <- "Tulane"
   HP2132801@meta.data[["Tissue Source"]] <- "Tulane"
   HP2202101@meta.data[["Tissue Source"]] <- "Tulane"
-
-
+  
+  
   HP2022801@meta.data[["Library"]] <- deparse(substitute(HP2022801))
   SAMN15877725@meta.data[["Library"]] <- deparse(substitute(SAMN15877725))
   HP2024001@meta.data[["Library"]] <- deparse(substitute(HP2024001))
@@ -324,8 +329,8 @@ pancreas.list.use <- pancreas.list[c("HPAP_019", "HPAP-022", "HPAP_024", "HPAP_0
   HP2123201@meta.data[["Library"]] <- deparse(substitute(HP2123201))
   HP2132801@meta.data[["Library"]] <- deparse(substitute(HP2132801))
   HP2202101@meta.data[["Library"]] <- deparse(substitute(HP2202101))
-
-
+  
+  
   HP2022801@meta.data[["sample"]] <- NULL
   SAMN15877725@meta.data[["sample"]] <- NULL
   HP2024001@meta.data[["sample"]] <- NULL
@@ -382,7 +387,7 @@ pancreas_qadir <- list("HP2022801" = HP2022801, "SAMN15877725" = SAMN15877725, "
                        "HP2024001" = HP2024001, "HP2105501" = HP2105501, "HP2108601" = HP2108601, "HP2108901" = HP2108901, 
                        "HP2031401" = HP2031401, "HP2110001" = HP2110001, "HP2123201" = HP2123201,
                        "HP2106201" = HP2106201, "HP2121601" = HP2121601, "HP2132801" = HP2132801, "HP2202101" = HP2202101
-                       )
+)
 
 # Subset out all single cells
 pancreas_qadir <- lapply(X = pancreas_qadir, 
@@ -394,43 +399,86 @@ pancreas_qadir <- lapply(X = pancreas_qadir,
                          })
 
 #Save point
-#saveRDS(pancreas_qadir, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
+saveRDS(pancreas_qadir, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
 
 
 # Load Processed data for analysis
-pancreas_subset <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_list_subset.rds)")
-pancreas_qadir <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
+#pancreas_subset <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
+#pancreas_qadir <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
 
 # Join datasets
 pancreas_combined <- c(pancreas_subset, pancreas_qadir)
 
+#Save point
+saveRDS(pancreas_combined, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
+
+# Load Processed data for analysis
+#pancreas_combined <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
+
 # merge data sets
-sampleset <- c("HPAP_019", "HPAP-022", "HPAP_024", "HPAP_026", "HPAP_029", "HPAP_035", "HPAP_036", "HPAP_037",
-               "HPAP_040", "HPAP_043", "HPAP_044", "HPAP_045", "HPAP_049", "HPAP_050", "HPAP_051", "HPAP_052",
-               "HPAP_053", "HPAP_054", "HPAP_056", "HPAP_057", "HPAP_058", "HPAP_059", "HPAP_061", "HPAP_063",
-               "HPAP_065", "HPAP_070", "HPAP_074", "HPAP_075", "HPAP_077", "HPAP_079", "HPAP_080", "HPAP_081",
-               "HPAP_082", "HPAP_083", "HPAP_085", "HPAP_088", "HPAP_090", "HPAP_091", "HPAP_099", "HPAP_100", 
-               "HPAP_101", "HPAP_103", "HPAP_105", "HPAP_106", "HPAP_108", "HPAP_109", "HP2022801", "SAMN15877725",
-               "HP2107001", "HP2107901", "HP2024001", "HP2105501", "HP2108601", "HP2108901", "HP2031401", "HP2110001",
-               "HP2123201", "HP2106201", "HP2121601", "HP2132801", "HP2202101")
+sampleset <- c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP_040", "HPAP_044", "HPAP_051", 
+               "HPAP_052", "HPAP_053", "HPAP_054", "HPAP_056", "HPAP_057", "HPAP_058", "HPAP_059", "HPAP_061", 
+               "HPAP_063", "HPAP_065", "HPAP_070", "HPAP_074", "HPAP_075", "HPAP_077", "HPAP_079", "HPAP_080", 
+               "HPAP_081", "HPAP_082", "HPAP_083", "HPAP_085", "HPAP_088", "HPAP_090", "HPAP_091", "HPAP_099",
+               "HPAP_100", "HPAP_101", "HPAP_103", "HPAP_105", "HPAP_106", "HPAP_108", "HPAP_109", "HP2022801", 
+               "SAMN15877725", "HP2107001", "HP2107901", "HP2024001", "HP2105501", "HP2108601", "HP2108901", 
+               "HP2031401", "HP2110001", "HP2123201", "HP2106201", "HP2121601", "HP2132801", "HP2202101")
 
 merged_data <- merge(pancreas_combined[[sampleset[[1]]]], 
                      y=pancreas_combined[sampleset[2:length(sampleset)]], 
                      project='pancreas', 
                      merge.data = TRUE)
 
+#Save point
+#saveRDS(merged_data, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+})
+
 # Inspect data
-merged_data
-Idents(merged_data) <- "Tissue Source"
-VlnPlot(object = pancreas.combined.h, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+Idents(pancreas_rna) <- "Tissue Source"
+VlnPlot(object = pancreas_rna, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, pt.size = 0)
+
+# Subset
+pancreas_rna <- subset(x = pancreas_rna, subset = nFeature_RNA > 500 & nFeature_RNA < 8000 & percent.mt < 15)
+
+#Save point
+#saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+
+# Inspect data
+pancreas_rna
+table(pancreas_rna@meta.data[["Chemistry"]])
+table(pancreas_rna@meta.data[["Sex"]])
+table(pancreas_rna@meta.data[["Library"]])
+table(pancreas_rna@meta.data[["Tissue Source"]])
+table(pancreas_rna@meta.data[["Diabetes Status"]])
+table(pancreas_rna@meta.data[["ancestry"]])
+table(pancreas_rna@meta.data[["doublets"]])
+table(pancreas_rna@meta.data[["Cell Type"]])
+
+Idents(pancreas_rna) <- "Diabetes Status"
+pancreas_rna <- subset(pancreas_rna, idents = c("ND", "T2D"))
 
 
+#Split data on basis of disease status and calculate integration features on object list
+DefaultAssay(pancreas_rna) <- "RNA"
+pancreas_rna <- FindVariableFeatures(pancreas_rna, selection.method = "vst", nfeatures = 2000, assay = "RNA")
 
+#Run Harmony batch correction with library, tissue source, and 10X kit chemistry as covariates
+pancreas_rna <- ScaleData(pancreas_rna, verbose = TRUE) %>% RunPCA(pc.genes = pancreas_rna@var.genes, npcs = 20, verbose = TRUE)
 
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+Idents(pancreas_rna) <- "ancestry"
+pancreas_rna$ancestry_sex <- paste(Idents(pancreas_rna), pancreas_rna$sex, sep = "_")
+table(pancreas_rna@meta.data[["ancestry_sex"]])
 
+pancreas_rna <- RunHarmony(pancreas_rna, c('Library','Tissue Source','sex'), assay.use='RNA', plot_convergence = TRUE)
 
+# Run UMAP
+pancreas_rna <- pancreas_rna %>% 
+  RunUMAP(reduction = "harmony", dims = 1:20)
 
-
+DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
 
 
 
