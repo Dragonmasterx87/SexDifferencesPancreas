@@ -424,17 +424,11 @@ sampleset <- c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP
                "SAMN15877725", "HP2107001", "HP2107901", "HP2024001", "HP2105501", "HP2108601", "HP2108901", 
                "HP2031401", "HP2110001", "HP2123201", "HP2106201", "HP2121601", "HP2132801", "HP2202101")
 
-merged_data <- merge(pancreas_combined[[sampleset[[1]]]], 
+pancreas_rna <- merge(pancreas_combined[[sampleset[[1]]]], 
                      y=pancreas_combined[sampleset[2:length(sampleset)]], 
                      project='pancreas', 
                      merge.data = TRUE)
 
-#Save point
-saveRDS(merged_data, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
-})
-
-#Load data
-pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
 
 # Inspect data
 Idents(pancreas_rna) <- "Tissue Source"
@@ -444,8 +438,14 @@ VlnPlot(object = pancreas_rna, features = c("nFeature_RNA", "nCount_RNA", "perce
 pancreas_rna <- subset(x = pancreas_rna, subset = nFeature_RNA > 500 & nFeature_RNA < 8000 & percent.mt < 15)
 
 #Save point
-#saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
-pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+})
+
+
+# Load data
+#pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+#pancreas_combined <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
+
 
 # Inspect data
 pancreas_rna
@@ -458,31 +458,62 @@ table(pancreas_rna@meta.data[["ancestry"]])
 table(pancreas_rna@meta.data[["doublets"]])
 table(pancreas_rna@meta.data[["Cell Type"]])
 
-Idents(pancreas_rna) <- "Diabetes Status"
-pancreas_rna <- subset(pancreas_rna, idents = c("ND", "T2D"))
-
-
 #Split data on basis of disease status and calculate integration features on object list
-DefaultAssay(pancreas_rna) <- "RNA"
-pancreas_rna <- FindVariableFeatures(pancreas_rna, selection.method = "vst", nfeatures = 2000, assay = "RNA")
+DefaultAssay(pancreas_rna) <- "SCT"
+integrationfeatures <- SelectIntegrationFeatures(pancreas_combined, nfeatures = 3000, verbose = TRUE)
+
+# replacing variable features with integrationfeatures
+VariableFeatures(pancreas_rna, assay = "SCT") <- integrationfeatures
+VariableFeatures(pancreas_rna, assay = "RNA") <- integrationfeatures
+
+# DefaultAssay(pancreas_rna) <- "RNA"
+# pancreas_rna <- FindVariableFeatures(pancreas_rna, selection.method = "vst", nfeatures = 2000, assay = "RNA")
 
 #Run Harmony batch correction with library, tissue source, and 10X kit chemistry as covariates
-pancreas_rna <- ScaleData(pancreas_rna, verbose = TRUE) %>% RunPCA(pc.genes = pancreas_rna@var.genes, npcs = 20, verbose = TRUE)
+DefaultAssay(pancreas_rna) <- "SCT"
+pancreas_rna <- RunPCA(object = pancreas_rna, assay = "SCT", npcs = 30)
+
+# pancreas_rna <- ScaleData(pancreas_rna, verbose = TRUE) %>% RunPCA(pc.genes = pancreas_rna@var.genes, npcs = 20, verbose = TRUE)
 
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
 Idents(pancreas_rna) <- "ancestry"
-pancreas_rna$ancestry_sex <- paste(Idents(pancreas_rna), pancreas_rna$sex, sep = "_")
+pancreas_rna$ancestry_sex <- paste(Idents(pancreas_rna), pancreas_rna$Sex, sep = "_")
 table(pancreas_rna@meta.data[["ancestry_sex"]])
 
-pancreas_rna <- RunHarmony(pancreas_rna, c('Library','Tissue Source','sex'), assay.use='RNA', plot_convergence = TRUE)
+Idents(pancreas_rna) <- "Library"
+pancreas_rna <- RunHarmony(pancreas_rna, 
+                           assay.use = "SCT",
+                           reduction = "pca",
+                           dims.use = 1:20,
+                           group.by.vars = c('Library','Tissue Source'),
+                           kmeans_init_nstart=20, kmeans_init_iter_max=100,
+                           plot_convergence = TRUE)
+
+unique(pancreas_rna@meta.data[["Library"]])
+unique(pancreas_rna@meta.data[["Tissue Source"]])
+unique(pancreas_rna@meta.data[["ancestry_sex"]])
+unique(pancreas_rna@meta.data[["Cell Type"]])
+unique(pancreas_rna@meta.data[["Chemistry"]])
+table(pancreas_rna@meta.data[["Chemistry"]])
 
 # Run UMAP
-pancreas_rna <- pancreas_rna %>% 
-  RunUMAP(reduction = "harmony", dims = 1:20)
-
+pancreas_rna <- RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE)
 DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
 
+Idents(pancreas_rna) <- "Chemistry"
 
+v2 <- subset(pancreas_rna, idents = c("10Xv2"))
+v3 <- subset(pancreas_rna, idents = c("10Xv3"))
+
+Idents(pancreas_rna) <- "Chemistry"
+DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
+
+p1 <- DimPlot(v2, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
+p2 <- DimPlot(v3, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
+p1|p2
+
+RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE, reduction.name = 'umap')
+DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
 
 
 
