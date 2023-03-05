@@ -75,70 +75,70 @@ hpap$ancestry <- plyr::mapvalues(
            "HPAP-108",
            "HPAP-109"),
   to = c("white", #"HPAP-019",
-                "white", #"HPAP-020",
-                "white", #"HPAP-021",
-                "white", #"HPAP-022",
-                "white", #"HPAP-023",
-                "white", #"HPAP-024",
-                "white", #"HPAP-026",
-                "white", #"HPAP-028",
-                "white", #"HPAP-029",
-                "white", #"HPAP-032",
-                "white", #"HPAP-034",
-                "white", #"HPAP-035",
-                "white", #"HPAP-036",
-                "white", #"HPAP-037",
-                "white", #"HPAP-038",
-                "white", #"HPAP-039",
-                "white", #"HPAP-040",
-                "white", #"HPAP-042",
-                "hispanic", #"HPAP-043",
-                "white", #"HPAP-044",
-                "white", #"HPAP-045",
-                "white", #"HPAP-047",
-                "white",  #"HPAP-049",
-                "hispanic", #"HPAP-050",
-                "black", #"HPAP-051",
-                "black", #"HPAP-052",
-                "white", #"HPAP-053",
-                "white", #"HPAP-054",
-                "hispanic", #"HPAP-055",
-                "white", #"HPAP-056",
-                "white", #"HPAP-057",
-                "black", #"HPAP-058",
-                "white", #"HPAP-059",
-                "black", #"HPAP-061",
-                "white", #"HPAP-063",
-                "black", #"HPAP-064",
-                "white", #"HPAP-065",
-                "black", #"HPAP-070",
-                "white", #"HPAP-071",
-                "hispanic", #"HPAP-072",
-                "white", #"HPAP-074",
-                "white", #"HPAP-075",
-                "white", #"HPAP-077",
-                "hispanic", #"HPAP-079",
-                "hispanic", #"HPAP-080",
-                "white", #"HPAP-081",
-                "white", #"HPAP-082",
-                "black", #"HPAP-083",
-                "white", #"HPAP-084",
-                "white", #"HPAP-085",
-                "white", #"HPAP-087",
-                "white", #"HPAP-088",
-                "white", #"HPAP-090",
-                "hispanic", #"HPAP-091",
-                "hispanic", #"HPAP-092",
-                "hispanic",  #"HPAP-099",
-                "white", #"HPAP-100",
-                "hispanic", #"HPAP-101",
-                "white", #"HPAP-103",
-                "hispanic", #"HPAP-104",
-                "hispanic", #"HPAP-105",
-                "white", #"HPAP-106",
-                "white", #"HPAP-107",
-                "black", #"HPAP-108",
-                "hispanic" #"HPAP-109"
+         "white", #"HPAP-020",
+         "white", #"HPAP-021",
+         "white", #"HPAP-022",
+         "white", #"HPAP-023",
+         "white", #"HPAP-024",
+         "white", #"HPAP-026",
+         "white", #"HPAP-028",
+         "white", #"HPAP-029",
+         "white", #"HPAP-032",
+         "white", #"HPAP-034",
+         "white", #"HPAP-035",
+         "white", #"HPAP-036",
+         "white", #"HPAP-037",
+         "white", #"HPAP-038",
+         "white", #"HPAP-039",
+         "white", #"HPAP-040",
+         "white", #"HPAP-042",
+         "hispanic", #"HPAP-043",
+         "white", #"HPAP-044",
+         "white", #"HPAP-045",
+         "white", #"HPAP-047",
+         "white",  #"HPAP-049",
+         "hispanic", #"HPAP-050",
+         "black", #"HPAP-051",
+         "black", #"HPAP-052",
+         "white", #"HPAP-053",
+         "white", #"HPAP-054",
+         "hispanic", #"HPAP-055",
+         "white", #"HPAP-056",
+         "white", #"HPAP-057",
+         "black", #"HPAP-058",
+         "white", #"HPAP-059",
+         "black", #"HPAP-061",
+         "white", #"HPAP-063",
+         "black", #"HPAP-064",
+         "white", #"HPAP-065",
+         "black", #"HPAP-070",
+         "white", #"HPAP-071",
+         "hispanic", #"HPAP-072",
+         "white", #"HPAP-074",
+         "white", #"HPAP-075",
+         "white", #"HPAP-077",
+         "hispanic", #"HPAP-079",
+         "hispanic", #"HPAP-080",
+         "white", #"HPAP-081",
+         "white", #"HPAP-082",
+         "black", #"HPAP-083",
+         "white", #"HPAP-084",
+         "white", #"HPAP-085",
+         "white", #"HPAP-087",
+         "white", #"HPAP-088",
+         "white", #"HPAP-090",
+         "hispanic", #"HPAP-091",
+         "hispanic", #"HPAP-092",
+         "hispanic",  #"HPAP-099",
+         "white", #"HPAP-100",
+         "hispanic", #"HPAP-101",
+         "white", #"HPAP-103",
+         "hispanic", #"HPAP-104",
+         "hispanic", #"HPAP-105",
+         "white", #"HPAP-106",
+         "white", #"HPAP-107",
+         "black", #"HPAP-108",
+         "hispanic" #"HPAP-109"
   )
 )
 
@@ -399,7 +399,7 @@ pancreas_qadir <- lapply(X = pancreas_qadir,
                          })
 
 #Save point
-saveRDS(pancreas_qadir, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
+#saveRDS(pancreas_qadir, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
 
 
 # Load Processed data for analysis
@@ -410,7 +410,7 @@ saveRDS(pancreas_qadir, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\
 pancreas_combined <- c(pancreas_subset, pancreas_qadir)
 
 #Save point
-saveRDS(pancreas_combined, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
+#saveRDS(pancreas_combined, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
 
 # Load Processed data for analysis
 #pancreas_combined <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
@@ -438,7 +438,7 @@ VlnPlot(object = pancreas_rna, features = c("nFeature_RNA", "nCount_RNA", "perce
 pancreas_rna <- subset(x = pancreas_rna, subset = nFeature_RNA > 500 & nFeature_RNA < 8000 & percent.mt < 15)
 
 #Save point
-saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+#saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
 })
 
 
@@ -502,6 +502,7 @@ DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=
 
 Idents(pancreas_rna) <- "Chemistry"
 
+# QC for Ruth split on chemistry
 v2 <- subset(pancreas_rna, idents = c("10Xv2"))
 v3 <- subset(pancreas_rna, idents = c("10Xv3"))
 
@@ -514,6 +515,11 @@ p1|p2
 
 RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE, reduction.name = 'umap')
 DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
+
+# Clustering
+pancreas_rna <- pancreas_rna %>% 
+  FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
+  FindClusters(algorithm=4,resolution = c(0.1, 0.2, 0.3, 0.4, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), method = 'igraph')
 
 
 
