@@ -2,7 +2,7 @@
 # Hpap dataset
 system.time({
   #user    system elapsed 
-  #2720.75 262.65 2995.66 (~50min)
+  #9294.29 614.52 9908.50 (~2.75hrs)
 hpap <- readRDS(file=r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\Raw_hpap_file\hpap_islet_scRNAseq.rds)")
 table(hpap@meta.data[["Library"]])
 
@@ -232,14 +232,14 @@ pancreas.list <- list("HPAP_019" = HPAP_019, "HPAP_020" = HPAP_020, "HPAP_021" =
 )
 
 # Pulling data for analysis
-pancreas.list.use <- pancreas.list[c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP_040", "HPAP_044", "HPAP_051", 
+pancreas_subset <- pancreas.list[c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP_040", "HPAP_044", "HPAP_051", 
                                      "HPAP_052", "HPAP_053", "HPAP_054", "HPAP_056", "HPAP_057", "HPAP_058", "HPAP_059", "HPAP_061", 
                                      "HPAP_063", "HPAP_065", "HPAP_070", "HPAP_074", "HPAP_075", "HPAP_077", "HPAP_079", "HPAP_080", 
                                      "HPAP_081", "HPAP_082", "HPAP_083", "HPAP_085", "HPAP_088", "HPAP_090", "HPAP_091", "HPAP_099",
                                      "HPAP_100", "HPAP_101", "HPAP_103", "HPAP_105", "HPAP_106", "HPAP_108", "HPAP_109")
 ]
 
-pancreas.list.use <- lapply(X = pancreas.list.use, 
+pancreas_subset <- lapply(X = pancreas_subset, 
                             FUN = function(x){
                               x[['percent.mt']] <- PercentageFeatureSet(x, 
                                                                         pattern = '^MT-')
@@ -252,12 +252,8 @@ pancreas.list.use <- lapply(X = pancreas.list.use,
 
 
 #Save point
-saveRDS(pancreas.list.use, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
-})
+#saveRDS(pancreas_subset, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
 
-system.time({
-  #user system elapsed 
-  #4129 275.1  4406 (~73min)
 {
   HP2022801 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2022801.rds)")
   SAMN15877725 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\SAMN15877725.rds)")
@@ -439,7 +435,6 @@ pancreas_rna <- subset(x = pancreas_rna, subset = nFeature_RNA > 500 & nFeature_
 
 #Save point
 #saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
-})
 
 
 # Load data
@@ -469,7 +464,7 @@ VariableFeatures(pancreas_rna, assay = "RNA") <- integrationfeatures
 # DefaultAssay(pancreas_rna) <- "RNA"
 # pancreas_rna <- FindVariableFeatures(pancreas_rna, selection.method = "vst", nfeatures = 2000, assay = "RNA")
 
-#Run Harmony batch correction with library, tissue source, and 10X kit chemistry as covariates
+#Run PCA
 DefaultAssay(pancreas_rna) <- "SCT"
 pancreas_rna <- RunPCA(object = pancreas_rna, assay = "SCT", npcs = 30)
 
@@ -480,12 +475,13 @@ Idents(pancreas_rna) <- "ancestry"
 pancreas_rna$ancestry_sex <- paste(Idents(pancreas_rna), pancreas_rna$Sex, sep = "_")
 table(pancreas_rna@meta.data[["ancestry_sex"]])
 
+#Run Harmony batch correction with library and tissue source covariates
 Idents(pancreas_rna) <- "Library"
 pancreas_rna <- RunHarmony(pancreas_rna, 
                            assay.use = "SCT",
                            reduction = "pca",
                            dims.use = 1:20,
-                           group.by.vars = c('Library','Tissue Source'),
+                           group.by.vars = c('Library','Tissue Source', 'Chemistry'),
                            kmeans_init_nstart=20, kmeans_init_iter_max=100,
                            plot_convergence = TRUE)
 
@@ -499,6 +495,13 @@ table(pancreas_rna@meta.data[["Chemistry"]])
 # Run UMAP
 pancreas_rna <- RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE)
 DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
+
+# Clustering
+pancreas_rna <- pancreas_rna %>% 
+  FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
+  FindClusters(algorithm=4,resolution = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), method = 'igraph')
+})
+
 
 Idents(pancreas_rna) <- "Chemistry"
 
@@ -516,10 +519,7 @@ p1|p2
 RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE, reduction.name = 'umap')
 DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
 
-# Clustering
-pancreas_rna <- pancreas_rna %>% 
-  FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
-  FindClusters(algorithm=4,resolution = c(0.1, 0.2, 0.3, 0.4, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), method = 'igraph')
+
 
 
 
