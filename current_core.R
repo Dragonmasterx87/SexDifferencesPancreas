@@ -453,22 +453,21 @@ table(pancreas_rna@meta.data[["ancestry"]])
 table(pancreas_rna@meta.data[["doublets"]])
 table(pancreas_rna@meta.data[["Cell Type"]])
 
-#Split data on basis of disease status and calculate integration features on object list
-DefaultAssay(pancreas_rna) <- "SCT"
-integrationfeatures <- SelectIntegrationFeatures(pancreas_combined, nfeatures = 3000, verbose = TRUE)
+# #Split data on basis of disease status and calculate integration features on object list
+# DefaultAssay(pancreas_rna) <- "SCT"
+# integrationfeatures <- SelectIntegrationFeatures(pancreas_combined, nfeatures = 3000, verbose = TRUE)
+# 
+# # replacing variable features with integrationfeatures
+# VariableFeatures(pancreas_rna, assay = "SCT") <- integrationfeatures
+# VariableFeatures(pancreas_rna, assay = "RNA") <- integrationfeatures
 
-# replacing variable features with integrationfeatures
-VariableFeatures(pancreas_rna, assay = "SCT") <- integrationfeatures
-VariableFeatures(pancreas_rna, assay = "RNA") <- integrationfeatures
 
-# DefaultAssay(pancreas_rna) <- "RNA"
-# pancreas_rna <- FindVariableFeatures(pancreas_rna, selection.method = "vst", nfeatures = 2000, assay = "RNA")
-
-#Run PCA
-DefaultAssay(pancreas_rna) <- "SCT"
-pancreas_rna <- RunPCA(object = pancreas_rna, assay = "SCT", npcs = 30)
-
-# pancreas_rna <- ScaleData(pancreas_rna, verbose = TRUE) %>% RunPCA(pc.genes = pancreas_rna@var.genes, npcs = 20, verbose = TRUE)
+#Perform basic threshold filtering and log normalization
+DefaultAssay(pancreas_rna) <- "RNA"
+pancreas_rna <- NormalizeData(pancreas_rna, normalization.method = "LogNormalize", scale.factor = 10000)
+pancreas_rna <- FindVariableFeatures(pancreas_rna, selection.method = "vst", nfeatures = 2000)
+pancreas_rna <- ScaleData(pancreas_rna, verbose = FALSE) %>% 
+  RunPCA(pc.genes = pancreas_rna@assays$RNA@var.features, npcs = 20, verbose = FALSE)
 
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
 Idents(pancreas_rna) <- "ancestry"
@@ -478,7 +477,7 @@ table(pancreas_rna@meta.data[["ancestry_sex"]])
 #Run Harmony batch correction with library and tissue source covariates
 Idents(pancreas_rna) <- "Library"
 pancreas_rna <- RunHarmony(pancreas_rna, 
-                           assay.use = "SCT",
+                           assay.use = "RNA",
                            reduction = "pca",
                            dims.use = 1:20,
                            group.by.vars = c('Library','Tissue Source', 'Chemistry'),
@@ -499,8 +498,91 @@ DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=
 # Clustering
 pancreas_rna <- pancreas_rna %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
-  FindClusters(algorithm=4,resolution = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), method = 'igraph')
+  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 4, 4.6, 5, 6, 7, 8, 9, 10), method = 'igraph')
+
+# Save file
+saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
 })
+
+# Cluster-tree analysis, looking appropriate non-anomalous clustering resolution
+clustree(pancreas_rna, prefix = "RNA_snn_res.")
+
+pancreas_rna <- FindClusters(pancreas_rna, algorithm=4,resolution = c(10), method = 'igraph')
+
+# View clustering
+DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.4', label = TRUE, pt.size = 0.01, raster=FALSE)
+FeaturePlot(object = pancreas_rna,
+            features = c("SOX10"
+            ),
+            pt.size = 0.01,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            max.cutoff = 500,
+            slot = 'counts',
+            order = TRUE,
+            raster=FALSE)
+
+# Subclustering
+Idents(pancreas_rna) <- "RNA_snn_res.6"
+subset_clust <- subset(pancreas_rna, idents = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                                                "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+                                                "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", 
+                                                "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", 
+                                                "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", 
+                                                "51", "52", "53", "54", "55", "56", "57", "58", "59", "60",
+                                                "61", "62", "63", #"64", 
+                                                "65", "66", #"67",
+                                                "68", "69", #"70", 
+                                                "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", 
+                                                "81", "82", #"83", 
+                                                "84", "85", "86", "87", "88", "89", "90" 
+                                                ))
+
+# As cells were subsetted re-run batch correction and cluster assignmnet
+subset_clust <- RunHarmony(subset_clust, 
+                           assay.use = "RNA",
+                           reduction = "pca",
+                           dims.use = 1:20,
+                           group.by.vars = c('Library','Tissue Source', 'Chemistry'),
+                           kmeans_init_nstart=20, kmeans_init_iter_max=100,
+                           plot_convergence = TRUE)
+
+
+# UMAP 
+subset_clust <- RunUMAP(subset_clust, reduction = "harmony", dims = 1:20, return.model = TRUE)
+
+#Neighbours + Clustering
+subset_clust <- subset_clust %>% 
+  FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
+  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5), method = 'igraph')
+
+
+DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 0.01, raster=FALSE)
+FeaturePlot(object = pancreas_rna,
+            features = c("INS"
+            ),
+            pt.size = 0.01,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            max.cutoff = 500,
+            slot = 'counts',
+            order = TRUE,
+            raster=FALSE)
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# View clustering
+DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
+pancreas_rna <- FindClusters(object = pancreas_rna, algorithm=4, resolution = 0, method = 'igraph')
 
 
 Idents(pancreas_rna) <- "Chemistry"
@@ -517,6 +599,7 @@ p2 <- DimPlot(v3, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALS
 p1|p2
 
 RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE, reduction.name = 'umap')
+DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
 DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
 
 
