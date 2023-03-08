@@ -530,9 +530,7 @@ subset_clust <- subset(pancreas_rna, idents = c("1", "2", "3", "4", "5", "6", "7
                                                 "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", 
                                                 "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", 
                                                 "51", "52", "53", "54", "55", "56", "57", "58", "59", "60",
-                                                "61", "62", "63", #"64", 
-                                                "65", "66", #"67",
-                                                "68", "69", #"70", 
+                                                "61", "62", "63", "64", "65", "66", "67", "68", "69", #"70", 
                                                 "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", 
                                                 "81", "82", #"83", 
                                                 "84", "85", "86", "87", "88", "89", "90" 
@@ -554,12 +552,24 @@ subset_clust <- RunUMAP(subset_clust, reduction = "harmony", dims = 1:20, return
 #Neighbours + Clustering
 subset_clust <- subset_clust %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
-  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5), method = 'igraph')
+  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 3, 4, 4.8), method = 'igraph')
 
 
 DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 0.01, raster=FALSE)
+FeaturePlot(object = subset_clust,
+            features = c("PPY"
+            ),
+            pt.size = 0.01,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            max.cutoff = 500,
+            slot = 'counts',
+            order = TRUE,
+            raster=FALSE)
+
+DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = pancreas_rna,
-            features = c("INS"
+            features = c("PPY"
             ),
             pt.size = 0.01,
             cols = c("darkgrey", "red"),
