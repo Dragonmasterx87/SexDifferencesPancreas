@@ -563,15 +563,15 @@ subset_clust <- subset_clust %>%
 
 DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = subset_clust,
-            features = c("SOX10"
+            features = c("HSPB1", "DNAJB6", "HSPH1", "GADD45B"
             ),
             pt.size = 0.01,
             cols = c("darkgrey", "red"),
-            min.cutoff = 0,
+            min.cutoff = 100,
             max.cutoff = 500,
             slot = 'counts',
             order = TRUE,
-            raster=FALSE)
+            raster=TRUE)
 
 DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = pancreas_rna,
@@ -586,102 +586,155 @@ FeaturePlot(object = pancreas_rna,
             raster=FALSE)
 
 # Cluster assignment
-table(subset_clust@meta.data$RNA_snn_res.4.8)
-Idents(subset_clust) <- "RNA_snn_res.4.8"
+table(subset_clust@meta.data$RNA_snn_res.6)
+Idents(subset_clust) <- "RNA_snn_res.6"
 subset_clust <- RenameIdents(subset_clust, 
-                             "1" = "",
-                             "2" = "",
-                             "3" = "",
-                             "4" = "",
-                             "5" = "",
-                             "6" = "",
-                             "7" = "",
-                             "8" = "",
-                             "9" = "",
-                             "10" = "",
-                             "11" = "",
-                             "12" = "",
-                             "13" = "",
-                             "14" = "",
-                             "15" = "",
-                             "16" = "",
-                             "17" = "",
-                             "18" = "",
-                             "19" = "",
-                             "20" = "",
-                             "21" = "",
-                             "22" = "",
-                             "23" = "",
-                             "24" = "",
-                             "25" = "",
-                             "26" = "",
-                             "27" = "",
-                             "28" = "",
-                             "29" = "",
-                             "30" = "",
-                             "31" = "",
-                             "32" = "",
-                             "33" = "",
-                             "34" = "",
-                             "35" = "",
-                             "36" = "",
-                             "37" = "",
-                             "38" = "",
-                             "39" = "",
-                             "40" = "",
-                             "41" = "",
-                             "42" = "",
-                             "43" = "",
-                             "44" = "",
-                             "45" = "",
-                             "46" = "",
-                             "47" = "",
-                             "48" = "",
-                             "49" = "",
-                             "50" = "",
-                             "51" = "",
-                             "52" = "",
-                             "53" = "",
-                             "54" = "",
-                             "55" = "",
-                             "56" = "",
-                             "57" = "",
-                             "58" = "",
-                             "59" = "",
-                             "60" = "",
-                             "61" = "",
-                             "62" = "",
-                             "63" = "",
-                             "64" = "",
-                             "65" = "",
-                             "66" = "",
-                             "67" = "",
-                             "68" = "",
-                             "69" = "",
-                             "70" = "",
-                             "71" = "",
-                                      "1" = "Beta",
-                                      "2" = "Alpha", 
-                                      "3" = "Beta",
-                                      "4" = "Acinar", 
-                                      "5" = "Activated Stellate", #(PDGFRA+)
-                                      "6" = "Ductal", 
-                                      "7" = "Endothelial",
-                                      "8" = "Beta", 
-                                      "9" = "Alpha",
-                                      "10" = "Beta", 
-                                      "11" = "Delta",
-                                      "12" = "Quiescent Stellate", #(RGS5+)
-                                      "13" = "Activated Stellate",
-                                      "14" = "Macrophage",
-                                      "15" = "Gamma",
-                                      "16" = "Ductal",
-                                      "17" = "Mast",
-                                      "18" = "Lymphocyte",
-                                      "19" = "Schwann",
-                                      "20" = "Beta",
-                                      "21" = "EndMT"
+                             "1" = "Alpha",
+                             "2" = "Alpha",
+                             "3" = "Alpha",
+                             "4" = "Alpha",
+                             "5" = "Alpha",
+                             "6" = "Alpha",
+                             "7" = "Acinar",
+                             "8" = "Quiescent_Stellate",
+                             "9" = "Alpha",
+                             "10" = "Alpha+Beta",
+                             "11" = "Acinar",
+                             "12" = "Beta",
+                             "13" = "Alpha",
+                             "14" = "Alpha+Beta",
+                             "15" = "Beta",
+                             "16" = "Alpha",
+                             "17" = "Ductal",
+                             "18" = "Alpha",
+                             "19" = "Delta",
+                             "20" = "Ductal",
+                             "21" = "Acinar",
+                             "22" = "Alpha",
+                             "23" = "Beta",
+                             "24" = "Beta",
+                             "25" = "Activated_Stellate",
+                             "26" = "Ductal",
+                             "27" = "Ductal",
+                             "28" = "Acinar",
+                             "29" = "Beta",
+                             "30" = "Acinar",
+                             "31" = "Alpha",
+                             "32" = "Beta",
+                             "33" = "Activated_Stellate",
+                             "34" = "Alpha",
+                             "35" = "Beta",
+                             "36" = "Alpha",
+                             "37" = "Endothelial",
+                             "38" = "Beta",
+                             "39" = "Beta",
+                             "40" = "Endothelial",
+                             "41" = "Acinar",
+                             "42" = "Acinar",
+                             "43" = "Activated_Stellate",
+                             "44" = "Delta",
+                             "45" = "Beta",
+                             "46" = "Alpha",
+                             "47" = "Beta",
+                             "48" = "Alpha",
+                             "49" = "Alpha+Beta",
+                             "50" = "Alpha",
+                             "51" = "Beta",
+                             "52" = "Mast",
+                             "53" = "Acinar",
+                             "54" = "Alpha+Beta",
+                             "55" = "Macrophage",
+                             "56" = "Acinar",
+                             "57" = "Acinar",
+                             "58" = "Activated_Stellate",
+                             "59" = "Beta",
+                             "60" = "PPY",
+                             "61" = "Acinar",
+                             "62" = "PPY",
+                             "63" = "Delta",
+                             "64" = "Ductal",
+                             "65" = "Endothelial",
+                             "66" = "Quiescent_Stellate",
+                             "67" = "Ductal",
+                             "68" = "Acinar",
+                             "69" = "Cycling_Endo",
+                             "70" = "Alpha",
+                             "71" = "Alpha+Beta",
+                             "72" = "Beta",
+                             "73" = "Endothelial",
+                             "74" = "Acinar",
+                             "75" = "Endothelial",
+                             "76" = "Ductal",
+                             "77" = "Acinar",
+                             "78" = "Macrophage",
+                             "79" = "Acinar",
+                             "80" = "Schwann",
+                             "81" = "Acinar",
+                             "82" = "EndMT",
+                             "83" = "Alpha",
+                             "84" = "Beta",
+                             "85" = "Macrophage",
+                             "86" = "Acinar",
+                             "87" = "Acinar"
+                             )
+
+# Check renaming
+table(subset_clust@active.ident)
+
+#plot <- DimPlot(subset_clust, reduction = "umap")
+DefaultAssay(object = subset_clust) <- "RNA"
+Idents(subset_clust, WhichCells(object = subset_clust, expression = GHRL > 50, slot = 'counts')) <- 'Epsilon'
+DimPlot(subset_clust, reduction = "umap", label = TRUE)
+
+# Subsetting Lymphocytes from Mast cells
+# First subset all cells, they are called "Mast" in the primary object
+lymphocytes <- subset(subset_clust, idents = "Mast")
+table(lymphocytes@active.ident)
+lymphocytes <- lymphocytes %>% 
+  FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
+  FindClusters(algorithm=4,resolution = c(0.5), method = 'igraph')
+
+# Run UMAP
+lymphocytes <- RunUMAP(lymphocytes, reduction = "harmony", dims = 1:20, return.model = TRUE)
+DimPlot(lymphocytes, reduction = 'umap', label = FALSE, pt.size = 1, raster=FALSE)
+
+# Cluster assignment
+table(lymphocytes@meta.data$RNA_snn_res.0.5)
+Idents(lymphocytes) <- "RNA_snn_res.0.5"
+DimPlot(lymphocytes, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 1, raster=FALSE)
+FeaturePlot(object = lymphocytes,
+            features = c("TPSAB1"
+            ),
+            pt.size = 1,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            max.cutoff = 500,
+            slot = 'counts',
+            order = TRUE,
+            raster=TRUE)
+table(lymphocytes@active.ident)
+lymphocytes <- RenameIdents(lymphocytes, 
+                            "1" = "Lymphocyte",
+                            "2" = "Mast",
+                            "3" = "Mast",
+                            "4" = "Mast"
 )
+table(lymphocytes@active.ident)
+
+# Generate a new column called celltype_qadir in the metadata copying all Ident info there, this is active idents so check
+table(subset_clust@active.ident)
+subset_clust$celltype_qadir <- as.character(Idents(subset_clust))
+table(subset_clust@meta.data$celltype_qadir)
+
+# Change the information of cells containing sub-cluster information
+subset_clust$celltype_qadir[Cells(lymphocytes)] <- paste("c1",Idents(lymphocytes))
+DimPlot(pbmc_small, group.by = "sub_cluster")
+
+
+# Saving this information in the metadata slot
+table(Idents(pancreas.combined.h.s))
+pancreas.combined.h.s$celltype <- Idents(pancreas.combined.h.s)
+head(pancreas.combined.h.s@meta.data)
 # 
 #
 #
