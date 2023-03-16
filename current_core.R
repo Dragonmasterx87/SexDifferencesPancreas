@@ -1,3 +1,6 @@
+############################ STAGE ############################
+############################   1   ############################
+
 # NAalysis of Ruth's data
 # Hpap dataset
 system.time({
@@ -504,13 +507,21 @@ pancreas_rna <- pancreas_rna %>%
 saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
 })
 
+
+############################ STAGE ############################
+############################   2   ############################
+
+system.time({
+# Load data
+pancreas_rna <- readRDS(file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+
 # Cluster-tree analysis, looking appropriate non-anomalous clustering resolution
 clustree(pancreas_rna, prefix = "RNA_snn_res.")
 
-pancreas_rna <- FindClusters(pancreas_rna, algorithm=4,resolution = c(10), method = 'igraph')
+pancreas_rna <- FindClusters(pancreas_rna, algorithm=4,resolution = c(6), method = 'igraph')
 
 # View clustering
-DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.4', label = TRUE, pt.size = 0.01, raster=FALSE)
+DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = pancreas_rna,
             features = c("SOX10"
             ),
@@ -540,7 +551,7 @@ subset_clust <- subset(pancreas_rna, idents = c("1", "2", "3", "4", "5", "6", "7
 
 # Checking cluster loss
 DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
-DimPlot(subset_clust_test, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
+DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 
 # As cells were subsetted re-run batch correction and cluster assignmnet
 subset_clust <- RunHarmony(subset_clust, 
@@ -684,25 +695,27 @@ table(subset_clust@active.ident)
 #plot <- DimPlot(subset_clust, reduction = "umap")
 DefaultAssay(object = subset_clust) <- "RNA"
 Idents(subset_clust, WhichCells(object = subset_clust, expression = GHRL > 50, slot = 'counts')) <- 'Epsilon'
+subset_clust$celltype_qadir <- Idents(subset_clust)
+Idents(subset_clust) <- "celltype_qadir"
 DimPlot(subset_clust, reduction = "umap", label = TRUE)
 
 # Subsetting Lymphocytes from Mast cells
 # First subset all cells, they are called "Mast" in the primary object
-lymphocytes <- subset(subset_clust, idents = "Mast")
-table(lymphocytes@active.ident)
-lymphocytes <- lymphocytes %>% 
+Mast <- subset(subset_clust, idents = "Mast")
+table(Mast@active.ident)
+Mast <- Mast %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
   FindClusters(algorithm=4,resolution = c(0.5), method = 'igraph')
 
 # Run UMAP
-lymphocytes <- RunUMAP(lymphocytes, reduction = "harmony", dims = 1:20, return.model = TRUE)
-DimPlot(lymphocytes, reduction = 'umap', label = FALSE, pt.size = 1, raster=FALSE)
+Mast <- RunUMAP(Mast, reduction = "harmony", dims = 1:20, return.model = TRUE)
+DimPlot(Mast, reduction = 'umap', label = FALSE, pt.size = 1, raster=FALSE)
 
 # Cluster assignment
-table(lymphocytes@meta.data$RNA_snn_res.0.5)
-Idents(lymphocytes) <- "RNA_snn_res.0.5"
-DimPlot(lymphocytes, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 1, raster=FALSE)
-FeaturePlot(object = lymphocytes,
+table(Mast@meta.data$RNA_snn_res.0.5)
+Idents(Mast) <- "RNA_snn_res.0.5"
+DimPlot(Mast, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 1, raster=FALSE)
+FeaturePlot(object = Mast,
             features = c("TPSAB1"
             ),
             pt.size = 1,
@@ -712,29 +725,2011 @@ FeaturePlot(object = lymphocytes,
             slot = 'counts',
             order = TRUE,
             raster=TRUE)
-table(lymphocytes@active.ident)
-lymphocytes <- RenameIdents(lymphocytes, 
-                            "1" = "Lymphocyte",
-                            "2" = "Mast",
-                            "3" = "Mast",
-                            "4" = "Mast"
+table(Mast@active.ident)
+Mast <- RenameIdents(Mast, 
+                     "1" = "Lymphocyte",
+                     "2" = "Mast",
+                     "3" = "Mast",
+                     "4" = "Mast"
 )
-table(lymphocytes@active.ident)
+
+table(Mast@active.ident)
 
 # Generate a new column called celltype_qadir in the metadata copying all Ident info there, this is active idents so check
 table(subset_clust@active.ident)
-subset_clust$celltype_qadir <- as.character(Idents(subset_clust))
-table(subset_clust@meta.data$celltype_qadir)
+subset_clust$celltype_qadir <- as.character(Idents(subset_clust)) #as.character imp
+table(subset_clust$celltype_qadir)
 
 # Change the information of cells containing sub-cluster information
-subset_clust$celltype_qadir[Cells(lymphocytes)] <- paste("c1",Idents(lymphocytes))
-DimPlot(pbmc_small, group.by = "sub_cluster")
+subset_clust$celltype_qadir[Cells(Mast)] <- paste(Idents(Mast))
+table(subset_clust$celltype_qadir)
+DimPlot(subset_clust, 
+        split.by = "Tissue Source", 
+        group.by = "celltype_qadir", 
+        label = FALSE, 
+        ncol = 2,  
+        cols = c("darkturquoise",
+                 "lightgreen",
+                 "springgreen4",
+                 "lightgoldenrod3",
+                 "green3",
+                 "grey56",
+                 "grey80",
+                 "deeppink",
+                 "violet",
+                 "purple",
+                 "coral2",
+                 "magenta",
+                 "red4",
+                 "black",
+                 "red",
+                 "salmon",
+                 "pink"
+        )
+)
+
+# Define an order of cluster identities remember after this step-
+# cluster re-assignment occurs, which re-assigns clustering in my_levels
+my_levels <- c("Beta", "Alpha+Beta", "Cycling_Endo", "Alpha", "Delta", "PPY", "Epsilon",
+               "Ductal", "Acinar", 
+               "Activated_Stellate", "Quiescent_Stellate", "EndMT", "Endothelial",
+               "Macrophage", "Lymphocyte", "Mast",
+               "Schwann")
+table(subset_clust@meta.data$celltype_qadir)
+
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+subset_clust@meta.data$celltype_qadir <- factor(x = subset_clust@meta.data$celltype_qadir, levels = my_levels)
+table(subset_clust@meta.data$celltype_qadir)
+
+# Set celltype_qadir as default
+Idents(subset_clust) <- "celltype_qadir"
+
+# Change the information of cells containing sub-cluster information
+DimPlot(subset_clust, 
+        split.by = "Diabetes Status", 
+        group.by = "celltype_qadir", 
+        label = TRUE, 
+        ncol = 2, 
+        raster = FALSE,
+        pt.size = 0.5,
+        cols = c("darkturquoise",
+                 "lightgreen",
+                 "lightgoldenrod3",
+                 "springgreen4",
+                 "dodgerblue4",
+                 "darkseagreen",
+                 "orangered3",
+                 "deeppink",
+                 "violetred4",
+                 "purple",
+                 "magenta",
+                 "hotpink3",
+                 "red2",
+                 "darkorange",
+                 "pink",
+                 "salmon",
+                 "grey30"
+        )
+)
+
+# Save data
+saveRDS(subset_clust, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\subset_clust.rds)")
+})
+
+############################ STAGE ############################
+############################   3   ############################
+
+# Load data
+processed_rna <- readRDS(file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\subset_clust.rds)")
+
+# Create a metadata slot for celltype_sex, celltype_sex_ancestry and celltype_sex_ancestry_disease
+Idents(processed_rna) <- "celltype_qadir"
+processed_rna$celltype_sex <- paste(Idents(processed_rna), processed_rna$Sex, sep = "_")
+Idents(processed_rna) <- "celltype_sex"
+processed_rna$celltype_sex_ancestry <- paste(Idents(processed_rna), processed_rna$ancestry, sep = "_")
+Idents(processed_rna) <- "celltype_sex_ancestry"
+processed_rna$celltype_sex_ancestry_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
+Idents(processed_rna) <- "celltype_sex"
+processed_rna$celltype_sex_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
+table(processed_rna$celltype_qadir)
+table(processed_rna$celltype_sex)
+table(processed_rna$celltype_sex_ancestry)
+table(processed_rna$celltype_sex_ancestry_disease)
+table(processed_rna$celltype_sex_disease)
+
+# Differential testings
+# Reset SCT # https://satijalab.org/seurat/articles/sctransform_v2_vignette.html#identify-differential-expressed-genes-across-conditions-1
+DefaultAssay(processed_rna) <- "SCT"
+processed_rna <- PrepSCTFindMarkers(processed_rna)
+
+# Differential Expression analysis
+# 1.Beta-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+beta.mvsf <- FindMarkers(processed_rna, 
+                         ident.1 = "Beta_M_ND", ident.2 = "Beta_F_ND", 
+                         assay = "SCT",
+                         slot = "counts",
+                         test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                         #latent.vars = 'sample',
+                         #min.cells.feature = 100,
+                         #min.pct = 0.1,
+                         logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                         pseudocount.use = 1,
+                         verbose = TRUE)
+write.csv(beta.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+beta.wmvswf <- FindMarkers(processed_rna, 
+                           ident.1 = "Beta_M_white_ND", ident.2 = "Beta_F_white_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(beta.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+beta.bmvsbf <- FindMarkers(processed_rna, 
+                           ident.1 = "Beta_M_black_ND", ident.2 = "Beta_F_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(beta.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+beta.hmvshf <- FindMarkers(processed_rna, 
+                           ident.1 = "Beta_M_hispanic_ND", ident.2 = "Beta_F_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(beta.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+beta.wmvsbm <- FindMarkers(processed_rna, 
+                           ident.1 = "Beta_M_white_ND", ident.2 = "Beta_M_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(beta.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+beta.wmvshm <- FindMarkers(processed_rna, 
+                           ident.1 = "Beta_M_white_ND", ident.2 = "Beta_M_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(beta.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+beta.wfvsbf <- FindMarkers(processed_rna, 
+                           ident.1 = "Beta_F_white_ND", ident.2 = "Beta_F_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(beta.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+beta.wfvshf <- FindMarkers(processed_rna, 
+                           ident.1 = "Beta_F_white_ND", ident.2 = "Beta_F_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(beta.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.wfvshf.csv)")
+
+##########################
+##########################
+
+# 2.Alpha-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+alpha.mvsf <- FindMarkers(processed_rna, 
+                         ident.1 = "Alpha_M_ND", ident.2 = "Alpha_F_ND", 
+                         assay = "SCT",
+                         slot = "counts",
+                         test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                         #latent.vars = 'sample',
+                         #min.cells.feature = 100,
+                         #min.pct = 0.1,
+                         logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                         pseudocount.use = 1,
+                         verbose = TRUE)
+write.csv(alpha.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+alpha.wmvswf <- FindMarkers(processed_rna, 
+                           ident.1 = "Alpha_M_white_ND", ident.2 = "Alpha_F_white_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(alpha.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+alpha.bmvsbf <- FindMarkers(processed_rna, 
+                           ident.1 = "Alpha_M_black_ND", ident.2 = "Alpha_F_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(alpha.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+alpha.hmvshf <- FindMarkers(processed_rna, 
+                           ident.1 = "Alpha_M_hispanic_ND", ident.2 = "Alpha_F_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(alpha.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+alpha.wmvsbm <- FindMarkers(processed_rna, 
+                           ident.1 = "Alpha_M_white_ND", ident.2 = "Alpha_M_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(alpha.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+alpha.wmvshm <- FindMarkers(processed_rna, 
+                           ident.1 = "Alpha_M_white_ND", ident.2 = "Alpha_M_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(alpha.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+alpha.wfvsbf <- FindMarkers(processed_rna, 
+                           ident.1 = "Alpha_F_white_ND", ident.2 = "Alpha_F_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(alpha.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+alpha.wfvshf <- FindMarkers(processed_rna, 
+                           ident.1 = "Alpha_F_white_ND", ident.2 = "Alpha_F_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(alpha.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.wfvshf.csv)")
+
+##########################
+##########################
+
+# 3.Delta-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+delta.mvsf <- FindMarkers(processed_rna, 
+                          ident.1 = "Delta_M_ND", ident.2 = "Delta_F_ND", 
+                          assay = "SCT",
+                          slot = "counts",
+                          test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                          #latent.vars = 'sample',
+                          #min.cells.feature = 100,
+                          #min.pct = 0.1,
+                          logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                          pseudocount.use = 1,
+                          verbose = TRUE)
+write.csv(delta.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+delta.wmvswf <- FindMarkers(processed_rna, 
+                            ident.1 = "Delta_M_white_ND", ident.2 = "Delta_F_white_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(delta.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+delta.bmvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "Delta_M_black_ND", ident.2 = "Delta_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(delta.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+delta.hmvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "Delta_M_hispanic_ND", ident.2 = "Delta_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(delta.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+delta.wmvsbm <- FindMarkers(processed_rna, 
+                            ident.1 = "Delta_M_white_ND", ident.2 = "Delta_M_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(delta.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+delta.wmvshm <- FindMarkers(processed_rna, 
+                            ident.1 = "Delta_M_white_ND", ident.2 = "Delta_M_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(delta.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+delta.wfvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "Delta_F_white_ND", ident.2 = "Delta_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(delta.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+delta.wfvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "Delta_F_white_ND", ident.2 = "Delta_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(delta.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.wfvshf.csv)")
+
+##########################
+##########################
+
+# 4.PPY-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+gamma.mvsf <- FindMarkers(processed_rna, 
+                          ident.1 = "PPY_M_ND", ident.2 = "PPY_F_ND", 
+                          assay = "SCT",
+                          slot = "counts",
+                          test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                          #latent.vars = 'sample',
+                          #min.cells.feature = 100,
+                          #min.pct = 0.1,
+                          logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                          pseudocount.use = 1,
+                          verbose = TRUE)
+write.csv(gamma.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+gamma.wmvswf <- FindMarkers(processed_rna, 
+                            ident.1 = "PPY_M_white_ND", ident.2 = "PPY_F_white_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(gamma.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+gamma.bmvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "PPY_M_black_ND", ident.2 = "PPY_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(gamma.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+gamma.hmvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "PPY_M_hispanic_ND", ident.2 = "PPY_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(gamma.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+gamma.wmvsbm <- FindMarkers(processed_rna, 
+                            ident.1 = "PPY_M_white_ND", ident.2 = "PPY_M_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(gamma.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+gamma.wmvshm <- FindMarkers(processed_rna, 
+                            ident.1 = "PPY_M_white_ND", ident.2 = "PPY_M_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(gamma.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+gamma.wfvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "PPY_F_white_ND", ident.2 = "PPY_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(gamma.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+gamma.wfvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "PPY_F_white_ND", ident.2 = "PPY_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(gamma.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.wfvshf.csv)")
+
+##########################
+##########################
+
+# 5.Epsilon-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+epsilon.mvsf <- FindMarkers(processed_rna, 
+                          ident.1 = "Epsilon_M_ND", ident.2 = "Epsilon_F_ND", 
+                          assay = "SCT",
+                          slot = "counts",
+                          test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                          #latent.vars = 'sample',
+                          #min.cells.feature = 100,
+                          #min.pct = 0.1,
+                          logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                          pseudocount.use = 1,
+                          verbose = TRUE)
+write.csv(epsilon.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+epsilon.wmvswf <- FindMarkers(processed_rna, 
+                            ident.1 = "Epsilon_M_white_ND", ident.2 = "Epsilon_F_white_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(epsilon.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+epsilon.bmvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "Epsilon_M_black_ND", ident.2 = "Epsilon_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(epsilon.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+epsilon.hmvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "Epsilon_M_hispanic_ND", ident.2 = "Epsilon_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(epsilon.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+epsilon.wmvsbm <- FindMarkers(processed_rna, 
+                            ident.1 = "Epsilon_M_white_ND", ident.2 = "Epsilon_M_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(epsilon.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+epsilon.wmvshm <- FindMarkers(processed_rna, 
+                            ident.1 = "Epsilon_M_white_ND", ident.2 = "Epsilon_M_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(epsilon.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+epsilon.wfvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "Epsilon_F_white_ND", ident.2 = "Epsilon_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(epsilon.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+epsilon.wfvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "Epsilon_F_white_ND", ident.2 = "Epsilon_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(epsilon.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.wfvshf.csv)")
+
+##########################
+##########################
+
+# 6.Alpha+Beta-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+alphabeta.mvsf <- FindMarkers(processed_rna, 
+                            ident.1 = "Alpha+Beta_M_ND", ident.2 = "Alpha+Beta_F_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(alphabeta.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+alphabeta.wmvswf <- FindMarkers(processed_rna, 
+                              ident.1 = "Alpha+Beta_M_white_ND", ident.2 = "Alpha+Beta_F_white_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(alphabeta.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+alphabeta.bmvsbf <- FindMarkers(processed_rna, 
+                              ident.1 = "Alpha+Beta_M_black_ND", ident.2 = "Alpha+Beta_F_black_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(alphabeta.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+alphabeta.hmvshf <- FindMarkers(processed_rna, 
+                              ident.1 = "Alpha+Beta_M_hispanic_ND", ident.2 = "Alpha+Beta_F_hispanic_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(alphabeta.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+alphabeta.wmvsbm <- FindMarkers(processed_rna, 
+                              ident.1 = "Alpha+Beta_M_white_ND", ident.2 = "Alpha+Beta_M_black_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(alphabeta.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+alphabeta.wmvshm <- FindMarkers(processed_rna, 
+                              ident.1 = "Alpha+Beta_M_white_ND", ident.2 = "Alpha+Beta_M_hispanic_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(alphabeta.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+alphabeta.wfvsbf <- FindMarkers(processed_rna, 
+                              ident.1 = "Alpha+Beta_F_white_ND", ident.2 = "Alpha+Beta_F_black_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(alphabeta.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+alphabeta.wfvshf <- FindMarkers(processed_rna, 
+                              ident.1 = "Alpha+Beta_F_white_ND", ident.2 = "Alpha+Beta_F_hispanic_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(alphabeta.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.wfvshf.csv)")
+
+##########################
+##########################
+
+# 7.Cycling_Endo-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+cycendo.mvsf <- FindMarkers(processed_rna, 
+                              ident.1 = "Cycling_Endo_M_ND", ident.2 = "Cycling_Endo_F_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(cycendo.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+cycendo.wmvswf <- FindMarkers(processed_rna, 
+                                ident.1 = "Cycling_Endo_M_white_ND", ident.2 = "Cycling_Endo_F_white_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(cycendo.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+cycendo.bmvsbf <- FindMarkers(processed_rna, 
+                                ident.1 = "Cycling_Endo_M_black_ND", ident.2 = "Cycling_Endo_F_black_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(cycendo.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+cycendo.hmvshf <- FindMarkers(processed_rna, 
+                                ident.1 = "Cycling_Endo_M_hispanic_ND", ident.2 = "Cycling_Endo_F_hispanic_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(cycendo.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+cycendo.wmvsbm <- FindMarkers(processed_rna, 
+                                ident.1 = "Cycling_Endo_M_white_ND", ident.2 = "Cycling_Endo_M_black_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(cycendo.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+cycendo.wmvshm <- FindMarkers(processed_rna, 
+                                ident.1 = "Cycling_Endo_M_white_ND", ident.2 = "Cycling_Endo_M_hispanic_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(cycendo.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+cycendo.wfvsbf <- FindMarkers(processed_rna, 
+                                ident.1 = "Cycling_Endo_F_white_ND", ident.2 = "Cycling_Endo_F_black_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(cycendo.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+cycendo.wfvshf <- FindMarkers(processed_rna, 
+                                ident.1 = "Cycling_Endo_F_white_ND", ident.2 = "Cycling_Endo_F_hispanic_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(cycendo.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.wfvshf.csv)")
+
+##########################
+##########################
+
+# 8.Duct-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+ductal.mvsf <- FindMarkers(processed_rna, 
+                            ident.1 = "Ductal_M_ND", ident.2 = "Ductal_F_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(ductal.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+ductal.wmvswf <- FindMarkers(processed_rna, 
+                              ident.1 = "Ductal_M_white_ND", ident.2 = "Ductal_F_white_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(ductal.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+ductal.bmvsbf <- FindMarkers(processed_rna, 
+                              ident.1 = "Ductal_M_black_ND", ident.2 = "Ductal_F_black_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(ductal.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+ductal.hmvshf <- FindMarkers(processed_rna, 
+                              ident.1 = "Ductal_M_hispanic_ND", ident.2 = "Ductal_F_hispanic_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(ductal.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+ductal.wmvsbm <- FindMarkers(processed_rna, 
+                              ident.1 = "Ductal_M_white_ND", ident.2 = "Ductal_M_black_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(ductal.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+ductal.wmvshm <- FindMarkers(processed_rna, 
+                              ident.1 = "Ductal_M_white_ND", ident.2 = "Ductal_M_hispanic_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(ductal.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+ductal.wfvsbf <- FindMarkers(processed_rna, 
+                              ident.1 = "Ductal_F_white_ND", ident.2 = "Ductal_F_black_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(ductal.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+ductal.wfvshf <- FindMarkers(processed_rna, 
+                              ident.1 = "Ductal_F_white_ND", ident.2 = "Ductal_F_hispanic_ND", 
+                              assay = "SCT",
+                              slot = "counts",
+                              test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                              #latent.vars = 'sample',
+                              #min.cells.feature = 100,
+                              #min.pct = 0.1,
+                              logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                              pseudocount.use = 1,
+                              verbose = TRUE)
+write.csv(ductal.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.wfvshf.csv)")
+
+##########################
+##########################
+
+# 9.Acinar-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+acinar.mvsf <- FindMarkers(processed_rna, 
+                           ident.1 = "Acinar_M_ND", ident.2 = "Acinar_F_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(acinar.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+acinar.wmvswf <- FindMarkers(processed_rna, 
+                             ident.1 = "Acinar_M_white_ND", ident.2 = "Acinar_F_white_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(acinar.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+acinar.bmvsbf <- FindMarkers(processed_rna, 
+                             ident.1 = "Acinar_M_black_ND", ident.2 = "Acinar_F_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(acinar.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+acinar.hmvshf <- FindMarkers(processed_rna, 
+                             ident.1 = "Acinar_M_hispanic_ND", ident.2 = "Acinar_F_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(acinar.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+acinar.wmvsbm <- FindMarkers(processed_rna, 
+                             ident.1 = "Acinar_M_white_ND", ident.2 = "Acinar_M_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(acinar.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+acinar.wmvshm <- FindMarkers(processed_rna, 
+                             ident.1 = "Acinar_M_white_ND", ident.2 = "Acinar_M_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(acinar.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+acinar.wfvsbf <- FindMarkers(processed_rna, 
+                             ident.1 = "Acinar_F_white_ND", ident.2 = "Acinar_F_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(acinar.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+acinar.wfvshf <- FindMarkers(processed_rna, 
+                             ident.1 = "Acinar_F_white_ND", ident.2 = "Acinar_F_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(acinar.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.wfvshf.csv)")
+
+##########################
+##########################
+
+# 10.Activated-Stellate-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+activstellate.mvsf <- FindMarkers(processed_rna, 
+                           ident.1 = "Activated_Stellate_M_ND", ident.2 = "Activated_Stellate_F_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(activstellate.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+activstellate.wmvswf <- FindMarkers(processed_rna, 
+                             ident.1 = "Activated_Stellate_M_white_ND", ident.2 = "Activated_Stellate_F_white_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(activstellate.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+activstellate.bmvsbf <- FindMarkers(processed_rna, 
+                             ident.1 = "Activated_Stellate_M_black_ND", ident.2 = "Activated_Stellate_F_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(activstellate.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+activstellate.hmvshf <- FindMarkers(processed_rna, 
+                             ident.1 = "Activated_Stellate_M_hispanic_ND", ident.2 = "Activated_Stellate_F_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(activstellate.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+activstellate.wmvsbm <- FindMarkers(processed_rna, 
+                             ident.1 = "Activated_Stellate_M_white_ND", ident.2 = "Activated_Stellate_M_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(activstellate.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+activstellate.wmvshm <- FindMarkers(processed_rna, 
+                             ident.1 = "Activated_Stellate_M_white_ND", ident.2 = "Activated_Stellate_M_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(activstellate.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+activstellate.wfvsbf <- FindMarkers(processed_rna, 
+                             ident.1 = "Activated_Stellate_F_white_ND", ident.2 = "Activated_Stellate_F_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(activstellate.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+activstellate.wfvshf <- FindMarkers(processed_rna, 
+                             ident.1 = "Activated_Stellate_F_white_ND", ident.2 = "Activated_Stellate_F_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(activstellate.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.wfvshf.csv)")
+
+##########################
+##########################
+
+# 11.Quiescent-Stellate-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+quiescstellate.mvsf <- FindMarkers(processed_rna, 
+                                  ident.1 = "Quiescent_Stellate_M_ND", ident.2 = "Quiescent_Stellate_F_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(quiescstellate.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+quiescstellate.wmvswf <- FindMarkers(processed_rna, 
+                                    ident.1 = "Quiescent_Stellate_M_white_ND", ident.2 = "Quiescent_Stellate_F_white_ND", 
+                                    assay = "SCT",
+                                    slot = "counts",
+                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                    #latent.vars = 'sample',
+                                    #min.cells.feature = 100,
+                                    #min.pct = 0.1,
+                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                    pseudocount.use = 1,
+                                    verbose = TRUE)
+write.csv(quiescstellate.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+quiescstellate.bmvsbf <- FindMarkers(processed_rna, 
+                                    ident.1 = "Quiescent_Stellate_M_black_ND", ident.2 = "Quiescent_Stellate_F_black_ND", 
+                                    assay = "SCT",
+                                    slot = "counts",
+                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                    #latent.vars = 'sample',
+                                    #min.cells.feature = 100,
+                                    #min.pct = 0.1,
+                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                    pseudocount.use = 1,
+                                    verbose = TRUE)
+write.csv(quiescstellate.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+quiescstellate.hmvshf <- FindMarkers(processed_rna, 
+                                    ident.1 = "Quiescent_Stellate_M_hispanic_ND", ident.2 = "Quiescent_Stellate_F_hispanic_ND", 
+                                    assay = "SCT",
+                                    slot = "counts",
+                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                    #latent.vars = 'sample',
+                                    #min.cells.feature = 100,
+                                    #min.pct = 0.1,
+                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                    pseudocount.use = 1,
+                                    verbose = TRUE)
+write.csv(quiescstellate.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+quiescstellate.wmvsbm <- FindMarkers(processed_rna, 
+                                    ident.1 = "Quiescent_Stellate_M_white_ND", ident.2 = "Quiescent_Stellate_M_black_ND", 
+                                    assay = "SCT",
+                                    slot = "counts",
+                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                    #latent.vars = 'sample',
+                                    #min.cells.feature = 100,
+                                    #min.pct = 0.1,
+                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                    pseudocount.use = 1,
+                                    verbose = TRUE)
+write.csv(quiescstellate.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+quiescstellate.wmvshm <- FindMarkers(processed_rna, 
+                                    ident.1 = "Quiescent_Stellate_M_white_ND", ident.2 = "Quiescent_Stellate_M_hispanic_ND", 
+                                    assay = "SCT",
+                                    slot = "counts",
+                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                    #latent.vars = 'sample',
+                                    #min.cells.feature = 100,
+                                    #min.pct = 0.1,
+                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                    pseudocount.use = 1,
+                                    verbose = TRUE)
+write.csv(quiescstellate.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+quiescstellate.wfvsbf <- FindMarkers(processed_rna, 
+                                    ident.1 = "Quiescent_Stellate_F_white_ND", ident.2 = "Quiescent_Stellate_F_black_ND", 
+                                    assay = "SCT",
+                                    slot = "counts",
+                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                    #latent.vars = 'sample',
+                                    #min.cells.feature = 100,
+                                    #min.pct = 0.1,
+                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                    pseudocount.use = 1,
+                                    verbose = TRUE)
+write.csv(quiescstellate.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+quiescstellate.wfvshf <- FindMarkers(processed_rna, 
+                                    ident.1 = "Quiescent_Stellate_F_white_ND", ident.2 = "Quiescent_Stellate_F_hispanic_ND", 
+                                    assay = "SCT",
+                                    slot = "counts",
+                                    test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                    #latent.vars = 'sample',
+                                    #min.cells.feature = 100,
+                                    #min.pct = 0.1,
+                                    logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                    pseudocount.use = 1,
+                                    verbose = TRUE)
+write.csv(quiescstellate.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.wfvshf.csv)")
+
+##########################
+##########################
+
+# 12.Endothelial-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+endothelial.mvsf <- FindMarkers(processed_rna, 
+                                   ident.1 = "Endothelial_M_ND", ident.2 = "Endothelial_F_ND", 
+                                   assay = "SCT",
+                                   slot = "counts",
+                                   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                   #latent.vars = 'sample',
+                                   #min.cells.feature = 100,
+                                   #min.pct = 0.1,
+                                   logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                   pseudocount.use = 1,
+                                   verbose = TRUE)
+write.csv(endothelial.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+endothelial.wmvswf <- FindMarkers(processed_rna, 
+                                     ident.1 = "Endothelial_M_white_ND", ident.2 = "Endothelial_F_white_ND", 
+                                     assay = "SCT",
+                                     slot = "counts",
+                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                     #latent.vars = 'sample',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0.1,
+                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     pseudocount.use = 1,
+                                     verbose = TRUE)
+write.csv(endothelial.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+endothelial.bmvsbf <- FindMarkers(processed_rna, 
+                                     ident.1 = "Endothelial_M_black_ND", ident.2 = "Endothelial_F_black_ND", 
+                                     assay = "SCT",
+                                     slot = "counts",
+                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                     #latent.vars = 'sample',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0.1,
+                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     pseudocount.use = 1,
+                                     verbose = TRUE)
+write.csv(endothelial.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+endothelial.hmvshf <- FindMarkers(processed_rna, 
+                                     ident.1 = "Endothelial_M_hispanic_ND", ident.2 = "Endothelial_F_hispanic_ND", 
+                                     assay = "SCT",
+                                     slot = "counts",
+                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                     #latent.vars = 'sample',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0.1,
+                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     pseudocount.use = 1,
+                                     verbose = TRUE)
+write.csv(endothelial.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+endothelial.wmvsbm <- FindMarkers(processed_rna, 
+                                     ident.1 = "Endothelial_M_white_ND", ident.2 = "Endothelial_M_black_ND", 
+                                     assay = "SCT",
+                                     slot = "counts",
+                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                     #latent.vars = 'sample',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0.1,
+                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     pseudocount.use = 1,
+                                     verbose = TRUE)
+write.csv(endothelial.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+endothelial.wmvshm <- FindMarkers(processed_rna, 
+                                     ident.1 = "Endothelial_M_white_ND", ident.2 = "Endothelial_M_hispanic_ND", 
+                                     assay = "SCT",
+                                     slot = "counts",
+                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                     #latent.vars = 'sample',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0.1,
+                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     pseudocount.use = 1,
+                                     verbose = TRUE)
+write.csv(endothelial.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+endothelial.wfvsbf <- FindMarkers(processed_rna, 
+                                     ident.1 = "Endothelial_F_white_ND", ident.2 = "Endothelial_F_black_ND", 
+                                     assay = "SCT",
+                                     slot = "counts",
+                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                     #latent.vars = 'sample',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0.1,
+                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     pseudocount.use = 1,
+                                     verbose = TRUE)
+write.csv(endothelial.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+endothelial.wfvshf <- FindMarkers(processed_rna, 
+                                     ident.1 = "Endothelial_F_white_ND", ident.2 = "Endothelial_F_hispanic_ND", 
+                                     assay = "SCT",
+                                     slot = "counts",
+                                     test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                     #latent.vars = 'sample',
+                                     #min.cells.feature = 100,
+                                     #min.pct = 0.1,
+                                     logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                     pseudocount.use = 1,
+                                     verbose = TRUE)
+write.csv(endothelial.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.wfvshf.csv)")
+
+##########################
+##########################
+
+# 13.EndMT-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+EndMT.mvsf <- FindMarkers(processed_rna, 
+                                ident.1 = "EndMT_M_ND", ident.2 = "EndMT_F_ND", 
+                                assay = "SCT",
+                                slot = "counts",
+                                test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                #latent.vars = 'sample',
+                                #min.cells.feature = 100,
+                                #min.pct = 0.1,
+                                logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                pseudocount.use = 1,
+                                verbose = TRUE)
+write.csv(EndMT.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+EndMT.wmvswf <- FindMarkers(processed_rna, 
+                                  ident.1 = "EndMT_M_white_ND", ident.2 = "EndMT_F_white_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(EndMT.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+EndMT.bmvsbf <- FindMarkers(processed_rna, 
+                                  ident.1 = "EndMT_M_black_ND", ident.2 = "EndMT_F_black_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(EndMT.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+EndMT.hmvshf <- FindMarkers(processed_rna, 
+                                  ident.1 = "EndMT_M_hispanic_ND", ident.2 = "EndMT_F_hispanic_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(EndMT.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+EndMT.wmvsbm <- FindMarkers(processed_rna, 
+                                  ident.1 = "EndMT_M_white_ND", ident.2 = "EndMT_M_black_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(EndMT.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+EndMT.wmvshm <- FindMarkers(processed_rna, 
+                                  ident.1 = "EndMT_M_white_ND", ident.2 = "EndMT_M_hispanic_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(EndMT.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+EndMT.wfvsbf <- FindMarkers(processed_rna, 
+                                  ident.1 = "EndMT_F_white_ND", ident.2 = "EndMT_F_black_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(EndMT.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+EndMT.wfvshf <- FindMarkers(processed_rna, 
+                                  ident.1 = "EndMT_F_white_ND", ident.2 = "EndMT_F_hispanic_ND", 
+                                  assay = "SCT",
+                                  slot = "counts",
+                                  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                                  #latent.vars = 'sample',
+                                  #min.cells.feature = 100,
+                                  #min.pct = 0.1,
+                                  logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                                  pseudocount.use = 1,
+                                  verbose = TRUE)
+write.csv(EndMT.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.wfvshf.csv)")
+
+##########################
+##########################
+
+# 14.Macrophage-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+mphage.mvsf <- FindMarkers(processed_rna, 
+                          ident.1 = "Macrophage_M_ND", ident.2 = "Macrophage_F_ND", 
+                          assay = "SCT",
+                          slot = "counts",
+                          test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                          #latent.vars = 'sample',
+                          #min.cells.feature = 100,
+                          #min.pct = 0.1,
+                          logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                          pseudocount.use = 1,
+                          verbose = TRUE)
+write.csv(mphage.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+mphage.wmvswf <- FindMarkers(processed_rna, 
+                            ident.1 = "Macrophage_M_white_ND", ident.2 = "Macrophage_F_white_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(mphage.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+mphage.bmvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "Macrophage_M_black_ND", ident.2 = "Macrophage_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(mphage.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+mphage.hmvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "Macrophage_M_hispanic_ND", ident.2 = "Macrophage_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(mphage.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+mphage.wmvsbm <- FindMarkers(processed_rna, 
+                            ident.1 = "Macrophage_M_white_ND", ident.2 = "Macrophage_M_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(mphage.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+mphage.wmvshm <- FindMarkers(processed_rna, 
+                            ident.1 = "Macrophage_M_white_ND", ident.2 = "Macrophage_M_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(mphage.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+mphage.wfvsbf <- FindMarkers(processed_rna, 
+                            ident.1 = "Macrophage_F_white_ND", ident.2 = "Macrophage_F_black_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(mphage.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+mphage.wfvshf <- FindMarkers(processed_rna, 
+                            ident.1 = "Macrophage_F_white_ND", ident.2 = "Macrophage_F_hispanic_ND", 
+                            assay = "SCT",
+                            slot = "counts",
+                            test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                            #latent.vars = 'sample',
+                            #min.cells.feature = 100,
+                            #min.pct = 0.1,
+                            logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                            pseudocount.use = 1,
+                            verbose = TRUE)
+write.csv(mphage.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.wfvshf.csv)")
+
+##########################
+##########################
+
+# 15.Mast-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+mast.mvsf <- FindMarkers(processed_rna, 
+                           ident.1 = "Mast_M_ND", ident.2 = "Mast_F_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(mast.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+mast.wmvswf <- FindMarkers(processed_rna, 
+                             ident.1 = "Mast_M_white_ND", ident.2 = "Mast_F_white_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(mast.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+mast.bmvsbf <- FindMarkers(processed_rna, 
+                             ident.1 = "Mast_M_black_ND", ident.2 = "Mast_F_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(mast.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+mast.hmvshf <- FindMarkers(processed_rna, 
+                             ident.1 = "Mast_M_hispanic_ND", ident.2 = "Mast_F_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(mast.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+mast.wmvsbm <- FindMarkers(processed_rna, 
+                             ident.1 = "Mast_M_white_ND", ident.2 = "Mast_M_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(mast.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+mast.wmvshm <- FindMarkers(processed_rna, 
+                             ident.1 = "Mast_M_white_ND", ident.2 = "Mast_M_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(mast.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+mast.wfvsbf <- FindMarkers(processed_rna, 
+                             ident.1 = "Mast_F_white_ND", ident.2 = "Mast_F_black_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(mast.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+mast.wfvshf <- FindMarkers(processed_rna, 
+                             ident.1 = "Mast_F_white_ND", ident.2 = "Mast_F_hispanic_ND", 
+                             assay = "SCT",
+                             slot = "counts",
+                             test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                             #latent.vars = 'sample',
+                             #min.cells.feature = 100,
+                             #min.pct = 0.1,
+                             logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                             pseudocount.use = 1,
+                             verbose = TRUE)
+write.csv(mast.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.wfvshf.csv)")
+
+##########################
+##########################
+
+# 16.Lymphocyte-cells ####
+# MALE VS. FEMALE
+Idents(processed_rna) <- "celltype_sex_disease"
+lympho.mvsf <- FindMarkers(processed_rna, 
+                         ident.1 = "Lymphocyte_M_ND", ident.2 = "Lymphocyte_F_ND", 
+                         assay = "SCT",
+                         slot = "counts",
+                         test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                         #latent.vars = 'sample',
+                         #min.cells.feature = 100,
+                         #min.pct = 0.1,
+                         logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                         pseudocount.use = 1,
+                         verbose = TRUE)
+write.csv(lympho.mvsf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.mvsf.csv)")
+
+# WHITE MALE VS. WHITE FEMALE
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+lympho.wmvswf <- FindMarkers(processed_rna, 
+                           ident.1 = "Lymphocyte_M_white_ND", ident.2 = "Lymphocyte_F_white_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(lympho.wmvswf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.wmvswf.csv)")
+
+# BLACK MALE VS. BLACK FEMALE
+lympho.bmvsbf <- FindMarkers(processed_rna, 
+                           ident.1 = "Lymphocyte_M_black_ND", ident.2 = "Lymphocyte_F_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(lympho.bmvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.bmvsbf.csv)")
+
+# HISPANIC MALE VS. HISPANIC FEMALE
+lympho.hmvshf <- FindMarkers(processed_rna, 
+                           ident.1 = "Lymphocyte_M_hispanic_ND", ident.2 = "Lymphocyte_F_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(lympho.hmvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.hmvshf.csv)")
+
+# WHITE MALE VS. BLACK MALE
+lympho.wmvsbm <- FindMarkers(processed_rna, 
+                           ident.1 = "Lymphocyte_M_white_ND", ident.2 = "Lymphocyte_M_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(lympho.wmvsbm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.wmvsbm.csv)")
+
+# WHITE MALE VS. HISPANIC MALE
+lympho.wmvshm <- FindMarkers(processed_rna, 
+                           ident.1 = "Lymphocyte_M_white_ND", ident.2 = "Lymphocyte_M_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(lympho.wmvshm, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.wmvshm.csv)")
+
+# WHITE FEMALE VS. BLACK FEMALE
+lympho.wfvsbf <- FindMarkers(processed_rna, 
+                           ident.1 = "Lymphocyte_F_white_ND", ident.2 = "Lymphocyte_F_black_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(lympho.wfvsbf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.wfvsbf.csv)")
+
+# WHITE FEMALE VS. HISPANIC FEMALE
+lympho.wfvshf <- FindMarkers(processed_rna, 
+                           ident.1 = "Lymphocyte_F_white_ND", ident.2 = "Lymphocyte_F_hispanic_ND", 
+                           assay = "SCT",
+                           slot = "counts",
+                           test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+                           #latent.vars = 'sample',
+                           #min.cells.feature = 100,
+                           #min.pct = 0.1,
+                           logfc.threshold = 0, # based on output log2 so 0.137504 is ~1.5 FC
+                           pseudocount.use = 1,
+                           verbose = TRUE)
+write.csv(lympho.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\lympho.wfvshf.csv)")
 
 
-# Saving this information in the metadata slot
-table(Idents(pancreas.combined.h.s))
-pancreas.combined.h.s$celltype <- Idents(pancreas.combined.h.s)
-head(pancreas.combined.h.s@meta.data)
+
 # 
 #
 #
