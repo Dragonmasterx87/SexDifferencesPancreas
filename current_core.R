@@ -816,6 +816,8 @@ DimPlot(subset_clust,
 saveRDS(subset_clust, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\subset_clust.rds)")
 })
 
+
+
 ############################ STAGE ############################
 ############################   3   ############################
 
@@ -843,7 +845,7 @@ DefaultAssay(processed_rna) <- "SCT"
 processed_rna <- PrepSCTFindMarkers(processed_rna)
 
 # Differential Expression analysis
-# 1.Beta-cells ####
+# 1.Beta-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 beta.mvsf <- FindMarkers(processed_rna, 
@@ -958,10 +960,10 @@ beta.wfvshf <- FindMarkers(processed_rna,
                            verbose = TRUE)
 write.csv(beta.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\beta.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 2.Alpha-cells ####
+# 2.Alpha-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 alpha.mvsf <- FindMarkers(processed_rna, 
@@ -1076,10 +1078,10 @@ alpha.wfvshf <- FindMarkers(processed_rna,
                            verbose = TRUE)
 write.csv(alpha.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alpha.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 3.Delta-cells ####
+# 3.Delta-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 delta.mvsf <- FindMarkers(processed_rna, 
@@ -1194,10 +1196,10 @@ delta.wfvshf <- FindMarkers(processed_rna,
                             verbose = TRUE)
 write.csv(delta.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\delta.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 4.PPY-cells ####
+# 4.PPY-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 gamma.mvsf <- FindMarkers(processed_rna, 
@@ -1312,10 +1314,10 @@ gamma.wfvshf <- FindMarkers(processed_rna,
                             verbose = TRUE)
 write.csv(gamma.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\gamma.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 5.Epsilon-cells ####
+# 5.Epsilon-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 epsilon.mvsf <- FindMarkers(processed_rna, 
@@ -1430,10 +1432,10 @@ epsilon.wfvshf <- FindMarkers(processed_rna,
                             verbose = TRUE)
 write.csv(epsilon.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\epsilon.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 6.Alpha+Beta-cells ####
+# 6.Alpha+Beta-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 alphabeta.mvsf <- FindMarkers(processed_rna, 
@@ -1548,10 +1550,10 @@ alphabeta.wfvshf <- FindMarkers(processed_rna,
                               verbose = TRUE)
 write.csv(alphabeta.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\alphabeta.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 7.Cycling_Endo-cells ####
+# 7.Cycling_Endo-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 cycendo.mvsf <- FindMarkers(processed_rna, 
@@ -1666,10 +1668,10 @@ cycendo.wfvshf <- FindMarkers(processed_rna,
                                 verbose = TRUE)
 write.csv(cycendo.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\cycendo.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 8.Duct-cells ####
+# 8.Duct-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 ductal.mvsf <- FindMarkers(processed_rna, 
@@ -1784,10 +1786,10 @@ ductal.wfvshf <- FindMarkers(processed_rna,
                               verbose = TRUE)
 write.csv(ductal.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\ductal.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 9.Acinar-cells ####
+# 9.Acinar-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 acinar.mvsf <- FindMarkers(processed_rna, 
@@ -1902,10 +1904,10 @@ acinar.wfvshf <- FindMarkers(processed_rna,
                              verbose = TRUE)
 write.csv(acinar.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\acinar.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 10.Activated-Stellate-cells ####
+# 10.Activated-Stellate-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 activstellate.mvsf <- FindMarkers(processed_rna, 
@@ -2020,10 +2022,10 @@ activstellate.wfvshf <- FindMarkers(processed_rna,
                              verbose = TRUE)
 write.csv(activstellate.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\activstellate.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 11.Quiescent-Stellate-cells ####
+# 11.Quiescent-Stellate-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 quiescstellate.mvsf <- FindMarkers(processed_rna, 
@@ -2138,10 +2140,10 @@ quiescstellate.wfvshf <- FindMarkers(processed_rna,
                                     verbose = TRUE)
 write.csv(quiescstellate.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\quiescstellate.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 12.Endothelial-cells ####
+# 12.Endothelial-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 endothelial.mvsf <- FindMarkers(processed_rna, 
@@ -2256,10 +2258,10 @@ endothelial.wfvshf <- FindMarkers(processed_rna,
                                      verbose = TRUE)
 write.csv(endothelial.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\endothelial.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 13.EndMT-cells ####
+# 13.EndMT-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 EndMT.mvsf <- FindMarkers(processed_rna, 
@@ -2374,10 +2376,10 @@ EndMT.wfvshf <- FindMarkers(processed_rna,
                                   verbose = TRUE)
 write.csv(EndMT.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\EndMT.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 14.Macrophage-cells ####
+# 14.Macrophage-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 mphage.mvsf <- FindMarkers(processed_rna, 
@@ -2492,10 +2494,10 @@ mphage.wfvshf <- FindMarkers(processed_rna,
                             verbose = TRUE)
 write.csv(mphage.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mphage.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 15.Mast-cells ####
+# 15.Mast-cells
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 mast.mvsf <- FindMarkers(processed_rna, 
@@ -2610,10 +2612,10 @@ mast.wfvshf <- FindMarkers(processed_rna,
                              verbose = TRUE)
 write.csv(mast.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap\mast.wfvshf.csv)")
 
-##########################
-##########################
+######################### #
+######################### #
 
-# 16.Lymphocyte-cells ####
+# 16.Lymphocyte-cells 
 # MALE VS. FEMALE
 Idents(processed_rna) <- "celltype_sex_disease"
 lympho.mvsf <- FindMarkers(processed_rna, 
@@ -2730,46 +2732,69 @@ write.csv(lympho.wfvshf, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1.
 
 
 
-# 
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-# View clustering
-DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
-pancreas_rna <- FindClusters(object = pancreas_rna, algorithm=4, resolution = 0, method = 'igraph')
+
+############################ STAGE ############################
+############################   4   ############################
+
+# Gene ontology analysis Rapid Gene ontology Auto Loader (Rapid GOAL)
+# Create a list of all files in directory
+dgelist <- list.files(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap)", 
+                      all.files = FALSE, 
+                      full.names = FALSE, 
+                      pattern = "*.csv")
+
+# Point towards WD using a function
+for (sample in dgelist){
+  wd <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Windows/data_hpap/%s', dgelist)
+}
+
+# Run iterative function to perform GO on all data
+for (x in wd) {
+  sample_name <- str_split_fixed(x, "/", n=12)[12]
+  datfile <- read.csv(file.path(x), row.names = 1)
+  
+  # Gene list of genes going UP
+  sig_df_up <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC > 0.26303) # >1.2x
+  sig_genes_up <- rownames(sig_df_up)
+  
+  # Gene list of genes going UP
+  sig_df_down <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC < -0.32192) # <0.8x
+  sig_genes_down <- rownames(sig_df_down)
+  
+  # All genes
+  all_genes <- rownames(datfile)
+  
+  # Run GO enrichment analysis genes up
+  GO.up <- enrichGO(gene = sig_genes_up, 
+                    universe = all_genes, 
+                    keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                    OrgDb = org.Hs.eg.db, 
+                    ont = c("ALL"), 
+                    pAdjustMethod = "BH", 
+                    pvalueCutoff = 1, 
+                    qvalueCutoff = 1, #if not set default is at 0.05
+                    readable = TRUE)
+  
+  # Run GO enrichment analysis genes down
+  GO.down <- enrichGO(gene = sig_genes_down, 
+                      universe = all_genes, 
+                      keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                      OrgDb = org.Hs.eg.db, 
+                      ont = c("ALL"), 
+                      pAdjustMethod = "BH", 
+                      pvalueCutoff = 1, 
+                      qvalueCutoff = 1, #if not set default is at 0.05
+                      readable = TRUE)
+  
+  go_data_up <- data.frame(GO.up)
+  go_data_down <- data.frame(GO.down)
+  
+  # Save outputs
+  write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/scRNAseq/hpap_combined/ORA/UP/%s.csv", sample_name), row.names = FALSE)
+  write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/scRNAseq/hpap_combined/ORA/DOWN/%s.csv", sample_name), row.names = FALSE)
+}
 
 
-Idents(pancreas_rna) <- "Chemistry"
 
-# QC for Ruth split on chemistry
-v2 <- subset(pancreas_rna, idents = c("10Xv2"))
-v3 <- subset(pancreas_rna, idents = c("10Xv3"))
-
-Idents(pancreas_rna) <- "Chemistry"
-DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
-
-p1 <- DimPlot(v2, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
-p2 <- DimPlot(v3, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
-p1|p2
-
-RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE, reduction.name = 'umap')
-DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
-DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
-
-
-
-
-
-
-
-
-
+############################ END ############################
+############################ END ############################
