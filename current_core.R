@@ -1,7 +1,7 @@
 ############################ STAGE ############################
 ############################   1   ############################
 
-# NAalysis of Ruth's data
+# New Aalysis of Ruth's data
 # Hpap dataset
 system.time({
   #user    system elapsed 
