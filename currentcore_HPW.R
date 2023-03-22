@@ -146,7 +146,7 @@ packageVersion("EnrichmentBrowser")
 
 ############################ STAGE ############################
 ############################   1   ############################
-# OBJECT SETUP AND NORMALIZATION ####
+# OBJECT SETUP AND NORMALIZATION ###
 # STEP 1: Load 
 system.time({
 #user    system elapsed 
@@ -220,7 +220,7 @@ system.time({
     data2 <- RunUMAP(data2, dims = 1:30, verbose = FALSE)
     data2 <- FindNeighbors(data2, dims = 1:30, verbose = FALSE)
     data2 <- FindClusters(data2, algorithm=4, resolution = 1, verbose=FALSE)
-    qsave(data2, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/RDS files/current/soupx_rounttoint/%s.qs",sample_name))
+    qsave(data2, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/RDS files/current/1_soupx_rounttoint/%s.qs",sample_name))
     }
   }
 })
@@ -230,22 +230,24 @@ system.time({
 ############################   2   ############################
 # Load data
 system.time({
+#user     system elapsed 
+#30790.28 562.56 31476.69 
 {
-  HP2022801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2022801.qs)")
-  SAMN15877725 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\SAMN15877725.qs)")
-  HP2024001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2024001.qs)")
-  HP2031401 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2031401.qs)")
-  HP2105501 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2105501.qs)")
-  HP2106201 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2106201.qs)")
-  HP2107001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2107001.qs)")
-  HP2107901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2107901.qs)")
-  HP2108601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2108601.qs)")
-  HP2108901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2108901.qs)")
-  HP2110001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2110001.qs)")
-  HP2121601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2121601.qs)")
-  HP2123201 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2123201.qs)")
-  HP2132801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2132801.qs)")
-  HP2202101 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\soupx_rounttoint\HP2202101.qs)")
+  HP2022801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2022801.qs)")
+  SAMN15877725 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\SAMN15877725.qs)")
+  HP2024001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2024001.qs)")
+  HP2031401 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2031401.qs)")
+  HP2105501 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2105501.qs)")
+  HP2106201 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2106201.qs)")
+  HP2107001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2107001.qs)")
+  HP2107901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2107901.qs)")
+  HP2108601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2108601.qs)")
+  HP2108901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2108901.qs)")
+  HP2110001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2110001.qs)")
+  HP2121601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2121601.qs)")
+  HP2123201 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2123201.qs)")
+  HP2132801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2132801.qs)")
+  HP2202101 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\1_soupx_rounttoint\HP2202101.qs)")
 }
 
 
@@ -430,21 +432,21 @@ system.time({
   }
 
 # Setup one metadata column
-HP2022801$doublets <- HP2022801$DF.classifications_0.25_0.09_170
-SAMN15877725$doublets <- SAMN15877725$DF.classifications_0.25_0.09_161
-HP2107001$doublets <- HP2107001$DF.classifications_0.25_0.09_169
-HP2107901$doublets <- HP2107901$DF.classifications_0.25_0.09_132
-HP2024001$doublets <- HP2024001$DF.classifications_0.25_0.09_121
-HP2105501$doublets <- HP2105501$DF.classifications_0.25_0.09_125
-HP2108601$doublets <- HP2108601$DF.classifications_0.25_0.09_218
-HP2108901$doublets <- HP2108901$DF.classifications_0.25_0.09_171
-HP2031401$doublets <- HP2031401$DF.classifications_0.25_0.09_187
-HP2110001$doublets <- HP2110001$DF.classifications_0.25_0.09_232
-HP2123201$doublets <- HP2123201$DF.classifications_0.25_0.09_62
-HP2106201$doublets <- HP2106201$DF.classifications_0.25_0.09_260
-HP2121601$doublets <- HP2121601$DF.classifications_0.25_0.09_143
-HP2132801$doublets <- HP2132801$DF.classifications_0.25_0.09_96
-HP2202101$doublets <- HP2202101$DF.classifications_0.25_0.09_160
+HP2022801$doublets <- HP2022801$DF.classifications_0.25_0.09_213
+SAMN15877725$doublets <- SAMN15877725$DF.classifications_0.25_0.09_201
+HP2107001$doublets <- HP2107001$DF.classifications_0.25_0.09_212
+HP2107901$doublets <- HP2107901$DF.classifications_0.25_0.09_165
+HP2024001$doublets <- HP2024001$DF.classifications_0.25_0.09_151
+HP2105501$doublets <- HP2105501$DF.classifications_0.25_0.09_156
+HP2108601$doublets <- HP2108601$DF.classifications_0.25_0.09_273
+HP2108901$doublets <- HP2108901$DF.classifications_0.25_0.09_214
+HP2031401$doublets <- HP2031401$DF.classifications_0.25_0.09_233
+HP2110001$doublets <- HP2110001$DF.classifications_0.25_0.09_290
+HP2123201$doublets <- HP2123201$DF.classifications_0.25_0.09_78
+HP2106201$doublets <- HP2106201$DF.classifications_0.25_0.09_325
+HP2121601$doublets <- HP2121601$DF.classifications_0.25_0.09_179
+HP2132801$doublets <- HP2132801$DF.classifications_0.25_0.09_120
+HP2202101$doublets <- HP2202101$DF.classifications_0.25_0.09_200
 
 # Step 4: Add cell IDs ####
 # Add cell IDs
@@ -746,21 +748,21 @@ pancreas_subset <- lapply(X = pancreas_subset,
 #saveRDS(pancreas_subset, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
 
 {
-  HP2022801 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2022801.rds)")
-  SAMN15877725 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\SAMN15877725.rds)")
-  HP2024001 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2024001.rds)")
-  HP2031401 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2031401.rds)")
-  HP2105501 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2105501.rds)")
-  HP2106201 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2106201.rds)")
-  HP2107001 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2107001.rds)")
-  HP2107901 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2107901.rds)")
-  HP2108601 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2108601.rds)")
-  HP2108901 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2108901.rds)")
-  HP2110001 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2110001.rds)")
-  HP2121601 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2121601.rds)")
-  HP2123201 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2123201.rds)")
-  HP2132801 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2132801.rds)")
-  HP2202101 <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\CoreArch_CurrentR\HP files after doubletfinder\HP2202101.rds)")
+  HP2022801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2022801.qs)")
+  SAMN15877725 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\SAMN15877725.qs)")
+  HP2024001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2024001.qs)")
+  HP2031401 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2031401.qs)")
+  HP2105501 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2105501.qs)")
+  HP2106201 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2106201.qs)")
+  HP2107001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2107001.qs)")
+  HP2107901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2107901.qs)")
+  HP2108601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2108601.qs)")
+  HP2108901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2108901.qs)")
+  HP2108901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2110001.qs)")
+  HP2121601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2121601.qs)")
+  HP2123201 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2123201.qs)")
+  HP2132801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2132801.qs)")
+  HP2202101 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2202101.qs)")
 }
 
 
@@ -924,15 +926,6 @@ VlnPlot(object = pancreas_rna, features = c("nFeature_RNA", "nCount_RNA", "perce
 # Subset
 pancreas_rna <- subset(x = pancreas_rna, subset = nFeature_RNA > 500 & nFeature_RNA < 8000 & percent.mt < 15)
 
-#Save point
-#saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
-
-
-# Load data
-#pancreas_rna <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
-#pancreas_combined <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
-
-
 # Inspect data
 pancreas_rna
 table(pancreas_rna@meta.data[["Chemistry"]])
@@ -992,7 +985,7 @@ pancreas_rna <- pancreas_rna %>%
   FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 4, 4.6, 5, 6, 7, 8, 9, 10), method = 'igraph')
 
 # Save file
-saveRDS(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+qsave(pancreas_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\pancreas_rna.qs)")
 })
 
 
