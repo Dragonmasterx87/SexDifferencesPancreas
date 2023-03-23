@@ -2,7 +2,7 @@
 # The following set of code is a description of the analysis performed in the 
 # paper entitled "enter name of paper here"
 # Author Fahd Qadir FMJ Lab Tulane University, Schoool of Medicine
-# Date code was written: 11/16/2022
+# Date code was written: 03/23/2022
 # R version 4.2.1 (2019-12-12) 'Funny-Looking Kid'
 
 # LOAD LIBRARIES ####
@@ -743,10 +743,7 @@ pancreas_subset <- lapply(X = pancreas_subset,
                                                vst.flavor = "v2")
                             })
 
-
-#Save point
-#saveRDS(pancreas_subset, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
-
+# Read in SoupX corrected/doublet classified data
 {
   HP2022801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2022801.qs)")
   SAMN15877725 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\SAMN15877725.qs)")
@@ -758,7 +755,7 @@ pancreas_subset <- lapply(X = pancreas_subset,
   HP2107901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2107901.qs)")
   HP2108601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2108601.qs)")
   HP2108901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2108901.qs)")
-  HP2108901 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2110001.qs)")
+  HP2110001 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2110001.qs)")
   HP2121601 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2121601.qs)")
   HP2123201 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2123201.qs)")
   HP2132801 <- qread(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\2_doublet_defined\HP2132801.qs)")
@@ -887,22 +884,8 @@ pancreas_qadir <- lapply(X = pancreas_qadir,
                            x <- subset(x = x, idents = c("Singlet"))
                          })
 
-#Save point
-#saveRDS(pancreas_qadir, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
-
-
-# Load Processed data for analysis
-#pancreas_subset <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_subset.rds)")
-#pancreas_qadir <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_qadir.rds)")
-
 # Join datasets
 pancreas_combined <- c(pancreas_subset, pancreas_qadir)
-
-#Save point
-#saveRDS(pancreas_combined, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
-
-# Load Processed data for analysis
-#pancreas_combined <- readRDS(r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_combined.rds)")
 
 # merge data sets
 sampleset <- c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP_040", "HPAP_044", "HPAP_051", 
@@ -917,7 +900,6 @@ pancreas_rna <- merge(pancreas_combined[[sampleset[[1]]]],
                      y=pancreas_combined[sampleset[2:length(sampleset)]], 
                      project='pancreas', 
                      merge.data = TRUE)
-
 
 # Inspect data
 Idents(pancreas_rna) <- "Tissue Source"
@@ -982,10 +964,11 @@ DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=
 # Clustering
 pancreas_rna <- pancreas_rna %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
-  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 4, 4.6, 5, 6, 7, 8, 9, 10), method = 'igraph')
+  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 4, 4.6, 5, 6, 7, 8, 9, 10), method = 'igraph') #25 res
 
 # Save file
 qsave(pancreas_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\pancreas_rna.qs)")
+qsave(pancreas_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\pancreas_rna.qs)")
 })
 
 
@@ -994,22 +977,20 @@ qsave(pancreas_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Co
 
 system.time({
 # Load data
-pancreas_rna <- readRDS(file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\pancreas_rna.rds)")
+pancreas_rna <- qread(file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\pancreas_rna.qs)")
 
 # Cluster-tree analysis, looking appropriate non-anomalous clustering resolution
-clustree(pancreas_rna, prefix = "RNA_snn_res.")
-
-pancreas_rna <- FindClusters(pancreas_rna, algorithm=4,resolution = c(6), method = 'igraph')
+#clustree(pancreas_rna, prefix = "RNA_snn_res.")
 
 # View clustering
 DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = pancreas_rna,
-            features = c("SOX10"
+            features = c("MKI67"
             ),
             pt.size = 0.01,
             cols = c("darkgrey", "red"),
             min.cutoff = 0,
-            max.cutoff = 500,
+            max.cutoff = 1000,
             slot = 'counts',
             order = TRUE,
             raster=FALSE)
@@ -1020,14 +1001,19 @@ subset_clust <- subset(pancreas_rna, idents = c("1", "2", "3", "4", "5", "6", "7
                                                 "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
                                                 "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", 
                                                 "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", 
-                                                "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", 
-                                                "51", "52", "53", "54", "55", #"56", 
-                                                "57", "58", "59", "60",
-                                                "61", "62", "63", "64", "65", "66", #"67", 
-                                                "68", "69", #"70", 
-                                                "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", 
-                                                "81", "82", #"83", 
-                                                "84", "85", "86", "87", "88", "89", "90" 
+                                                "41", "42", "43", "44", #"45", 
+                                                "46", "47", "48", "49", "50", 
+                                                #"51", 
+                                                "52", "53", "54", "55", "56", "57", "58", "59", "60",
+                                                "61", "62", "63", "64", #"65", 
+                                                "66", #"67", 
+                                                "68", "69", "70", 
+                                                "71", "72", "73", "74", #"75", 
+                                                "76", #"77", 
+                                                "78", "79", #"80", 
+                                                "81", "82", "83", "84", #"85", 
+                                                "86", "87", #"88", 
+                                                "89", "90" 
                                                 ))
 
 # Checking cluster loss
@@ -1050,9 +1036,9 @@ subset_clust <- RunUMAP(subset_clust, reduction = "harmony", dims = 1:20, return
 #Neighbours + Clustering
 subset_clust <- subset_clust %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
-  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 6), method = 'igraph')
+  FindClusters(algorithm=4,resolution = c(0.5, 6), method = 'igraph')
 
-
+DefaultAssay(subset_clust) <- "RNA"
 DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = subset_clust,
             features = c("HSPB1", "DNAJB6", "HSPH1", "GADD45B"
@@ -1065,9 +1051,20 @@ FeaturePlot(object = subset_clust,
             order = TRUE,
             raster=TRUE)
 
+FeaturePlot(object = subset_clust,
+            features = c("INS"
+            ),
+            pt.size = 0.01,
+            cols = c("darkgrey", "red"),
+            min.cutoff = 0,
+            max.cutoff = 500,
+            slot = 'counts',
+            order = TRUE,
+            raster=TRUE)
+
 DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = pancreas_rna,
-            features = c("MT-CO3"
+            features = c("TRAC"
             ),
             pt.size = 0.01,
             cols = c("darkgrey", "red"),
@@ -1081,123 +1078,132 @@ FeaturePlot(object = pancreas_rna,
 table(subset_clust@meta.data$RNA_snn_res.6)
 Idents(subset_clust) <- "RNA_snn_res.6"
 subset_clust <- RenameIdents(subset_clust, 
-                             "1" = "Alpha",
-                             "2" = "Alpha",
-                             "3" = "Alpha",
-                             "4" = "Alpha",
-                             "5" = "Alpha",
-                             "6" = "Alpha",
-                             "7" = "Acinar",
-                             "8" = "Quiescent_Stellate",
-                             "9" = "Alpha",
-                             "10" = "Alpha+Beta",
-                             "11" = "Acinar",
-                             "12" = "Beta",
-                             "13" = "Alpha",
-                             "14" = "Alpha+Beta",
-                             "15" = "Beta",
-                             "16" = "Alpha",
-                             "17" = "Ductal",
-                             "18" = "Alpha",
-                             "19" = "Delta",
-                             "20" = "Ductal",
-                             "21" = "Acinar",
-                             "22" = "Alpha",
-                             "23" = "Beta",
-                             "24" = "Beta",
-                             "25" = "Activated_Stellate",
-                             "26" = "Ductal",
-                             "27" = "Ductal",
-                             "28" = "Acinar",
-                             "29" = "Beta",
-                             "30" = "Acinar",
-                             "31" = "Alpha",
-                             "32" = "Beta",
-                             "33" = "Activated_Stellate",
-                             "34" = "Alpha",
-                             "35" = "Beta",
-                             "36" = "Alpha",
-                             "37" = "Endothelial",
-                             "38" = "Beta",
-                             "39" = "Beta",
-                             "40" = "Endothelial",
-                             "41" = "Acinar",
-                             "42" = "Acinar",
-                             "43" = "Activated_Stellate",
-                             "44" = "Delta",
-                             "45" = "Beta",
-                             "46" = "Alpha",
-                             "47" = "Beta",
-                             "48" = "Alpha",
-                             "49" = "Alpha+Beta",
-                             "50" = "Alpha",
-                             "51" = "Beta",
-                             "52" = "Mast",
-                             "53" = "Acinar",
-                             "54" = "Alpha+Beta",
-                             "55" = "Macrophage",
-                             "56" = "Acinar",
-                             "57" = "Acinar",
-                             "58" = "Activated_Stellate",
-                             "59" = "Beta",
-                             "60" = "PPY",
-                             "61" = "Acinar",
-                             "62" = "PPY",
-                             "63" = "Delta",
-                             "64" = "Ductal",
-                             "65" = "Endothelial",
-                             "66" = "Quiescent_Stellate",
-                             "67" = "Ductal",
-                             "68" = "Acinar",
-                             "69" = "Cycling_Endo",
-                             "70" = "Alpha",
-                             "71" = "Alpha+Beta",
-                             "72" = "Beta",
-                             "73" = "Endothelial",
-                             "74" = "Acinar",
-                             "75" = "Endothelial",
-                             "76" = "Ductal",
-                             "77" = "Acinar",
-                             "78" = "Macrophage",
-                             "79" = "Acinar",
-                             "80" = "Schwann",
-                             "81" = "Acinar",
-                             "82" = "EndMT",
-                             "83" = "Alpha",
-                             "84" = "Beta",
-                             "85" = "Macrophage",
-                             "86" = "Acinar",
-                             "87" = "Acinar"
+                             "1" = "alpha",
+                             "2" = "alpha",
+                             "3" = "alpha",
+                             "4" = "alpha",
+                             "5" = "alpha",
+                             "6" = "alpha",
+                             "7" = "activated_stellate",
+                             "8" = "alpha",
+                             "9" = "acinar",
+                             "10" = "alpha",
+                             "11" = "beta",
+                             "12" = "beta",
+                             "13" = "ductal",
+                             "14" = "beta",
+                             "15" = "beta",
+                             "16" = "alpha",
+                             "17" = "alpha",
+                             "18" = "acinar",
+                             "19" = "ductal",
+                             "20" = "beta",
+                             "21" = "beta+alpha",
+                             "22" = "activated_stellate",
+                             "23" = "alpha",
+                             "24" = "acinar",
+                             "25" = "ductal",
+                             "26" = "beta",
+                             "27" = "quiescent_stellate",
+                             "28" = "acinar",
+                             "29" = "endothelial",
+                             "30" = "alpha",
+                             "31" = "endothelial",
+                             "32" = "beta+delta",
+                             "33" = "alpha",
+                             "34" = "acinar",
+                             "35" = "acinar",
+                             "36" = "ductal",
+                             "37" = "beta+alpha",
+                             "38" = "beta",
+                             "39" = "beta+alpha",
+                             "40" = "alpha",
+                             "41" = "beta",
+                             "42" = "acinar",
+                             "43" = "beta",
+                             "44" = "beta",
+                             "45" = "delta",
+                             "46" = "beta",
+                             "47" = "delta",
+                             "48" = "activated_stellate",
+                             "49" = "acinar",
+                             "50" = "alpha",
+                             "51" = "beta",
+                             "52" = "alpha",
+                             "53" = "gamma",
+                             "54" = "mast",
+                             "55" = "macrophages",
+                             "56" = "beta+alpha",
+                             "57" = "beta",
+                             "58" = "acinar",
+                             "59" = "gamma",
+                             "60" = "quiescent_stellate",
+                             "61" = "acinar",
+                             "62" = "ductal",
+                             "63" = "activated_stellate",
+                             "64" = "acinar",
+                             "65" = "alpha",
+                             "66" = "endothelial",
+                             "67" = "ductal",
+                             "68" = "ductal",
+                             "69" = "acinar",
+                             "70" = "cycling_endo",
+                             "71" = "acinar",
+                             "72" = "endothelial",
+                             "73" = "acinar",
+                             "74" = "acinar",
+                             "75" = "endothelial",
+                             "76" = "acinar",
+                             "77" = "beta",
+                             "78" = "alpha",
+                             "79" = "alpha",
+                             "80" = "alpha",
+                             "81" = "schwann",
+                             "82" = "activated_stellate",
+                             "83" = "beta+alpha",
+                             "84" = "beta+alpha",
+                             "85" = "ductal",
+                             "86" = "acinar",
+                             "87" = "ductal"
                              )
 
 # Check renaming
 table(subset_clust@active.ident)
+unique(subset_clust@active.ident)
 
-#plot <- DimPlot(subset_clust, reduction = "umap")
+
+############################## #
+########## SUBSET1 ########### #
+############################## #
+
+# Subset epsilon cells
 DefaultAssay(object = subset_clust) <- "RNA"
-Idents(subset_clust, WhichCells(object = subset_clust, expression = GHRL > 50, slot = 'counts')) <- 'Epsilon'
+Idents(subset_clust, WhichCells(object = subset_clust, expression = GHRL > 50, slot = 'counts')) <- 'epsilon'
 subset_clust$celltype_qadir <- Idents(subset_clust)
 Idents(subset_clust) <- "celltype_qadir"
 DimPlot(subset_clust, reduction = "umap", label = TRUE)
 
+############################## #
+########## SUBSET2 ########### #
+############################## #
+
 # Subsetting Lymphocytes from Mast cells
 # First subset all cells, they are called "Mast" in the primary object
-Mast <- subset(subset_clust, idents = "Mast")
-table(Mast@active.ident)
-Mast <- Mast %>% 
+mast <- subset(subset_clust, idents = "mast")
+table(mast@active.ident)
+mast <- mast %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
   FindClusters(algorithm=4,resolution = c(0.5), method = 'igraph')
 
 # Run UMAP
-Mast <- RunUMAP(Mast, reduction = "harmony", dims = 1:20, return.model = TRUE)
-DimPlot(Mast, reduction = 'umap', label = FALSE, pt.size = 1, raster=FALSE)
-
+mast <- RunUMAP(mast, reduction = "harmony", dims = 1:20, return.model = TRUE)
+DimPlot(mast, reduction = 'umap', label = FALSE, pt.size = 1, raster=FALSE)
 # Cluster assignment
-table(Mast@meta.data$RNA_snn_res.0.5)
-Idents(Mast) <- "RNA_snn_res.0.5"
-DimPlot(Mast, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 1, raster=FALSE)
-FeaturePlot(object = Mast,
-            features = c("TPSAB1"
+table(mast@meta.data$RNA_snn_res.0.5)
+Idents(mast) <- "RNA_snn_res.0.5"
+DimPlot(mast, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 1, raster=FALSE)
+FeaturePlot(object = mast,
+            features = c("TRAC"
             ),
             pt.size = 1,
             cols = c("darkgrey", "red"),
@@ -1205,16 +1211,18 @@ FeaturePlot(object = Mast,
             max.cutoff = 500,
             slot = 'counts',
             order = TRUE,
-            raster=TRUE)
-table(Mast@active.ident)
-Mast <- RenameIdents(Mast, 
-                     "1" = "Lymphocyte",
-                     "2" = "Mast",
-                     "3" = "Mast",
-                     "4" = "Mast"
+            raster=FALSE)
+
+table(mast@active.ident)
+mast <- RenameIdents(mast, 
+                     "1" = "mast",
+                     "2" = "lymphocyte",
+                     "3" = "mast",
+                     "4" = "lymphocyte",
+                     "5" = "lymphocyte"
 )
 
-table(Mast@active.ident)
+table(mast@active.ident)
 
 # Generate a new column called celltype_qadir in the metadata copying all Ident info there, this is active idents so check
 table(subset_clust@active.ident)
@@ -1222,79 +1230,82 @@ subset_clust$celltype_qadir <- as.character(Idents(subset_clust)) #as.character 
 table(subset_clust$celltype_qadir)
 
 # Change the information of cells containing sub-cluster information
-subset_clust$celltype_qadir[Cells(Mast)] <- paste(Idents(Mast))
+subset_clust$celltype_qadir[Cells(mast)] <- paste(Idents(mast))
 table(subset_clust$celltype_qadir)
 DimPlot(subset_clust, 
-        split.by = "Tissue Source", 
+        #split.by = "Tissue Source", 
         group.by = "celltype_qadir", 
         label = FALSE, 
-        ncol = 2,  
-        cols = c("darkturquoise",
-                 "lightgreen",
-                 "springgreen4",
-                 "lightgoldenrod3",
-                 "green3",
-                 "grey56",
-                 "grey80",
-                 "deeppink",
-                 "violet",
-                 "purple",
-                 "coral2",
-                 "magenta",
-                 "red4",
-                 "black",
-                 "red",
-                 "salmon",
-                 "pink"
+        ncol = 1,  
+        cols = c("dodgerblue3",      #beta
+                 "turquoise2",       #beta+alpha
+                 "lightseagreen",    #alpha
+                 "darkseagreen2",    #cycling_endo
+                 "khaki2",           #epsilon 
+                 "springgreen4",     #gamma
+                 "chartreuse3",      #delta
+                 "burlywood3",       #beta+delta
+                 "darkorange",       #ductal
+                 "salmon3",          #acinar
+                 "orangered",        #activated_setallate
+                 "salmon",           #quiescent_stellate
+                 "red",              #endothelial
+                 "magenta3",         #macrophages
+                 "orchid1",          #lymphocytes
+                 "red4",             #mast
+                 "grey30"            #schwann
         )
 )
 
 # Define an order of cluster identities remember after this step-
 # cluster re-assignment occurs, which re-assigns clustering in my_levels
-my_levels <- c("Beta", "Alpha+Beta", "Cycling_Endo", "Alpha", "Delta", "PPY", "Epsilon",
-               "Ductal", "Acinar", 
-               "Activated_Stellate", "Quiescent_Stellate", "EndMT", "Endothelial",
-               "Macrophage", "Lymphocyte", "Mast",
-               "Schwann")
+my_levels <- c("beta", "beta+alpha", "alpha", "cycling_endo", "epsilon", "gamma", "delta", "beta+delta",
+               "ductal", "acinar", 
+               "activated_stellate", "quiescent_stellate", "endothelial",
+               "macrophages", "lymphocyte", "mast",
+               "schwann")
 table(subset_clust@meta.data$celltype_qadir)
 
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
 subset_clust@meta.data$celltype_qadir <- factor(x = subset_clust@meta.data$celltype_qadir, levels = my_levels)
 table(subset_clust@meta.data$celltype_qadir)
+unique(subset_clust@meta.data$celltype_qadir)
 
 # Set celltype_qadir as default
 Idents(subset_clust) <- "celltype_qadir"
 
 # Change the information of cells containing sub-cluster information
 DimPlot(subset_clust, 
-        split.by = "Diabetes Status", 
+        #split.by = "Diabetes Status", 
         group.by = "celltype_qadir", 
         label = TRUE, 
-        ncol = 2, 
+        ncol = 1, 
         raster = FALSE,
         pt.size = 0.5,
-        cols = c("darkturquoise",
-                 "lightgreen",
-                 "lightgoldenrod3",
-                 "springgreen4",
-                 "dodgerblue4",
-                 "darkseagreen",
-                 "orangered3",
-                 "deeppink",
-                 "violetred4",
-                 "purple",
-                 "magenta",
-                 "hotpink3",
-                 "red2",
-                 "darkorange",
-                 "pink",
-                 "salmon",
-                 "grey30"
+        cols = c("dodgerblue3",      #beta
+                 "turquoise2",       #beta+alpha
+                 "lightseagreen",    #alpha
+                 "darkseagreen2",    #cycling_endo
+                 "khaki2",           #epsilon 
+                 "springgreen4",     #gamma
+                 "chartreuse3",      #delta
+                 "burlywood3",       #beta+delta
+                 "darkorange",       #ductal
+                 "salmon3",          #acinar
+                 "orangered",        #activated_setallate
+                 "salmon",           #quiescent_stellate
+                 "red",              #endothelial
+                 "magenta3",         #macrophages
+                 "orchid1",          #lymphocytes
+                 "red4",             #mast
+                 "grey30"            #schwann
         )
 )
 
 # Save data
-saveRDS(subset_clust, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\subset_clust.rds)")
+processed_rna < subset_clust
+qsave(processed_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\processed_rna.qs)")
+qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 })
 
 
@@ -1303,7 +1314,7 @@ saveRDS(subset_clust, file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pa
 ############################   5   ############################
 
 # Load data
-processed_rna <- readRDS(file = r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\pancreas.list\subset_clust.rds)")
+processed_rna <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 
 # Create a metadata slot for celltype_sex, celltype_sex_ancestry and celltype_sex_ancestry_disease
 Idents(processed_rna) <- "celltype_qadir"
@@ -1564,30 +1575,30 @@ pheatmap(sampleDistMatrix,
 ############################ STAGE ############################
 ############################   6   ############################
 
-DimPlot(processed_rna, 
-        split.by = "Diabetes Status", 
+DimPlot(subset_clust, 
+        #split.by = "Diabetes Status", 
         group.by = "celltype_qadir", 
         label = TRUE, 
-        ncol = 2, 
+        ncol = 1, 
         raster = FALSE,
         pt.size = 0.5,
-        cols = c("darkturquoise",
-                                "lightgreen",
-                                "lightgoldenrod3",
-                                "springgreen4",
-                                "dodgerblue4",
-                                "darkseagreen",
-                                "orangered3",
-                                "deeppink",
-                                "violetred4",
-                                "purple",
-                                "magenta",
-                                "hotpink3",
-                                "red2",
-                                "darkorange",
-                                "pink",
-                                "salmon",
-                                "grey30"
+        cols = c("dodgerblue3",      #beta
+                 "turquoise2",       #beta+alpha
+                 "lightseagreen",    #alpha
+                 "darkseagreen2",    #cycling_endo
+                 "khaki2",           #epsilon 
+                 "springgreen4",     #gamma
+                 "chartreuse3",      #delta
+                 "burlywood3",       #beta+delta
+                 "darkorange",       #ductal
+                 "salmon3",          #acinar
+                 "orangered",        #activated_setallate
+                 "salmon",           #quiescent_stellate
+                 "red",              #endothelial
+                 "magenta3",         #macrophages
+                 "orchid1",          #lymphocytes
+                 "red4",             #mast
+                 "grey30"            #schwann
         )
 )
 
