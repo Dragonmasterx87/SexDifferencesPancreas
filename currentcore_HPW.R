@@ -44,6 +44,7 @@ BiocManager::install("escape")
 BiocManager::install("ComplexHeatmap")
 BiocManager::install(c("DropletUtils", "Nebulosa"))
 BiocManager::install("hdf5r", force = TRUE)
+BiocManager::install("DESeq2")
 
 # install Seurat from Github (automatically updates sctransform)
 setRepositories(ind=1:3) # needed to automatically install Bioconductor dependencies
@@ -120,6 +121,16 @@ suppressWarnings(
     library(devtools)
     library(R.utils)
     library(qs)
+    library(parallel)
+    library(readr)
+    library(DESeq2)
+    library(beeswarm)
+    library(limma)
+    library(edgeR)
+    library(GenomicFeatures)
+    library(data.table)
+    library(RColorBrewer)
+    library(pheatmap)
   }
 )
 
@@ -1302,20 +1313,6 @@ DimPlot(subset_clust,
         )
 )
 
-# Save data
-processed_rna < subset_clust
-qsave(processed_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\processed_rna.qs)")
-qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
-})
-
-
-
-############################ STAGE ############################
-############################   5   ############################
-
-# Load data
-processed_rna <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
-
 # Create a metadata slot for celltype_sex, celltype_sex_ancestry and celltype_sex_ancestry_disease
 Idents(processed_rna) <- "celltype_qadir"
 processed_rna$celltype_sex <- paste(Idents(processed_rna), processed_rna$Sex, sep = "_")
@@ -1331,9 +1328,20 @@ table(processed_rna$celltype_sex_ancestry)
 table(processed_rna$celltype_sex_ancestry_disease)
 table(processed_rna$celltype_sex_disease)
 
+# Save data
+processed_rna < subset_clust
+qsave(processed_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\processed_rna.qs)")
+qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+})
+
+
+
+############################ STAGE ############################
+############################   5   ############################
+
 ###Step 1: Make Pseudobulk Matrices
 #Read in final Seurat object
-adata <- readRDS('/nfs/lab/relgamal/Fahd/processed_rna.rds')
+adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 Idents(adata) <- adata@meta.data$celltype_qadir
 samples <- unique(adata@meta.data$Library)
 
@@ -1392,26 +1400,47 @@ get_per_sample_gex_SUMS <- function(cell.type, mtx.fp){
   head(fin.counts.df)
   
   #export df
-  mtx.fp <- sprintf('/nfs/lab/relgamal/Fahd/%s_sample_gex_total_counts.txt',cell.type)
+  mtx.fp <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/%s_sample_gex_total_counts.txt',cell.type) # change to save dir
   write.table(fin.counts.df,mtx.fp,sep='\t',quote=FALSE)
 }
 
 #Run function to make matrices
 unique_cell_types <- unique(adata$celltype_qadir)
 for (cell.type in unique_cell_types){
-  fp = sprintf('/nfs/lab/relgamal/Fahd/%s_pseudobulk.txt',cell.type)
+  fp = sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/%s_pseudobulk.txt',cell.type) # change to save dir as above
   get_per_sample_gex_SUMS(cell.type, fp)
 }
 
 ###Step 2: Make TPM Matrices
 #Pull out gene exon info and calculate effective length
-gene_annotations_gtf_fp <- '/nfs/lab/publicdata/gencode_v38/gencode.v38.annotation_comprehensive_CHR.gtf'
+gene_annotations_gtf_fp <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/publicdata/gencode_v38/gencode.v38.annotation.gtf'
 suppressMessages(txdb <- makeTxDbFromGFF(gene_annotations_gtf_fp,format="gtf"))
 exons.list.per.gene <- exonsBy(txdb,by="gene") #Collect the exons per gene_id
 #Reduce all the exons to a set of non overlapping exons, calculate their lengths (widths) and sum them
 exonic.gene.sizes <- sum(width(reduce(exons.list.per.gene)))
 
-gene.info <- fread('/nfs/lab/publicdata/gencode_v38/gene_info_hg38_basic.tsv')
+#checking <- gene.info
+gene.info <- rtracklayer::import('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/publicdata/gencode_v38/gencode.v38.basic.annotation.gtf')
+gene.info <- as.data.frame(gene.info)
+gene.info <- gene.info %>% select(gene_id, gene_name, gene_type, seqnames, start, end, strand, source, level)
+head(gene.info)
+
+# Calculate entire gene boundaries
+gene.info.start <- gene.info %>% group_by(gene_id) %>% slice_min(order_by = start)
+gene.info.start <- gene.info.start[!duplicated(gene.info.start$gene_id),]
+gene.info.start <- gene.info.start %>% select(gene_id, gene_name, gene_type, seqnames, end, strand, source, level)
+
+gene.info.end <- gene.info %>% group_by(gene_id) %>% slice_max(order_by = end)
+gene.info.end <- gene.info.end[!duplicated(gene.info.end$gene_id),]
+gene.info.end <- gene.info.end %>% select(gene_id, start)
+
+gene.info.comp <- merge(gene.info.end, gene.info.start, by = "gene_id")
+gene.info.comp <- gene.info.comp %>% select(gene_id, gene_name, gene_type, seqnames, start, end, strand, source, level)
+gene.info.comp$check <- ifelse(gene.info.comp$end > gene.info.comp$start, 'TRUE',
+                               ifelse(gene.info.comp$end < gene.info.comp$start, 'FALSE'))
+
+unique(gene.info.comp$check)
+gene.info <- gene.info.comp
 
 #Add the effective lengths to the original gene.info dataframe
 temp_df <- gene.info
@@ -1424,7 +1453,7 @@ new_df <- merge(temp_df,temp_df2, by='gene_id', all=TRUE)
 fin.gene.info <- new_df[!duplicated(new_df$gene_name),]
 
 #Read in psedobulk matrices from above 
-dir = '/nfs/lab/relgamal/Fahd/'
+dir = 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/'
 
 files = list.files(dir, pattern =".txt")
 cells = gsub("_sample_gex_total_counts.txt","", files)
@@ -1440,7 +1469,7 @@ make_tpm = function(raw_counts, gene_sizes){
 }
 
 #Output dir for TPM matrices
-outdir = "/nfs/lab/relgamal/Fahd/"
+outdir = "C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/TPM/"
 
 
 for (FILE in files){
@@ -1461,15 +1490,31 @@ rownames(meta) <- NULL
 meta <- meta[!duplicated(meta),]
 meta$sex_ancestry_diabetes <- paste0(meta$Sex, '_', meta$ancestry, '_', meta$Diabetes_Status)
 
+# #Create all combinations of tests comparing 2 conditions using the meta$sex_ancestry_diabetes column we created
+# combinations <- combn(meta$sex_ancestry_diabetes, 2)
+# combinations <- t(combinations)
+# combinations <- as.data.frame(combinations)
+# combinations <- combinations[which(combinations$V1 != combinations$V2),]
+# split1 <- str_split_fixed(combinations$V1, pattern='_',n=3)
+# split1 <- as.data.frame(split1)
+# split2 <- str_split_fixed(combinations$V2, pattern='_',n=3)
+# split2 <- as.data.frame(split2)
+# combinations <- cbind(combinations, split1, split2)
+# colnames(combinations) <- c('test1', 'test2', 'sex1', 'ancestry1', 'diabetes1','sex2', 'ancestry2', 'diabetes2')
+# 
+# #These next 4 lines will create the combinations where 2 variables remain the same and only one changes
+# ## ie. would remove M_black_T2D vs. F_white_T2D since there is only a single common variable
+# keep1 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$ancestry1 == combinations$ancestry2),]
+# keep2 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$diabetes1 == combinations$diabetes2),]
+# keep3 <- combinations[which(combinations$ancestry1 == combinations$ancestry2 & combinations$diabetes1 == combinations$diabetes2),]
+# keep <- rbind(keep1,keep2,keep3)
+# head(keep)
+
 #Create all combinations of tests comparing 2 conditions using the meta$sex_ancestry_diabetes column we created
-combinations <- combn(meta$sex_ancestry_diabetes, 2)
-combinations <- t(combinations)
-combinations <- as.data.frame(combinations)
+combinations <- as.data.frame(t(combn(meta$sex_ancestry_diabetes, 2)))
 combinations <- combinations[which(combinations$V1 != combinations$V2),]
-split1 <- str_split_fixed(combinations$V1, pattern='_',n=3)
-split1 <- as.data.frame(split1)
-split2 <- str_split_fixed(combinations$V2, pattern='_',n=3)
-split2 <- as.data.frame(split2)
+split1 <- as.data.frame(str_split_fixed(combinations$V1, pattern='_',n=3))
+split2 <- as.data.frame(str_split_fixed(combinations$V2, pattern='_',n=3))
 combinations <- cbind(combinations, split1, split2)
 colnames(combinations) <- c('test1', 'test2', 'sex1', 'ancestry1', 'diabetes1','sex2', 'ancestry2', 'diabetes2')
 
@@ -1480,15 +1525,19 @@ keep2 <- combinations[which(combinations$sex1 == combinations$sex2 & combination
 keep3 <- combinations[which(combinations$ancestry1 == combinations$ancestry2 & combinations$diabetes1 == combinations$diabetes2),]
 keep <- rbind(keep1,keep2,keep3)
 
+keep$check <- paste0(keep$test1, '_', keep$test2) #should be testing combinations
+keep <- keep[!duplicated(keep$check),] #remove duplicate testing combinations
+
+
 ###FYI total of 545 different tests
 
 #Pseudobulk matrices directory
-dir <- '/nfs/lab/relgamal/Fahd/'
+dir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/'
 #Create outdir for results
-outdir <- '/nfs/lab/relgamal/Fahd/results/'
-dir.create(outdir)
+outdir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/DE_testing/'
+#dir.create(outdir) #works like mkdir
 
-files <- list.files('/nfs/lab/relgamal/Fahd/', pattern='gex')
+files <- list.files('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/', pattern='gex')
 
 ##Create matrices for results
 sumres <- matrix(nrow=length(cells), ncol = 3)
@@ -1510,14 +1559,23 @@ for (FILE in files) {
     counts <- raw_counts[rowSums(raw_counts) >= 10,] #Light pre-filtering
     
     my_design <- as.formula ('~sex_ancestry_diabetes + Chemistry + Tissue_Source')
-    dds  <- DESeqDataSetFromMatrix(round(counts), colData = meta2, design = my_design) #colData is where design columns are found
+    dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
     dds <- estimateSizeFactors(dds)
     dds <- estimateDispersions(dds)
-    dds <- nbinomWaldTest(dds)
+    dds <- nbinomWaldTest(dds, maxit = 1000) # https://support.bioconductor.org/p/65091/
     
-    tests1 <- keep$test1
-    tests2 <- keep$test2
+    tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', #'M_white_T2D', 
+                'M_white_T2D', #'M_black_T2D', 
+                'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', #'M_hispanic_T2D', 
+                'M_white_T2D', 'M_black_T2D', #'M_hispanic_T2D', 
+                'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
+    tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', #'M_hispanic_T2D', 
+                'M_black_T2D', #'M_hispanic_T2D', 
+                'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', #'F_hispanic_T2D', 
+                'M_white_ND', 'M_black_ND', #'M_hispanic_ND', 
+                'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
     
+    print('Preparing to run DESeq2')
     for (x in 1:length(tests1)){
       test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]])   
       res <- results(dds, contrast=c(test))
@@ -1525,6 +1583,7 @@ for (FILE in files) {
       res <- res[order(res$pvalue),]
       outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
       write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
+      print('test run and copied to folder')
     }
   }   
 }   
