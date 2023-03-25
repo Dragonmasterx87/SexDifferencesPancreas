@@ -1341,6 +1341,7 @@ qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.
 
 ###Step 1: Make Pseudobulk Matrices
 #Read in final Seurat object
+system.time({
 adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 Idents(adata) <- adata@meta.data$celltype_qadir
 samples <- unique(adata@meta.data$Library)
@@ -1536,7 +1537,6 @@ dir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biolo
 #Create outdir for results
 outdir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/DE_testing/'
 #dir.create(outdir) #works like mkdir
-
 files <- list.files('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/', pattern='gex')
 
 ##Create matrices for results
@@ -1553,40 +1553,84 @@ for (FILE in files) {
   meta$Library2 <- gsub('-', '.', meta$Library)
   meta2 <- meta[which(meta$Library2 %in% colnames(raw_counts)),]
   
-  if ('ND' %in% meta2$Diabetes_Status && 'T2D' %in% meta2$Diabetes_Status){
+  if ('M' %in% meta2$Sex && 'F' %in% meta2$Sex){
     print(cell)
-    print('all conditions found')
-    counts <- raw_counts[rowSums(raw_counts) >= 10,] #Light pre-filtering
+    print('Data for 2 sex present, however not all data may be present will check this at a later step')
     
-    my_design <- as.formula ('~sex_ancestry_diabetes + Chemistry + Tissue_Source')
-    dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
-    dds <- estimateSizeFactors(dds)
-    dds <- estimateDispersions(dds)
-    dds <- nbinomWaldTest(dds, maxit = 1000) # https://support.bioconductor.org/p/65091/
-    
-    tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', #'M_white_T2D', 
-                'M_white_T2D', #'M_black_T2D', 
-                'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', #'M_hispanic_T2D', 
-                'M_white_T2D', 'M_black_T2D', #'M_hispanic_T2D', 
-                'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
-    tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', #'M_hispanic_T2D', 
-                'M_black_T2D', #'M_hispanic_T2D', 
-                'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', #'F_hispanic_T2D', 
-                'M_white_ND', 'M_black_ND', #'M_hispanic_ND', 
-                'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
-    
-    print('Preparing to run DESeq2')
-    for (x in 1:length(tests1)){
-      test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]])   
-      res <- results(dds, contrast=c(test))
-      res <- as.data.frame(res)
-      res <- res[order(res$pvalue),]
-      outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
-      write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
-      print('test run and copied to folder')
+    genes_to_keep <- c()
+    for (i in 1:nrow(raw_counts)) {
+      if (sum(raw_counts[i, ] >= 5) >= 2) {
+        genes_to_keep <- c(genes_to_keep, rownames(raw_counts[i, ]))
+      }
     }
-  }   
-}   
+    counts <- raw_counts[which(rownames(raw_counts) %in% genes_to_keep),] 
+    #counts <- raw_counts[rowSums(raw_counts) >= 10,] #Light pre-filtering
+    
+    if (length(unique(meta2$Chemistry)) > 1) {
+      my_design <- as.formula ('~sex_ancestry_diabetes + Chemistry + Tissue_Source')
+      dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+      dds <- estimateSizeFactors(dds)
+      dds <- estimateDispersions(dds)
+      dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+    } else {
+      my_design <- as.formula ('~sex_ancestry_diabetes + Tissue_Source')
+      dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+      dds <- estimateSizeFactors(dds)
+      dds <- estimateDispersions(dds)
+      dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+    }
+      
+      tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
+                  'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
+                  'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
+    
+      tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', 'M_hispanic_T2D', 
+                  'M_black_T2D', 'M_hispanic_T2D', 'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D', 
+                  'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
+      
+      print('Preparing to run DESeq2')
+      
+      for (x in 1:length(tests1)){
+        t1 <- tests1[[x]]
+        t2 <- tests2[[x]]
+        test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]])
+        numoft1 <- length(which(meta2$sex_ancestry_diabetes==t1))
+        numoft2 <- length(which(meta2$sex_ancestry_diabetes==t2))
+        
+        # if (numoft1 > 2 & numoft2 > 2) {
+        #   print(paste(t1, 'and', t2, 'are present in the dataset', sep = ' '))
+        #   print(paste("Data copied here:", outdir, sep = " "))
+        # }
+        
+        if (numoft1 < 3) {
+          print(paste("!!WARNING!!"))
+          print(paste(t1, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+          print(paste('####'))
+          print(paste('####'))
+          } else if (numoft2 < 3) {
+            print(paste("!!WARNING!!"))
+            print(paste(t2, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+            print(paste("####"))
+            print(paste("####"))
+            } else if (numoft1 > 2 & numoft2 > 2) {
+              #sprintf("%s and %s are present in the dataset", t1, t2)
+              #sprintf("Find data here: %s", outdir)
+              res <- results(dds, contrast=c(test))
+              res <- as.data.frame(res)
+              res <- res[order(res$pvalue),]
+              outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
+              write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
+              #print(paste(t1, 'and', t2, 'are present in dataset metadata', sep = " "))
+              print(sprintf('%s and %s are present in the dataset metadata', t1, t2)) #just because I wanted to understand using sprintf
+              print(paste("Data copied here:", outdir, sep = " "))
+              print(paste('####'))
+              print(paste('####'))
+              }
+        
+      }
+  }
+}
+}) # System time
 
 #Create pseudobulk matrix from all cell types
 gene_x_cell <- adata@assays[['SCT']]@counts #gene by cell matrix
