@@ -1490,6 +1490,7 @@ colnames(meta) <- c('Library', 'Sex', 'Tissue_Source', 'Chemistry', 'ancestry', 
 rownames(meta) <- NULL
 meta <- meta[!duplicated(meta),]
 meta$sex_ancestry_diabetes <- paste0(meta$Sex, '_', meta$ancestry, '_', meta$Diabetes_Status)
+meta$sex_diabetes <- paste0(meta$Sex, '_', meta$Diabetes_Status)
 
 # #Create all combinations of tests comparing 2 conditions using the meta$sex_ancestry_diabetes column we created
 # combinations <- combn(meta$sex_ancestry_diabetes, 2)
@@ -1580,20 +1581,26 @@ for (FILE in files) {
       dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
     }
       
-      tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
-                  'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
-                  'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
-    
-      tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', 'M_hispanic_T2D', 
-                  'M_black_T2D', 'M_hispanic_T2D', 'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D', 
-                  'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
+    # For ancestry
+      # tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
+      #             'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
+      #             'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
+      # 
+      # tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', 'M_hispanic_T2D', 
+      #             'M_black_T2D', 'M_hispanic_T2D', 'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D', 
+      #             'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
+      
+      # For male and female
+      tests1 <- c('M_ND', 'M_ND', 'F_ND', 'M_T2D')
+      tests2 <- c('F_ND', 'M_T2D', 'F_T2D', 'F_T2D')
       
       print('Preparing to run DESeq2')
       
       for (x in 1:length(tests1)){
         t1 <- tests1[[x]]
         t2 <- tests2[[x]]
-        test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]])
+        #test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # For sex_ancestry_diabetes
+        test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
         numoft1 <- length(which(meta2$sex_ancestry_diabetes==t1))
         numoft2 <- length(which(meta2$sex_ancestry_diabetes==t2))
         
