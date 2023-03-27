@@ -1343,6 +1343,8 @@ table(processed_rna$celltype_sex_disease)
 ###Step 1: Make Pseudobulk Matrices
 #Read in final Seurat object
 system.time({
+#user    system elapsed 
+#3098.69 60.33  3371.21 
 adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 Idents(adata) <- adata@meta.data$celltype_qadir
 samples <- unique(adata@meta.data$Library)
@@ -1513,23 +1515,23 @@ meta$sex_diabetes <- paste0(meta$Sex, '_', meta$Diabetes_Status)
 # keep <- rbind(keep1,keep2,keep3)
 # head(keep)
 
-#Create all combinations of tests comparing 2 conditions using the meta$sex_ancestry_diabetes column we created
-combinations <- as.data.frame(t(combn(meta$sex_ancestry_diabetes, 2)))
-combinations <- combinations[which(combinations$V1 != combinations$V2),]
-split1 <- as.data.frame(str_split_fixed(combinations$V1, pattern='_',n=3))
-split2 <- as.data.frame(str_split_fixed(combinations$V2, pattern='_',n=3))
-combinations <- cbind(combinations, split1, split2)
-colnames(combinations) <- c('test1', 'test2', 'sex1', 'ancestry1', 'diabetes1','sex2', 'ancestry2', 'diabetes2')
-
-#These next 4 lines will create the combinations where 2 variables remain the same and only one changes
-## ie. would remove M_black_T2D vs. F_white_T2D since there is only a single common variable
-keep1 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$ancestry1 == combinations$ancestry2),]
-keep2 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$diabetes1 == combinations$diabetes2),]
-keep3 <- combinations[which(combinations$ancestry1 == combinations$ancestry2 & combinations$diabetes1 == combinations$diabetes2),]
-keep <- rbind(keep1,keep2,keep3)
-
-keep$check <- paste0(keep$test1, '_', keep$test2) #should be testing combinations
-keep <- keep[!duplicated(keep$check),] #remove duplicate testing combinations
+# #Create all combinations of tests comparing 2 conditions using the meta$sex_ancestry_diabetes column we created
+# combinations <- as.data.frame(t(combn(meta$sex_ancestry_diabetes, 2)))
+# combinations <- combinations[which(combinations$V1 != combinations$V2),]
+# split1 <- as.data.frame(str_split_fixed(combinations$V1, pattern='_',n=3))
+# split2 <- as.data.frame(str_split_fixed(combinations$V2, pattern='_',n=3))
+# combinations <- cbind(combinations, split1, split2)
+# colnames(combinations) <- c('test1', 'test2', 'sex1', 'ancestry1', 'diabetes1','sex2', 'ancestry2', 'diabetes2')
+# 
+# #These next 4 lines will create the combinations where 2 variables remain the same and only one changes
+# ## ie. would remove M_black_T2D vs. F_white_T2D since there is only a single common variable
+# keep1 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$ancestry1 == combinations$ancestry2),]
+# keep2 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$diabetes1 == combinations$diabetes2),]
+# keep3 <- combinations[which(combinations$ancestry1 == combinations$ancestry2 & combinations$diabetes1 == combinations$diabetes2),]
+# keep <- rbind(keep1,keep2,keep3)
+# 
+# keep$check <- paste0(keep$test1, '_', keep$test2) #should be testing combinations
+# keep <- keep[!duplicated(keep$check),] #remove duplicate testing combinations
 
 #Pseudobulk matrices directory
 dir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/'
@@ -1785,57 +1787,31 @@ for (FILE in files) {
 
 ############################ STAGE ############################
 ############################   6   ############################
-qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
-DimPlot(subset_clust, 
-        #split.by = "Diabetes Status", 
-        group.by = "celltype_qadir", 
-        label = TRUE, 
-        ncol = 1, 
-        raster = FALSE,
-        pt.size = 0.5,
-        cols = c("dodgerblue3",      #beta
-                 "turquoise2",       #beta+alpha
-                 "lightseagreen",    #alpha
-                 "darkseagreen2",    #cycling_endo
-                 "khaki2",           #epsilon 
-                 "springgreen4",     #gamma
-                 "chartreuse3",      #delta
-                 "burlywood3",       #beta+delta
-                 "darkorange",       #ductal
-                 "salmon3",          #acinar
-                 "orangered",        #activated_setallate
-                 "salmon",           #quiescent_stellate
-                 "red",              #endothelial
-                 "magenta3",         #macrophages
-                 "orchid1",          #lymphocytes
-                 "red4",             #mast
-                 "grey30"            #schwann
-        )
-)
-
 # Gene ontology analysis Rapid Gene ontology Auto Loader (Rapid GOAL)
 # Create a list of all files in directory
-dgelist <- list.files(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\DE Testing\Windows\data_hpap)", 
+system.time({
+dgelist <- list.files(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\analysis\DE_testing)", 
                       all.files = FALSE, 
                       full.names = FALSE, 
-                      pattern = "*.csv")
+                      pattern = "*.tsv")
 
 # Point towards WD using a function
 for (sample in dgelist){
-  wd <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/DE Testing/Windows/data_hpap/%s', dgelist)
+  wd <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/DE_testing/%s', dgelist)
 }
 
 # Run iterative function to perform GO on all data
 for (x in wd) {
-  sample_name <- str_split_fixed(x, "/", n=12)[12]
-  datfile <- read.csv(file.path(x), row.names = 1)
+  sample_name <- str_split_fixed(x, "/", n=13)[13] # needs to be number of / in wd +1 
+  datfile <- read.table(file.path(x), sep = '\t', row.names = 1) 
+  #datfile <- read.csv(file.path(x), row.names = 1)
   
   # Gene list of genes going UP
-  sig_df_up <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC > 0.26303) # >1.2x
+  sig_df_up <- dplyr::filter(datfile, pvalue < 0.001 & log2FoldChange > 1) # >1x
   sig_genes_up <- rownames(sig_df_up)
   
   # Gene list of genes going UP
-  sig_df_down <- dplyr::filter(datfile, p_val < 0.05 & avg_log2FC < -0.32192) # <0.8x
+  sig_df_down <- dplyr::filter(datfile, pvalue < 0.001 & log2FoldChange < 1) # <1
   sig_genes_down <- rownames(sig_df_down)
   
   # All genes
@@ -1870,11 +1846,43 @@ for (x in wd) {
   go_data_down <- dplyr::filter(go_data_down, pvalue < 0.05)
   
   # Save outputs
-  write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/scRNAseq/hpap_combined/ORA/UP/%s", sample_name), row.names = FALSE)
-  write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/!FAHD/4. Sex and Race Based Study Project/Sequencing_Data/scRNAseq/hpap_combined/ORA/DOWN/%s", sample_name), row.names = FALSE)
+  adjusted_name <- gsub('.{4}$', '', sample_name)
+  adjusted_name <- gsub('deseq.WaldTest.', '', adjusted_name)
+  write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/UP/%s.csv", adjusted_name), row.names = FALSE)
+  write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/DOWN/%s.csv", adjusted_name), row.names = FALSE)
 }
+})
 
-
+############################ STAGE ############################
+############################   7   ############################
+# plotting
+qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+DimPlot(subset_clust, 
+        #split.by = "Diabetes Status", 
+        group.by = "celltype_qadir", 
+        label = TRUE, 
+        ncol = 1, 
+        raster = FALSE,
+        pt.size = 0.5,
+        cols = c("dodgerblue3",      #beta
+                 "turquoise2",       #beta+alpha
+                 "lightseagreen",    #alpha
+                 "darkseagreen2",    #cycling_endo
+                 "khaki2",           #epsilon 
+                 "springgreen4",     #gamma
+                 "chartreuse3",      #delta
+                 "burlywood3",       #beta+delta
+                 "darkorange",       #ductal
+                 "salmon3",          #acinar
+                 "orangered",        #activated_setallate
+                 "salmon",           #quiescent_stellate
+                 "red",              #endothelial
+                 "magenta3",         #macrophages
+                 "orchid1",          #lymphocytes
+                 "red4",             #mast
+                 "grey30"            #schwann
+        )
+)
 
 ############################ END ############################
 ############################ END ############################
