@@ -1313,7 +1313,9 @@ DimPlot(subset_clust,
         )
 )
 
+
 # Create a metadata slot for celltype_sex, celltype_sex_ancestry and celltype_sex_ancestry_disease
+processed_rna < subset_clust
 Idents(processed_rna) <- "celltype_qadir"
 processed_rna$celltype_sex <- paste(Idents(processed_rna), processed_rna$Sex, sep = "_")
 Idents(processed_rna) <- "celltype_sex"
@@ -1329,9 +1331,8 @@ table(processed_rna$celltype_sex_ancestry_disease)
 table(processed_rna$celltype_sex_disease)
 
 # Save data
-processed_rna < subset_clust
-qsave(processed_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\processed_rna.qs)")
-qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+#qsave(processed_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\processed_rna.qs)")
+#qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 })
 
 
@@ -1530,9 +1531,6 @@ keep <- rbind(keep1,keep2,keep3)
 keep$check <- paste0(keep$test1, '_', keep$test2) #should be testing combinations
 keep <- keep[!duplicated(keep$check),] #remove duplicate testing combinations
 
-
-###FYI total of 545 different tests
-
 #Pseudobulk matrices directory
 dir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/'
 #Create outdir for results
@@ -1544,6 +1542,7 @@ files <- list.files('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scri
 sumres <- matrix(nrow=length(cells), ncol = 3)
 rownames(sumres) <- cells
 
+# testing for sex_ancestry_diabetes
 for (FILE in files) {
   cell <- gsub('_sample_gex_total_counts.txt', '', FILE)
   raw_counts <- read.table(paste0(dir, FILE), row.names=1)
@@ -1580,111 +1579,213 @@ for (FILE in files) {
       dds <- estimateDispersions(dds)
       dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
     }
+    
+    tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
+                'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
+                'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
+    
+    tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', 'M_hispanic_T2D', 
+                'M_black_T2D', 'M_hispanic_T2D', 'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D', 
+                'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
+    
+    print('Preparing to run DESeq2')
+    
+    for (x in 1:length(tests1)){
+      t1 <- tests1[[x]]
+      t2 <- tests2[[x]]
+      test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]])
+      numoft1 <- length(which(meta2$sex_ancestry_diabetes==t1))
+      numoft2 <- length(which(meta2$sex_ancestry_diabetes==t2))
       
-    # For ancestry
-      # tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
-      #             'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
-      #             'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
-      # 
-      # tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', 'M_hispanic_T2D', 
-      #             'M_black_T2D', 'M_hispanic_T2D', 'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D', 
-      #             'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
+      # if (numoft1 > 2 & numoft2 > 2) {
+      #   print(paste(t1, 'and', t2, 'are present in the dataset', sep = ' '))
+      #   print(paste("Data copied here:", outdir, sep = " "))
+      # }
       
-      # For male and female
+      if (numoft1 < 3) {
+        message(paste("!!WARNING!!"))
+        message(paste(t1, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+        message(paste('####'))
+        message(paste('####'))
+      } else if (numoft2 < 3) {
+        message(paste("!!WARNING!!"))
+        message(paste(t2, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+        message(paste("####"))
+        message(paste("####"))
+      } else if (numoft1 > 2 & numoft2 > 2) {
+        #sprintf("%s and %s are present in the dataset", t1, t2)
+        #sprintf("Find data here: %s", outdir)
+        res <- results(dds, contrast=c(test))
+        res <- as.data.frame(res)
+        res <- res[order(res$pvalue),]
+        outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
+        write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
+        #print(paste(t1, 'and', t2, 'are present in dataset metadata', sep = " "))
+        print(sprintf('%s and %s are present in the dataset metadata', t1, t2)) #just because I wanted to understand using sprintf
+        print(paste("Data copied here:", outdir, sep = " "))
+        print(paste('####'))
+        print(paste('####'))
+      }
+      
+    }
+  }
+}
+        
+# testing for sex_diabetes
+for (FILE in files) {
+  cell <- gsub('_sample_gex_total_counts.txt', '', FILE)
+  raw_counts <- read.table(paste0(dir, FILE), row.names=1)
+  sample_names <- unique(adata@meta.data$Library)
+  sample_names <- gsub('-','.', sample_names)
+  raw_counts <- raw_counts[,(colSums(raw_counts != 0) > 0)]
+  raw_counts <- raw_counts[,which(colnames(raw_counts) %in% sample_names)]
+  meta$Library2 <- gsub('-', '.', meta$Library)
+  meta2 <- meta[which(meta$Library2 %in% colnames(raw_counts)),]
+  
+  if ('M' %in% meta2$Sex && 'F' %in% meta2$Sex){
+    print(cell)
+    print('Data for 2 sex present, however not all data may be present will check this at a later step')
+    
+    genes_to_keep <- c()
+    for (i in 1:nrow(raw_counts)) {
+      if (sum(raw_counts[i, ] >= 5) >= 2) {
+        genes_to_keep <- c(genes_to_keep, rownames(raw_counts[i, ]))
+      }
+    }
+    counts <- raw_counts[which(rownames(raw_counts) %in% genes_to_keep),] 
+    #counts <- raw_counts[rowSums(raw_counts) >= 10,] #Light pre-filtering
+    
+    if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
+        length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
+        length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
+        length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
+      my_design <- as.formula ('~sex_diabetes + Chemistry + Tissue_Source') # design for sex_diabetes
+      dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+      dds <- estimateSizeFactors(dds)
+      dds <- estimateDispersions(dds)
+      dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+    } else {
+      print(sprintf('%s does not have sufficient diabetes samples to test, bypassing to test ND only', cell))
+      meta2 <- subset(meta2, Diabetes_Status == 'ND') # it is possible some T2D are present so eliminate them from your dataset since you are restricted to sex
+      counts <- counts[,meta2$Library2]
+      my_design <- as.formula ('~Sex +  Tissue_Source') # design for sex_diabetes
+      dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+      dds <- estimateSizeFactors(dds)
+      dds <- estimateDispersions(dds)
+      dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+    }
+    
+    if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
+        length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
+        length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
+        length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
+      # This is now the next test. Your samples need to be > 1  
       tests1 <- c('M_ND', 'M_ND', 'F_ND', 'M_T2D')
       tests2 <- c('F_ND', 'M_T2D', 'F_T2D', 'F_T2D')
-      
-      print('Preparing to run DESeq2')
-      
-      for (x in 1:length(tests1)){
-        t1 <- tests1[[x]]
-        t2 <- tests2[[x]]
-        #test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # For sex_ancestry_diabetes
-        test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
-        numoft1 <- length(which(meta2$sex_ancestry_diabetes==t1))
-        numoft2 <- length(which(meta2$sex_ancestry_diabetes==t2))
-        
-        # if (numoft1 > 2 & numoft2 > 2) {
-        #   print(paste(t1, 'and', t2, 'are present in the dataset', sep = ' '))
-        #   print(paste("Data copied here:", outdir, sep = " "))
-        # }
-        
-        if (numoft1 < 3) {
-          print(paste("!!WARNING!!"))
-          print(paste(t1, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
-          print(paste('####'))
-          print(paste('####'))
-          } else if (numoft2 < 3) {
-            print(paste("!!WARNING!!"))
-            print(paste(t2, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
-            print(paste("####"))
-            print(paste("####"))
-            } else if (numoft1 > 2 & numoft2 > 2) {
-              #sprintf("%s and %s are present in the dataset", t1, t2)
-              #sprintf("Find data here: %s", outdir)
-              res <- results(dds, contrast=c(test))
-              res <- as.data.frame(res)
-              res <- res[order(res$pvalue),]
-              outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
-              write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
-              #print(paste(t1, 'and', t2, 'are present in dataset metadata', sep = " "))
-              print(sprintf('%s and %s are present in the dataset metadata', t1, t2)) #just because I wanted to understand using sprintf
-              print(paste("Data copied here:", outdir, sep = " "))
-              print(paste('####'))
-              print(paste('####'))
-              }
-        
+    } else {
+      tests1 <- c("M")
+      tests2 <- c("F")
+    }
+    
+    print('Preparing to run DESeq2')
+    
+    for (x in 1:length(tests1)){
+      t1 <- tests1[[x]]
+      t2 <- tests2[[x]]
+      if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
+          length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
+          length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
+          length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
+        test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
+        numoft1 <- length(which(meta2$sex_diabetes==t1))
+        numoft2 <- length(which(meta2$sex_diabetes==t2))
+      } else {
+        test <- c('Sex', tests1[[x]],tests2[[x]]) # For sex only (for example Schwann cells)
+        numoft1 <- length(which(meta2$Sex==t1)) # For sex diabetes
+        numoft2 <- length(which(meta2$Sex==t2))
       }
+      
+      # if (numoft1 > 2 & numoft2 > 2) {
+      #   print(paste(t1, 'and', t2, 'are present in the dataset', sep = ' '))
+      #   print(paste("Data copied here:", outdir, sep = " "))
+      # }
+      
+      if (numoft1 < 3) {
+        message(paste("!!WARNING CHECK METADATA!!"))
+        message(paste(t1, "samples are <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+        message(paste('####'))
+        message(paste('####'))
+      } else if (numoft2 < 3) {
+        message(paste("!!WARNING CHECK METADATA!!"))
+        message(paste(t2, "samples are <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+        message(paste("####"))
+        message(paste("####"))
+      } else if (numoft1 > 2 & numoft2 > 2) {
+        #sprintf("%s and %s are present in the dataset", t1, t2)
+        #sprintf("Find data here: %s", outdir)
+        res <- results(dds, contrast=c(test))
+        res <- as.data.frame(res)
+        res <- res[order(res$pvalue),]
+        outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
+        write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
+        #print(paste(t1, 'and', t2, 'are present in dataset metadata', sep = " "))
+        print(sprintf('%s cells and %s cells are present in the dataset metadata', t1, t2)) #just because I wanted to understand using sprintf
+        print(paste("Data copied here:", outdir, sep = " "))
+        print(paste('####'))
+        print(paste('####'))
+      }
+      
+    }
   }
 }
 }) # System time
 
-#Create pseudobulk matrix from all cell types
-gene_x_cell <- adata@assays[['SCT']]@counts #gene by cell matrix
-
-bulk <- data.frame(matrix(nrow = 26275, ncol = 0)) 
-for (x in samples){
-  sample_subset <- gene_x_cell[,grep(x, colnames(gene_x_cell))]
-  sample_means <- Matrix::rowSums(sample_subset)
-  rownames(bulk) <- rownames(sample_subset)
-  bulk[[x]] <- sample_means
-  
-}
-
-dds_bulk <- DESeqDataSetFromMatrix(
-  countData = round(bulk),
-  meta,
-  design= ~sex_ancestry_diabetes + Chemistry + Tissue_Source)
-
-dds_bulk <- estimateSizeFactors(dds_bulk)
-dds_bulk <- estimateDispersions(dds_bulk)    
-vsd_bulk <- varianceStabilizingTransformation(dds_bulk)
-
-#Make a PCA
-options(repr.plot.height = 7, repr.plot.width = 14)
-pcaData <- plotPCA(vsd_bulk, intgroup=c('ancestry', 'Sex', 'Diabetes_Status', 'Tissue_Source'), returnData=TRUE, ntop=5000)
-percentVar <- round(100 * attr(pcaData, 'percentVar'))
-ggplot(pcaData, aes(PC1, PC2, color=ancestry, shape=Sex)) +
-  geom_point(size=3) +
-  xlab(paste0('PC1: ',percentVar[1],'% variance')) +
-  ylab(paste0('PC2: ',percentVar[2],'% variance')) + 
-  coord_fixed() + theme_minimal()
-
-#Make a heatmap
-options(repr.plot.height = 15, repr.plot.width = 20)
-sampleDists <- dist(t(assay(vsd_bulk)))
-sampleDistMatrix <- as.matrix(sampleDists)
-rownames(sampleDistMatrix) <- vsd_bulk$Library
-colnames(sampleDistMatrix) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
-pheatmap(sampleDistMatrix,
-         clustering_distance_rows=sampleDists,
-         clustering_distance_cols=sampleDists,
-         col=colors)
+# #Create pseudobulk matrix from all cell types
+# gene_x_cell <- adata@assays[['SCT']]@counts #gene by cell matrix
+# 
+# bulk <- data.frame(matrix(nrow = 26275, ncol = 0)) 
+# for (x in samples){
+#   sample_subset <- gene_x_cell[,grep(x, colnames(gene_x_cell))]
+#   sample_means <- Matrix::rowSums(sample_subset)
+#   rownames(bulk) <- rownames(sample_subset)
+#   bulk[[x]] <- sample_means
+#   
+# }
+# 
+# dds_bulk <- DESeqDataSetFromMatrix(
+#   countData = round(bulk),
+#   meta,
+#   design= ~sex_ancestry_diabetes + Chemistry + Tissue_Source)
+# 
+# dds_bulk <- estimateSizeFactors(dds_bulk)
+# dds_bulk <- estimateDispersions(dds_bulk)    
+# vsd_bulk <- varianceStabilizingTransformation(dds_bulk)
+# 
+# #Make a PCA
+# options(repr.plot.height = 7, repr.plot.width = 14)
+# pcaData <- plotPCA(vsd_bulk, intgroup=c('ancestry', 'Sex', 'Diabetes_Status', 'Tissue_Source'), returnData=TRUE, ntop=5000)
+# percentVar <- round(100 * attr(pcaData, 'percentVar'))
+# ggplot(pcaData, aes(PC1, PC2, color=ancestry, shape=Sex)) +
+#   geom_point(size=3) +
+#   xlab(paste0('PC1: ',percentVar[1],'% variance')) +
+#   ylab(paste0('PC2: ',percentVar[2],'% variance')) + 
+#   coord_fixed() + theme_minimal()
+# 
+# #Make a heatmap
+# options(repr.plot.height = 15, repr.plot.width = 20)
+# sampleDists <- dist(t(assay(vsd_bulk)))
+# sampleDistMatrix <- as.matrix(sampleDists)
+# rownames(sampleDistMatrix) <- vsd_bulk$Library
+# colnames(sampleDistMatrix) <- NULL
+# colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+# pheatmap(sampleDistMatrix,
+#          clustering_distance_rows=sampleDists,
+#          clustering_distance_cols=sampleDists,
+#          col=colors)
 
 ############################ STAGE ############################
 ############################   6   ############################
-
+qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 DimPlot(subset_clust, 
         #split.by = "Diabetes Status", 
         group.by = "celltype_qadir", 
@@ -1812,6 +1913,11 @@ p1|p2
 RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE, reduction.name = 'umap')
 DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
 DimPlot(pancreas_rna, reduction = 'harmony', label = FALSE, pt.size = 0.01, raster=FALSE)
+
+
+
+
+
 
 
 
