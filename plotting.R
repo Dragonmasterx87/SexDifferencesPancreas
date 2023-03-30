@@ -342,7 +342,21 @@ dittoHeatmap(
   # complex = FALSE
 )
 
+# Violin plot
+Idents(processed_rna) <- "ancestry_sex"
+processed_rna$ancestry_sex_library <- paste(Idents(processed_rna), processed_rna$'Library', sep = "_")
+table(processed_rna@meta.data[["ancestry_sex_library"]])
 
+Idents(processed_rna) <- "ancestry_sex_library"
+Stacked_VlnPlot(processed_rna, features = c("DDX3Y", "EIF1AY",
+                                            "KDM5D", "NLGN4Y",
+                                            "RPS4Y1","USP9Y", 
+                                            "UTY", "ZFY"), x_lab_rotate = TRUE)
+
+Stacked_VlnPlot(processed_rna, features = c("XIST", "TSIX",
+                                            "ZFX", "KDM5C",
+                                            "SEPTIN6", "EIF1AX",
+                                            "KDM6A", "PUDP", "DDX3X"), x_lab_rotate = TRUE)
 
 
 
