@@ -2011,7 +2011,7 @@ for (FILE in files) {
       } else if (numoft1 > 2 & numoft2 > 2) {
         #sprintf("%s and %s are present in the dataset", t1, t2)
         #sprintf("Find data here: %s", outdir)
-        res <- results(dds, contrast=c(test), cooksCutoff=FALSE) #cooksCutoff = FALSE see here: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#outlier
+        res <- results(dds, contrast=c(test), cooksCutoff=FALSE, independentFiltering=FALSE) #cooksCutoff = FALSE see here: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#outlier
         res <- as.data.frame(res)
         res <- res[order(res$pvalue),]
         outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
@@ -2114,7 +2114,7 @@ for (FILE in files) {
       } else if (numoft1 > 2 & numoft2 > 2) {
         #sprintf("%s and %s are present in the dataset", t1, t2)
         #sprintf("Find data here: %s", outdir)
-        res <- results(dds, contrast=c(test), cooksCutoff=FALSE) #cooksCutoff = FALSE see here: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#outlier
+        res <- results(dds, contrast=c(test), cooksCutoff=FALSE, independentFiltering=FALSE) #cooksCutoff = FALSE see here: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#outlier
         res <- as.data.frame(res)
         res <- res[order(res$pvalue),]
         outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
@@ -2148,16 +2148,16 @@ system.time({
   
   # Run iterative function to perform GO on all data
   for (x in wd) {
-    sample_name <- str_split_fixed(x, "/", n=13)[13] # needs to be number of / in wd +1 (for tulane = 12 + 1)
+    sample_name <- str_split_fixed(x, "/", n=13)[13] # needs to be number of / in wd +1 (for alldata = 12 + 1)
     datfile <- read.table(file.path(x), sep = '\t', row.names = 1) 
     #datfile <- read.csv(file.path(x), row.names = 1)
     
     # Gene list of genes going UP
-    sig_df_up <- dplyr::filter(datfile, pvalue < 0.05 & log2FoldChange > 0.263034) # >1.2x
+    sig_df_up <- dplyr::filter(datfile, padj < 0.1 & log2FoldChange > 0.000000000014)
     sig_genes_up <- rownames(sig_df_up)
     
-    # Gene list of genes going UP
-    sig_df_down <- dplyr::filter(datfile, pvalue < 0.05 & log2FoldChange < -0.32193) # <0.8
+    # Gene list of genes going DOWN
+    sig_df_down <- dplyr::filter(datfile, padj < 0.1 & log2FoldChange < -0.000000000014) 
     sig_genes_down <- rownames(sig_df_down)
     
     # All genes
@@ -2171,7 +2171,7 @@ system.time({
                       ont = c("ALL"), 
                       pAdjustMethod = "BH", 
                       pvalueCutoff = 1, 
-                      qvalueCutoff = 0.1, #if not set default is at 0.05
+                      qvalueCutoff = 1, #if not set default is at 0.05
                       readable = TRUE)
     
     # Run GO enrichment analysis genes down
@@ -2182,14 +2182,16 @@ system.time({
                         ont = c("ALL"), 
                         pAdjustMethod = "BH", 
                         pvalueCutoff = 1, 
-                        qvalueCutoff = 0.1, #if not set default is at 0.05
+                        qvalueCutoff = 1, #if not set default is at 0.05
                         readable = TRUE)
     
     go_data_up <- data.frame(GO.up)
     go_data_down <- data.frame(GO.down)
     
-    go_data_up <- dplyr::filter(go_data_up, pvalue < 0.05)
-    go_data_down <- dplyr::filter(go_data_down, pvalue < 0.05)
+    if (nrow(go_data_up) > 0) {
+    go_data_up <- dplyr::filter(go_data_up, qvalue < 0.1) }
+    if (nrow(go_data_down) > 0) {
+    go_data_down <- dplyr::filter(go_data_down, qvalue < 0.1)}
     
     # Save outputs
     adjusted_name <- gsub('.{4}$', '', sample_name)
@@ -2270,14 +2272,14 @@ system.time({
     head(fin.counts.df)
     
     #export df
-    mtx.fp <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/tulane/%s_sample_gex_total_counts.txt',cell.type) # Tulane
+    mtx.fp <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/tulane/%s_sample_gex_total_counts.txt',cell.type) # Tulane
     write.table(fin.counts.df,mtx.fp,sep='\t',quote=FALSE)
   }
   
   #Run function to make matrices
   unique_cell_types <- unique(adata$celltype_qadir)
   for (cell.type in unique_cell_types){
-    fp = sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/tulane/%s_pseudobulk.txt',cell.type) # Tulane
+    fp = sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/tulane/%s_pseudobulk.txt',cell.type) # Tulane
     get_per_sample_gex_SUMS(cell.type, fp)
   }
   
@@ -2323,7 +2325,7 @@ system.time({
   fin.gene.info <- new_df[!duplicated(new_df$gene_name),]
   
   #Read in psedobulk matrices from above 
-  dir = 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/tulane/' # Tulane
+  dir = 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/tulane/' # Tulane
   
   files = list.files(dir, pattern =".txt")
   cells = gsub("_sample_gex_total_counts.txt","", files)
@@ -2339,7 +2341,7 @@ system.time({
   }
   
   #Output dir for TPM matrices
-  outdir = "C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/TPM/tulane/" # Tulane
+  outdir = "C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/TPM/tulane/" # Tulane
   
   for (FILE in files){
     cell <- cells[which(files == FILE)]
@@ -2362,53 +2364,15 @@ system.time({
   meta$sex_ancestry_diabetes <- paste0(meta$Sex, '_', meta$ancestry, '_', meta$Diabetes_Status)
   meta$sex_diabetes <- paste0(meta$Sex, '_', meta$Diabetes_Status)
   
-  # #Create all combinations of tests comparing 2 conditions using the meta$sex_ancestry_diabetes column we created
-  # combinations <- combn(meta$sex_ancestry_diabetes, 2)
-  # combinations <- t(combinations)
-  # combinations <- as.data.frame(combinations)
-  # combinations <- combinations[which(combinations$V1 != combinations$V2),]
-  # split1 <- str_split_fixed(combinations$V1, pattern='_',n=3)
-  # split1 <- as.data.frame(split1)
-  # split2 <- str_split_fixed(combinations$V2, pattern='_',n=3)
-  # split2 <- as.data.frame(split2)
-  # combinations <- cbind(combinations, split1, split2)
-  # colnames(combinations) <- c('test1', 'test2', 'sex1', 'ancestry1', 'diabetes1','sex2', 'ancestry2', 'diabetes2')
-  # 
-  # #These next 4 lines will create the combinations where 2 variables remain the same and only one changes
-  # ## ie. would remove M_black_T2D vs. F_white_T2D since there is only a single common variable
-  # keep1 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$ancestry1 == combinations$ancestry2),]
-  # keep2 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$diabetes1 == combinations$diabetes2),]
-  # keep3 <- combinations[which(combinations$ancestry1 == combinations$ancestry2 & combinations$diabetes1 == combinations$diabetes2),]
-  # keep <- rbind(keep1,keep2,keep3)
-  # head(keep)
-  
-  # #Create all combinations of tests comparing 2 conditions using the meta$sex_ancestry_diabetes column we created
-  # combinations <- as.data.frame(t(combn(meta$sex_ancestry_diabetes, 2)))
-  # combinations <- combinations[which(combinations$V1 != combinations$V2),]
-  # split1 <- as.data.frame(str_split_fixed(combinations$V1, pattern='_',n=3))
-  # split2 <- as.data.frame(str_split_fixed(combinations$V2, pattern='_',n=3))
-  # combinations <- cbind(combinations, split1, split2)
-  # colnames(combinations) <- c('test1', 'test2', 'sex1', 'ancestry1', 'diabetes1','sex2', 'ancestry2', 'diabetes2')
-  # 
-  # #These next 4 lines will create the combinations where 2 variables remain the same and only one changes
-  # ## ie. would remove M_black_T2D vs. F_white_T2D since there is only a single common variable
-  # keep1 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$ancestry1 == combinations$ancestry2),]
-  # keep2 <- combinations[which(combinations$sex1 == combinations$sex2 & combinations$diabetes1 == combinations$diabetes2),]
-  # keep3 <- combinations[which(combinations$ancestry1 == combinations$ancestry2 & combinations$diabetes1 == combinations$diabetes2),]
-  # keep <- rbind(keep1,keep2,keep3)
-  # 
-  # keep$check <- paste0(keep$test1, '_', keep$test2) #should be testing combinations
-  # keep <- keep[!duplicated(keep$check),] #remove duplicate testing combinations
-  
   #Pseudobulk matrices directory
-  dir <- "C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/tulane/" # Tulane
+  dir <- "C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/tulane/" # Tulane
   
   #Create outdir for results
-  outdir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/DE_testing/tulane_samples/no_cookscutoff/' #Tulane
+  outdir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/DE_testing/tulane/' #Tulane
   #dir.create(outdir) #works like mkdir
   
   # list of pseudobulk files
-  files <- list.files('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/pseudobulk_counts/tulane/', pattern='gex') #Tulane
+  files <- list.files('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/tulane/', pattern='gex') #Tulane
   
   ##Create matrices for results
   sumres <- matrix(nrow=length(cells), ncol = 3)
@@ -2600,14 +2564,14 @@ system.time({
 # Gene ontology analysis Rapid Gene ontology Auto Loader (Rapid GOAL)
 # Create a list of all files in directory
 system.time({
-dgelist <- list.files(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\analysis\DE_testing\tulane_samples\no_cookscutoff)", # Tulane
+dgelist <- list.files(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane)", # Tulane
                       all.files = FALSE, 
                       full.names = FALSE, 
                       pattern = "*.tsv")
 
 # Point towards WD using a function
 for (sample in dgelist){
-  wd <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/analysis/DE_testing/tulane_samples/no_cookscutoff/%s', dgelist) # Tulane
+  wd <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/DE_testing/tulane/%s', dgelist) # Tulane
 }
 
 # Run iterative function to perform GO on all data
@@ -2617,11 +2581,11 @@ for (x in wd) {
   #datfile <- read.csv(file.path(x), row.names = 1)
   
   # Gene list of genes going UP
-  sig_df_up <- dplyr::filter(datfile, pvalue < 0.05 & log2FoldChange > 0.263034) # >1.2x
+  sig_df_up <- dplyr::filter(datfile, padj < 0.1 & log2FoldChange > 0.000000000014)
   sig_genes_up <- rownames(sig_df_up)
   
-  # Gene list of genes going UP
-  sig_df_down <- dplyr::filter(datfile, pvalue < 0.05 & log2FoldChange < -0.32193) # <0.8
+  # Gene list of genes going DOWN
+  sig_df_down <- dplyr::filter(datfile, padj < 0.1 & log2FoldChange < -0.000000000014) 
   sig_genes_down <- rownames(sig_df_down)
   
   # All genes
@@ -2649,11 +2613,10 @@ for (x in wd) {
                       qvalueCutoff = 1, #if not set default is at 0.05
                       readable = TRUE)
   
-  go_data_up <- data.frame(GO.up)
-  go_data_down <- data.frame(GO.down)
-  
-  go_data_up <- dplyr::filter(go_data_up, pvalue < 0.05)
-  go_data_down <- dplyr::filter(go_data_down, pvalue < 0.05)
+  if (nrow(go_data_up) > 0) {
+    go_data_up <- dplyr::filter(go_data_up, qvalue < 0.1) }
+  if (nrow(go_data_down) > 0) {
+    go_data_down <- dplyr::filter(go_data_down, qvalue < 0.1)}
   
   # Save outputs
   adjusted_name <- gsub('.{4}$', '', sample_name)
@@ -2664,7 +2627,439 @@ for (x in wd) {
 })
 
 ############################ STAGE ############################
-############################   7   ############################
+############################   10  ############################
+# ALL DATA
+###Step 1: Make Pseudobulk Matrices
+#Read in final Seurat object
+adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+Idents(adata) <- "Tissue Source"
+hpap <- subset(adata, idents = c("nPod", "UPenn")) # tulane
+adata <- hpap #hpap
+Idents(adata) <- adata@meta.data$celltype_qadir
+samples <- unique(adata@meta.data$Library)
+
+# RUN ANALYSIS
+system.time({
+  #Pull out list of all cell types
+  unique_cell_types <- unique(adata$celltype_qadir)
+  DefaultAssay(adata) <- 'RNA'
+  
+  #Get counts data
+  gex.counts <- GetAssayData(adata,slot='counts')
+  
+  dim(gex.counts)
+  head(gex.counts)
+  adata_matrices <- adata
+  
+  ##Pull out barcodes
+  sample_bcs <- list()
+  for (sample in samples){
+    sample_bcs[[sample]] <- row.names(adata[[]][adata[[]]$Library == sample,])
+  }
+  
+  lengths(sample_bcs)
+  head(sample_bcs[[1]])
+  
+  #Looping through cell types by making ^ into a function
+  get_per_sample_gex_SUMS <- function(cell.type, mtx.fp){
+    print(paste(cell.type))
+    
+    #pull out rows of gex.counts where BC Ident matches cell.type
+    bcs <- names(Idents(adata_matrices)[Idents(adata_matrices) == cell.type])
+    counts <- gex.counts[,colnames(gex.counts) %in% bcs]
+    print(dim(counts))
+    
+    #initialize the matrix of sample gex
+    counts.df <- as.data.frame(rep(0,length(row.names(gex.counts))))
+    row.names(counts.df) <- row.names(gex.counts)
+    colnames(counts.df) <- c('temp')
+    
+    #go through samples and calculate sum of gex values
+    for (sample in samples){
+      sample_cols <- colnames(counts) %in% sample_bcs[[sample]]
+      counts.cut <- counts[,sample_cols]
+      
+      #if only one bc, this becomes a vector which is an issue
+      if (typeof(counts.cut) == 'double'){
+        mean.counts <- counts.cut
+        #if there are NO bcs, this will return NA (just return 0 for everything)
+      } else if(length(colnames(counts.cut)) == 0){
+        mean.counts <- rep(0,length(row.names(counts)))
+      } else {
+        mean.counts <- rowSums(counts.cut)
+      }
+      counts.df <- cbind(counts.df,as.data.frame(mean.counts))
+    }
+    fin.counts.df <- counts.df[,-c(1)]
+    colnames(fin.counts.df) <- samples
+    head(fin.counts.df)
+    
+    #export df
+    mtx.fp <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/hpap/%s_sample_gex_total_counts.txt',cell.type) # change to save dir
+    write.table(fin.counts.df,mtx.fp,sep='\t',quote=FALSE)
+  }
+  
+  #Run function to make matrices
+  unique_cell_types <- unique(adata$celltype_qadir)
+  for (cell.type in unique_cell_types){
+    fp = sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/hpap/%s_pseudobulk.txt',cell.type) # change to save dir as above
+    get_per_sample_gex_SUMS(cell.type, fp)
+  }
+  
+  ###Step 2: Make TPM Matrices
+  #Pull out gene exon info and calculate effective length
+  gene_annotations_gtf_fp <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/publicdata/gencode_v38/gencode.v38.annotation.gtf'
+  suppressMessages(txdb <- makeTxDbFromGFF(gene_annotations_gtf_fp,format="gtf"))
+  exons.list.per.gene <- exonsBy(txdb,by="gene") #Collect the exons per gene_id
+  #Reduce all the exons to a set of non overlapping exons, calculate their lengths (widths) and sum them
+  exonic.gene.sizes <- sum(width(reduce(exons.list.per.gene)))
+  
+  #checking <- gene.info
+  gene.info <- rtracklayer::import('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/publicdata/gencode_v38/gencode.v38.basic.annotation.gtf')
+  gene.info <- as.data.frame(gene.info)
+  gene.info <- gene.info %>% select(gene_id, gene_name, gene_type, seqnames, start, end, strand, source, level)
+  head(gene.info)
+  
+  # Calculate entire gene boundaries
+  gene.info.start <- gene.info %>% group_by(gene_id) %>% slice_min(order_by = start)
+  gene.info.start <- gene.info.start[!duplicated(gene.info.start$gene_id),]
+  gene.info.start <- gene.info.start %>% select(gene_id, gene_name, gene_type, seqnames, end, strand, source, level)
+  
+  gene.info.end <- gene.info %>% group_by(gene_id) %>% slice_max(order_by = end)
+  gene.info.end <- gene.info.end[!duplicated(gene.info.end$gene_id),]
+  gene.info.end <- gene.info.end %>% select(gene_id, start)
+  
+  gene.info.comp <- merge(gene.info.end, gene.info.start, by = "gene_id")
+  gene.info.comp <- gene.info.comp %>% select(gene_id, gene_name, gene_type, seqnames, start, end, strand, source, level)
+  gene.info.comp$check <- ifelse(gene.info.comp$end > gene.info.comp$start, 'TRUE',
+                                 ifelse(gene.info.comp$end < gene.info.comp$start, 'FALSE'))
+  
+  unique(gene.info.comp$check)
+  gene.info <- gene.info.comp
+  
+  #Add the effective lengths to the original gene.info dataframe
+  temp_df <- gene.info
+  rownames(temp_df) <- gene.info$gene_id
+  temp_df2 <- as.data.frame(exonic.gene.sizes)
+  temp_df2$gene_id <- rownames(temp_df2)
+  
+  new_df <- merge(temp_df,temp_df2, by='gene_id', all=TRUE)
+  #Remove duplicate rows from gene info df
+  fin.gene.info <- new_df[!duplicated(new_df$gene_name),]
+  
+  #Read in psedobulk matrices from above 
+  dir = 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/hpap/'
+  
+  files = list.files(dir, pattern =".txt")
+  cells = gsub("_sample_gex_total_counts.txt","", files)
+  
+  make_tpm = function(raw_counts, gene_sizes){
+    rpk <- raw_counts / gene_sizes
+    tpm <- rpk
+    for (i in 1:ncol(rpk)){
+      tpm[,i] <- rpk[,i]/(sum(rpk[,i])/1e6)
+      
+    }
+    return(tpm)
+  }
+  
+  #Output dir for TPM matrices
+  outdir = "C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/TPM/hpap/"
+  
+  for (FILE in files){
+    cell <- cells[which(files == FILE)]
+    raw_counts <- read.table(paste0(dir, FILE), row.names=1)
+    raw_counts <- subset(raw_counts ,rownames(raw_counts) %in% fin.gene.info$gene_name)
+    gene_sizes <- fin.gene.info$exonic.gene.sizes[match(rownames(raw_counts), fin.gene.info$gene_name )]
+    
+    tpm_mat <- make_tpm(raw_counts, gene_sizes)
+    write.table(tpm_mat, paste0(outdir,  cell, "_TPM_per_sample.txt"), sep="\t", quote=F)
+  }
+}) # System time
+
+###Step 3: DESeq
+system.time({
+  #Create a metadata table
+  meta <- adata@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status')]
+  colnames(meta) <- c('Library', 'Sex', 'Tissue_Source', 'Chemistry', 'ancestry', 'Diabetes_Status')
+  rownames(meta) <- NULL
+  meta <- meta[!duplicated(meta),]
+  meta$sex_ancestry_diabetes <- paste0(meta$Sex, '_', meta$ancestry, '_', meta$Diabetes_Status)
+  meta$sex_diabetes <- paste0(meta$Sex, '_', meta$Diabetes_Status)
+  
+  #Pseudobulk matrices directory
+  dir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/hpap/'
+  
+  #Create outdir for results
+  outdir <- 'C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/DE_testing/hpap/' #changes based on analysis
+  #dir.create(outdir) #works like mkdir
+  
+  # list of pseudobulk files
+  files <- list.files('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/pseudobulk_counts/hpap/', pattern='gex')
+  
+  ##Create matrices for results
+  sumres <- matrix(nrow=length(cells), ncol = 3)
+  rownames(sumres) <- cells
+  
+  # testing for sex_ancestry_diabetes
+  for (FILE in files) {
+    cell <- gsub('_sample_gex_total_counts.txt', '', FILE)
+    raw_counts <- read.table(paste0(dir, FILE), row.names=1)
+    sample_names <- unique(adata@meta.data$Library)
+    sample_names <- gsub('-','.', sample_names)
+    raw_counts <- raw_counts[,(colSums(raw_counts != 0) > 0)]
+    raw_counts <- raw_counts[,which(colnames(raw_counts) %in% sample_names)]
+    meta$Library2 <- gsub('-', '.', meta$Library)
+    meta2 <- meta[which(meta$Library2 %in% colnames(raw_counts)),]
+    
+    if ('M' %in% meta2$Sex && 'F' %in% meta2$Sex){
+      print(cell)
+      print('Data for 2 sex present, however not all data may be present will check this at a later step')
+      
+      genes_to_keep <- c()
+      for (i in 1:nrow(raw_counts)) {
+        if (sum(raw_counts[i, ] >= 5) >= 2) {
+          genes_to_keep <- c(genes_to_keep, rownames(raw_counts[i, ]))
+        }
+      }
+      counts <- raw_counts[which(rownames(raw_counts) %in% genes_to_keep),] 
+      
+      if (length(unique(meta2$Chemistry)) > 1) {
+        my_design <- as.formula ('~sex_ancestry_diabetes + Chemistry + Tissue_Source') # alldata
+        dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+        dds <- estimateSizeFactors(dds)
+        dds <- estimateDispersions(dds)
+        dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+      } else {
+        my_design <- as.formula ('~sex_ancestry_diabetes + Tissue_Source') # alldata
+        dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+        dds <- estimateSizeFactors(dds)
+        dds <- estimateDispersions(dds)
+        dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+      }
+      
+      tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
+                  'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
+                  'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
+      
+      tests2 <- c('M_hispanic_ND', 'M_black_ND', 'M_hispanic_ND', 'F_hispanic_ND', 'F_black_ND', 'F_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND', 'M_hispanic_T2D', 
+                  'M_black_T2D', 'M_hispanic_T2D', 'F_hispanic_T2D', 'F_black_T2D', 'F_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D', 
+                  'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'F_white_ND', 'F_black_ND', 'F_hispanic_ND')
+      
+      print('Preparing to run DESeq2')
+      
+      for (x in 1:length(tests1)){
+        t1 <- tests1[[x]]
+        t2 <- tests2[[x]]
+        test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # This should not change when you test subsetted data
+        numoft1 <- length(which(meta2$sex_ancestry_diabetes==t1))
+        numoft2 <- length(which(meta2$sex_ancestry_diabetes==t2))
+        
+        if (numoft1 < 3) {
+          message(paste("!!WARNING!!"))
+          message(paste(t1, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+          message(paste('####'))
+          message(paste('####'))
+        } else if (numoft2 < 3) {
+          message(paste("!!WARNING!!"))
+          message(paste(t2, "is <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+          message(paste("####"))
+          message(paste("####"))
+        } else if (numoft1 > 2 & numoft2 > 2) {
+          #sprintf("%s and %s are present in the dataset", t1, t2)
+          #sprintf("Find data here: %s", outdir)
+          res <- results(dds, contrast=c(test), cooksCutoff=FALSE, independentFiltering=FALSE) #cooksCutoff = FALSE see here: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#outlier
+          res <- as.data.frame(res)
+          res <- res[order(res$pvalue),]
+          outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
+          write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
+          #print(paste(t1, 'and', t2, 'are present in dataset metadata', sep = " "))
+          print(sprintf('%s and %s are present in the dataset metadata', t1, t2)) #just because I wanted to understand using sprintf
+          print(paste("Data copied here:", outdir, sep = " "))
+          print(paste('####'))
+          print(paste('####'))
+        }
+        
+      }
+    }
+  }
+  
+  # testing for sex_diabetes
+  for (FILE in files) {
+    cell <- gsub('_sample_gex_total_counts.txt', '', FILE)
+    raw_counts <- read.table(paste0(dir, FILE), row.names=1)
+    sample_names <- unique(adata@meta.data$Library)
+    sample_names <- gsub('-','.', sample_names)
+    raw_counts <- raw_counts[,(colSums(raw_counts != 0) > 0)]
+    raw_counts <- raw_counts[,which(colnames(raw_counts) %in% sample_names)]
+    meta$Library2 <- gsub('-', '.', meta$Library)
+    meta2 <- meta[which(meta$Library2 %in% colnames(raw_counts)),]
+    
+    if ('M' %in% meta2$Sex && 'F' %in% meta2$Sex){
+      print(cell)
+      print('Data for 2 sex present, however not all data may be present will check this at a later step')
+      
+      genes_to_keep <- c()
+      for (i in 1:nrow(raw_counts)) {
+        if (sum(raw_counts[i, ] >= 5) >= 2) {
+          genes_to_keep <- c(genes_to_keep, rownames(raw_counts[i, ]))
+        }
+      }
+      counts <- raw_counts[which(rownames(raw_counts) %in% genes_to_keep),] 
+      
+      if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && #Alldata 
+          length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
+          length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
+          length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
+        my_design <- as.formula ('~sex_diabetes + Chemistry + Tissue_Source') # design for sex_diabetes
+        dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+        dds <- estimateSizeFactors(dds)
+        dds <- estimateDispersions(dds)
+        dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+      } else {
+        print(sprintf('%s does not have sufficient diabetes samples to test, bypassing to test ND only', cell))
+        meta2 <- subset(meta2, Diabetes_Status == 'ND') # it is possible some T2D are present so eliminate them from your dataset since you are restricted to sex
+        counts <- counts[,meta2$Library2]
+        my_design <- as.formula ('~Sex +  Tissue_Source') # design for sex_diabetes
+        dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+        dds <- estimateSizeFactors(dds)
+        dds <- estimateDispersions(dds)
+        dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+      }
+      
+      if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
+          length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
+          length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
+          length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
+        # This is now the next test. Your samples need to be > 1  
+        tests1 <- c('M_ND', 'M_ND', 'F_ND', 'M_T2D')
+        tests2 <- c('F_ND', 'M_T2D', 'F_T2D', 'F_T2D')
+      } else {
+        tests1 <- c("M")
+        tests2 <- c("F")
+      }
+      
+      print('Preparing to run DESeq2')
+      
+      for (x in 1:length(tests1)){
+        t1 <- tests1[[x]]
+        t2 <- tests2[[x]]
+        if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
+            length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
+            length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
+            length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
+          test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
+          numoft1 <- length(which(meta2$sex_diabetes==t1))
+          numoft2 <- length(which(meta2$sex_diabetes==t2))
+        } else {
+          test <- c('Sex', tests1[[x]],tests2[[x]]) # For sex only (for example Schwann cells)
+          numoft1 <- length(which(meta2$Sex==t1)) # For sex diabetes
+          numoft2 <- length(which(meta2$Sex==t2))
+        }
+        
+        
+        if (numoft1 < 3) {
+          message(paste("!!WARNING CHECK METADATA!!"))
+          message(paste(t1, "samples are <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+          message(paste('####'))
+          message(paste('####'))
+        } else if (numoft2 < 3) {
+          message(paste("!!WARNING CHECK METADATA!!"))
+          message(paste(t2, "samples are <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
+          message(paste("####"))
+          message(paste("####"))
+        } else if (numoft1 > 2 & numoft2 > 2) {
+          #sprintf("%s and %s are present in the dataset", t1, t2)
+          #sprintf("Find data here: %s", outdir)
+          res <- results(dds, contrast=c(test), cooksCutoff=FALSE, independentFiltering=FALSE) #cooksCutoff = FALSE see here: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#outlier
+          res <- as.data.frame(res)
+          res <- res[order(res$pvalue),]
+          outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
+          write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
+          #print(paste(t1, 'and', t2, 'are present in dataset metadata', sep = " "))
+          print(sprintf('%s cells and %s cells are present in the dataset metadata', t1, t2)) #just because I wanted to understand using sprintf
+          print(paste("Data copied here:", outdir, sep = " "))
+          print(paste('####'))
+          print(paste('####'))
+        }
+        
+      }
+    }
+  }
+}) # System time
+
+############################ STAGE ############################
+############################   11  ############################
+# Gene ontology analysis Rapid Gene ontology Auto Loader (Rapid GOAL)
+# Create a list of all files in directory
+system.time({
+  dgelist <- list.files(r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\hpap)", 
+                        all.files = FALSE, 
+                        full.names = FALSE, 
+                        pattern = "*.tsv")
+  
+  # Point towards WD using a function
+  for (sample in dgelist){
+    wd <- sprintf('C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/DETesting/DE_testing/hpap/%s', dgelist)
+  }
+  
+  # Run iterative function to perform GO on all data
+  for (x in wd) {
+    sample_name <- str_split_fixed(x, "/", n=13)[13] # needs to be number of / in wd +1 (for alldata = 12 + 1)
+    datfile <- read.table(file.path(x), sep = '\t', row.names = 1) 
+    #datfile <- read.csv(file.path(x), row.names = 1)
+    
+    # Gene list of genes going UP
+    sig_df_up <- dplyr::filter(datfile, padj < 0.1 & log2FoldChange > 0.000000000014)
+    sig_genes_up <- rownames(sig_df_up)
+    
+    # Gene list of genes going DOWN
+    sig_df_down <- dplyr::filter(datfile, padj < 0.1 & log2FoldChange < -0.000000000014) 
+    sig_genes_down <- rownames(sig_df_down)
+    
+    # All genes
+    all_genes <- rownames(datfile)
+    
+    # Run GO enrichment analysis genes up
+    GO.up <- enrichGO(gene = sig_genes_up, 
+                      universe = all_genes, 
+                      keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                      OrgDb = org.Hs.eg.db, 
+                      ont = c("ALL"), 
+                      pAdjustMethod = "BH", 
+                      pvalueCutoff = 1, 
+                      qvalueCutoff = 1, #if not set default is at 0.05
+                      readable = TRUE)
+    
+    # Run GO enrichment analysis genes down
+    GO.down <- enrichGO(gene = sig_genes_down, 
+                        universe = all_genes, 
+                        keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                        OrgDb = org.Hs.eg.db, 
+                        ont = c("ALL"), 
+                        pAdjustMethod = "BH", 
+                        pvalueCutoff = 1, 
+                        qvalueCutoff = 1, #if not set default is at 0.05
+                        readable = TRUE)
+    
+    go_data_up <- data.frame(GO.up)
+    go_data_down <- data.frame(GO.down)
+    
+    if (nrow(go_data_up) > 0) {
+      go_data_up <- dplyr::filter(go_data_up, qvalue < 0.1) }
+    if (nrow(go_data_down) > 0) {
+      go_data_down <- dplyr::filter(go_data_down, qvalue < 0.1)}
+    
+    # Save outputs
+    adjusted_name <- gsub('.{4}$', '', sample_name)
+    adjusted_name <- gsub('deseq.WaldTest.', '', adjusted_name)
+    write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/UP/%s.csv", adjusted_name), row.names = FALSE)
+    write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/DOWN/%s.csv", adjusted_name), row.names = FALSE)
+  }
+})
+
+############################ STAGE ############################
+############################   12  ############################
 # plotting
 #qsave(processed_rna, file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 DimPlot(subset_clust, 
