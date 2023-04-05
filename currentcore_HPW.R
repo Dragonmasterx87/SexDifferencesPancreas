@@ -2576,7 +2576,7 @@ for (sample in dgelist){
 
 # Run iterative function to perform GO on all data
 for (x in wd) {
-  sample_name <- str_split_fixed(x, "/", n=15)[15] # needs to be number of / in wd +1 (for tulane = 14 + 1)
+  sample_name <- str_split_fixed(x, "/", n=13)[13] # needs to be number of / in wd +1 (for tulane = 12 + 1)
   datfile <- read.table(file.path(x), sep = '\t', row.names = 1) 
   #datfile <- read.csv(file.path(x), row.names = 1)
   
@@ -2621,8 +2621,8 @@ for (x in wd) {
   # Save outputs
   adjusted_name <- gsub('.{4}$', '', sample_name)
   adjusted_name <- gsub('deseq.WaldTest.', '', adjusted_name)
-  write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/no_cookscutoff/UP/%s.csv", adjusted_name), row.names = FALSE) #Tulane
-  write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/no_cookscutoff/DOWN/%s.csv", adjusted_name), row.names = FALSE)
+  write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/UP/%s.csv", adjusted_name), row.names = FALSE) #Tulane
+  write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/DOWN/%s.csv", adjusted_name), row.names = FALSE)
 }
 })
 
