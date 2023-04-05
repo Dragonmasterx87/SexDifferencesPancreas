@@ -1967,13 +1967,13 @@ for (FILE in files) {
     counts <- raw_counts[which(rownames(raw_counts) %in% genes_to_keep),] 
     
     if (length(unique(meta2$Chemistry)) > 1) {
-      my_design <- as.formula ('~sex_ancestry_diabetes + Chemistry + Tissue_Source') # alldata
+      my_design <- as.formula ('~Chemistry + Tissue_Source + sex_ancestry_diabetes') # alldata
       dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
       dds <- estimateSizeFactors(dds)
       dds <- estimateDispersions(dds)
       dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
     } else {
-      my_design <- as.formula ('~sex_ancestry_diabetes + Tissue_Source') # alldata
+      my_design <- as.formula ('~Tissue_Source + sex_ancestry_diabetes') # alldata
       dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
       dds <- estimateSizeFactors(dds)
       dds <- estimateDispersions(dds)
@@ -2053,7 +2053,7 @@ for (FILE in files) {
          length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
          length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
          length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
-      my_design <- as.formula ('~sex_diabetes + Chemistry + Tissue_Source') # design for sex_diabetes
+      my_design <- as.formula ('~Chemistry + Tissue_Source + sex_diabetes') # design for sex_diabetes
       dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
       dds <- estimateSizeFactors(dds)
       dds <- estimateDispersions(dds)
@@ -2062,7 +2062,7 @@ for (FILE in files) {
       print(sprintf('%s does not have sufficient diabetes samples to test, bypassing to test ND only', cell))
       meta2 <- subset(meta2, Diabetes_Status == 'ND') # it is possible some T2D are present so eliminate them from your dataset since you are restricted to sex
       counts <- counts[,meta2$Library2]
-      my_design <- as.formula ('~Sex +  Tissue_Source') # design for sex_diabetes
+      my_design <- as.formula ('~Tissue_Source + Sex') # design for sex_diabetes
       dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
       dds <- estimateSizeFactors(dds)
       dds <- estimateDispersions(dds)
@@ -2826,13 +2826,13 @@ system.time({
       counts <- raw_counts[which(rownames(raw_counts) %in% genes_to_keep),] 
       
       if (length(unique(meta2$Chemistry)) > 1) {
-        my_design <- as.formula ('~sex_ancestry_diabetes + Chemistry + Tissue_Source') # alldata
+        my_design <- as.formula ('~Chemistry + Tissue_Source + sex_ancestry_diabetes') # alldata
         dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
       } else {
-        my_design <- as.formula ('~sex_ancestry_diabetes + Tissue_Source') # alldata
+        my_design <- as.formula ('~Tissue_Source + sex_ancestry_diabetes') # alldata
         dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
@@ -2912,7 +2912,7 @@ system.time({
           length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
           length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
           length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
-        my_design <- as.formula ('~sex_diabetes + Chemistry + Tissue_Source') # design for sex_diabetes
+        my_design <- as.formula ('~Chemistry + Tissue_Source + sex_diabetes') # design for sex_diabetes
         dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
@@ -2921,7 +2921,7 @@ system.time({
         print(sprintf('%s does not have sufficient diabetes samples to test, bypassing to test ND only', cell))
         meta2 <- subset(meta2, Diabetes_Status == 'ND') # it is possible some T2D are present so eliminate them from your dataset since you are restricted to sex
         counts <- counts[,meta2$Library2]
-        my_design <- as.formula ('~Sex +  Tissue_Source') # design for sex_diabetes
+        my_design <- as.formula ('~Tissue_Source + Sex') # design for sex_diabetes
         dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
