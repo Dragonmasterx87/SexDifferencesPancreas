@@ -1774,6 +1774,8 @@ qsave(processed_rna, r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 ############################ STAGE ############################
 ############################   6   ############################
 # ALL DATA
+# RUN ANALYSIS
+system.time({
 ###Step 1: Make Pseudobulk Matrices
 #Read in final Seurat object
 adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
@@ -1781,8 +1783,6 @@ Idents(adata) <- "Tissue Source"
 Idents(adata) <- adata@meta.data$celltype_qadir
 samples <- unique(adata@meta.data$Library)
 
-# RUN ANALYSIS
-system.time({
 #Pull out list of all cell types
 unique_cell_types <- unique(adata$celltype_qadir)
 DefaultAssay(adata) <- 'RNA'
@@ -1918,10 +1918,9 @@ for (FILE in files){
   tpm_mat <- make_tpm(raw_counts, gene_sizes)
   write.table(tpm_mat, paste0(outdir,  cell, "_TPM_per_sample.txt"), sep="\t", quote=F)
 }
-}) # System time
+
 
 ###Step 3: DESeq
-system.time({
 #Create a metadata table
 meta <- adata@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status')]
 colnames(meta) <- c('Library', 'Sex', 'Tissue_Source', 'Chemistry', 'ancestry', 'Diabetes_Status')
@@ -2075,8 +2074,8 @@ for (FILE in files) {
         length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
         length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
       # This is now the next test. Your samples need to be > 1  
-      tests1 <- c('M_ND', 'M_ND', 'F_ND', 'M_T2D')
-      tests2 <- c('F_ND', 'M_T2D', 'F_T2D', 'F_T2D')
+      tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
+      tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
     } else {
       tests1 <- c("M")
       tests2 <- c("F")
@@ -2129,7 +2128,7 @@ for (FILE in files) {
     }
   }
 }
-}) # System time
+}) # Sys float time
 
 ############################ STAGE ############################
 ############################   7   ############################
@@ -2196,17 +2195,20 @@ system.time({
     # Save outputs
     adjusted_name <- gsub('.{4}$', '', sample_name)
     adjusted_name <- gsub('deseq.WaldTest.', '', adjusted_name)
-    write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/alldata/UP/%s.csv", adjusted_name), row.names = FALSE)
-    write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/alldata/DOWN/%s.csv", adjusted_name), row.names = FALSE)
+    if (nrow(go_data_up) > 0) {
+    write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/alldata/UP/%s.csv", adjusted_name), row.names = FALSE)}
+    if (nrow(go_data_down) > 0) {
+    write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/alldata/DOWN/%s.csv", adjusted_name), row.names = FALSE)}
     }
-})
+}) # Sys float time
 
 ############################ STAGE ############################
 ############################   8   ############################
 # TULANE TEST
 ###Step 1: Make Pseudobulk Matrices
 #Read in final Seurat object
-
+# RUN ANALYSIS
+system.time({
 #user    system elapsed 
 #3098.69 60.33  3371.21 
 adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
@@ -2216,7 +2218,6 @@ adata <- tulane #tulane
 Idents(adata) <- adata@meta.data$celltype_qadir
 samples <- unique(adata@meta.data$Library)
 
-system.time({
   #Pull out list of all cell types
   unique_cell_types <- unique(adata$celltype_qadir)
   
@@ -2352,10 +2353,8 @@ system.time({
     tpm_mat <- make_tpm(raw_counts, gene_sizes)
     write.table(tpm_mat, paste0(outdir,  cell, "_TPM_per_sample.txt"), sep="\t", quote=F)
   }
-}) # System time
 
 ###Step 3: DESeq
-system.time({
   #Create a metadata table
   meta <- adata@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status')]
   colnames(meta) <- c('Library', 'Sex', 'Tissue_Source', 'Chemistry', 'ancestry', 'Diabetes_Status')
@@ -2505,8 +2504,8 @@ system.time({
       if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && #Tulane
           length(which(meta2$sex_diabetes == 'F_ND')) > 1 ) {
           # This is now the next test. Your samples need to be > 1  
-        tests1 <- c('M_ND', 'M_ND', 'F_ND', 'M_T2D')
-        tests2 <- c('F_ND', 'M_T2D', 'F_T2D', 'F_T2D')
+        tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
+        tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
       } else {
         tests1 <- c("M")
         tests2 <- c("F")
@@ -2557,7 +2556,7 @@ system.time({
       }
     }
   }
-}) # System time
+}) # Sys float time
 
 ############################ STAGE ############################
 ############################   9   ############################
@@ -2621,10 +2620,12 @@ for (x in wd) {
   # Save outputs
   adjusted_name <- gsub('.{4}$', '', sample_name)
   adjusted_name <- gsub('deseq.WaldTest.', '', adjusted_name)
-  write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/UP/%s.csv", adjusted_name), row.names = FALSE) #Tulane
-  write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/DOWN/%s.csv", adjusted_name), row.names = FALSE)
+  if (nrow(go_data_up) > 0) {
+  write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/UP/%s.csv", adjusted_name), row.names = FALSE)} #Tulane
+  if (nrow(go_data_down) > 0) {
+  write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/DOWN/%s.csv", adjusted_name), row.names = FALSE)}
 }
-})
+}) #Sys float time
 
 ############################ STAGE ############################
 ############################   10  ############################
@@ -2775,7 +2776,7 @@ system.time({
     tpm_mat <- make_tpm(raw_counts, gene_sizes)
     write.table(tpm_mat, paste0(outdir,  cell, "_TPM_per_sample.txt"), sep="\t", quote=F)
   }
-}) # System time
+}) # Sys float time
 
 ###Step 3: DESeq
 system.time({
@@ -2932,8 +2933,8 @@ system.time({
           length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
           length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
         # This is now the next test. Your samples need to be > 1  
-        tests1 <- c('M_ND', 'M_ND', 'F_ND', 'M_T2D')
-        tests2 <- c('F_ND', 'M_T2D', 'F_T2D', 'F_T2D')
+        tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
+        tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
       } else {
         tests1 <- c("M")
         tests2 <- c("F")
@@ -3053,10 +3054,12 @@ system.time({
     # Save outputs
     adjusted_name <- gsub('.{4}$', '', sample_name)
     adjusted_name <- gsub('deseq.WaldTest.', '', adjusted_name)
-    write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/UP/%s.csv", adjusted_name), row.names = FALSE)
-    write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/DOWN/%s.csv", adjusted_name), row.names = FALSE)
+    if (nrow(go_data_up) > 0) {
+    write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/UP/%s.csv", adjusted_name), row.names = FALSE)}
+    if (nrow(go_data_up) > 0) {
+    write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/DOWN/%s.csv", adjusted_name), row.names = FALSE)}
   }
-})
+}) # Sys float time
 
 ############################ STAGE ############################
 ############################   12  ############################
