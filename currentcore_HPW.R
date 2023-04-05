@@ -2629,6 +2629,8 @@ for (x in wd) {
 
 ############################ STAGE ############################
 ############################   10  ############################
+# RUN ANALYSIS
+system.time({
 # ALL DATA
 ###Step 1: Make Pseudobulk Matrices
 #Read in final Seurat object
@@ -2639,8 +2641,6 @@ adata <- hpap #hpap
 Idents(adata) <- adata@meta.data$celltype_qadir
 samples <- unique(adata@meta.data$Library)
 
-# RUN ANALYSIS
-system.time({
   #Pull out list of all cell types
   unique_cell_types <- unique(adata$celltype_qadir)
   DefaultAssay(adata) <- 'RNA'
@@ -2776,10 +2776,9 @@ system.time({
     tpm_mat <- make_tpm(raw_counts, gene_sizes)
     write.table(tpm_mat, paste0(outdir,  cell, "_TPM_per_sample.txt"), sep="\t", quote=F)
   }
-}) # Sys float time
+
 
 ###Step 3: DESeq
-system.time({
   #Create a metadata table
   meta <- adata@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status')]
   colnames(meta) <- c('Library', 'Sex', 'Tissue_Source', 'Chemistry', 'ancestry', 'Diabetes_Status')
