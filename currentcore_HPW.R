@@ -2612,6 +2612,9 @@ for (x in wd) {
                       qvalueCutoff = 1, #if not set default is at 0.05
                       readable = TRUE)
   
+  go_data_up <- data.frame(GO.up)
+  go_data_down <- data.frame(GO.down)
+  
   if (nrow(go_data_up) > 0) {
     go_data_up <- dplyr::filter(go_data_up, qvalue < 0.1) }
   if (nrow(go_data_down) > 0) {
@@ -2624,6 +2627,7 @@ for (x in wd) {
   write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/UP/%s.csv", adjusted_name), row.names = FALSE)} #Tulane
   if (nrow(go_data_down) > 0) {
   write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/tulane/DOWN/%s.csv", adjusted_name), row.names = FALSE)}
+  print(sprintf('%s analysis run', adjusted_name))
 }
 }) #Sys float time
 
