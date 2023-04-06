@@ -2834,13 +2834,16 @@ samples <- unique(adata@meta.data$Library)
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
-      } else {
+      } else if (length(which(meta2$sex_ancestry_diabetes == 'M_white_ND')) > 1 || #Alldata 
+                 length(which(meta2$sex_ancestry_diabetes == 'F_white_ND')) > 1) {
         my_design <- as.formula ('~Tissue_Source + sex_ancestry_diabetes') # alldata
         dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
-      }
+      } else {
+        message(paste("!!WARNING!!"))
+        message(paste(cell, "cell containing samples are <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))}
       
       tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
                   'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
@@ -2920,7 +2923,8 @@ samples <- unique(adata@meta.data$Library)
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
-      } else {
+      } else if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
+                 length(which(meta2$sex_diabetes == 'F_ND')) > 1) {
         print(sprintf('%s does not have sufficient diabetes samples to test, bypassing to test ND only', cell))
         meta2 <- subset(meta2, Diabetes_Status == 'ND') # it is possible some T2D are present so eliminate them from your dataset since you are restricted to sex
         counts <- counts[,meta2$Library2]
@@ -2929,7 +2933,7 @@ samples <- unique(adata@meta.data$Library)
         dds <- estimateSizeFactors(dds)
         dds <- estimateDispersions(dds)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
-      }
+      } else {print('samples not sufficient to test')}
       
       if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
           length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
@@ -2955,7 +2959,8 @@ samples <- unique(adata@meta.data$Library)
           test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
           numoft1 <- length(which(meta2$sex_diabetes==t1))
           numoft2 <- length(which(meta2$sex_diabetes==t2))
-        } else {
+        } else if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
+                   length(which(meta2$sex_diabetes == 'F_ND')) > 1) {
           test <- c('Sex', tests1[[x]],tests2[[x]]) # For sex only (for example Schwann cells)
           numoft1 <- length(which(meta2$Sex==t1)) # For sex diabetes
           numoft2 <- length(which(meta2$Sex==t2))
@@ -3059,7 +3064,7 @@ system.time({
     adjusted_name <- gsub('deseq.WaldTest.', '', adjusted_name)
     if (nrow(go_data_up) > 0) {
     write.csv(go_data_up, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/UP/%s.csv", adjusted_name), row.names = FALSE)}
-    if (nrow(go_data_up) > 0) {
+    if (nrow(go_data_down) > 0) {
     write.csv(go_data_down, file = sprintf("C:/Users/QadirMirzaMuhammadFa/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/scRNA/ORA/hpap/DOWN/%s.csv", adjusted_name), row.names = FALSE)}
   }
 }) # Sys float time
