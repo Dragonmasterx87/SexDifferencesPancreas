@@ -1980,6 +1980,8 @@ for (FILE in files) {
       dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
     }
     
+    # No need for conditional formatting here
+    # Specifying test combinations
     tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
                 'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
                 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
@@ -1991,6 +1993,7 @@ for (FILE in files) {
     print('Preparing to run DESeq2')
     
     for (x in 1:length(tests1)){
+      # No need for conditional formatting here
       t1 <- tests1[[x]]
       t2 <- tests2[[x]]
       test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # This should not change when you test subsetted data
@@ -2069,35 +2072,19 @@ for (FILE in files) {
       dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
     }
     
-    if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
-        length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
-        length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
-        length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
-      # This is now the next test. Your samples need to be > 1  
-      tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
-      tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
-    } else {
-      tests1 <- c("M")
-      tests2 <- c("F")
-    }
-    
+    # No need for conditional formatting here
+    # Specifying test combinations
+    tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
+    tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
     print('Preparing to run DESeq2')
     
     for (x in 1:length(tests1)){
+      # No need for conditional formatting here
       t1 <- tests1[[x]]
       t2 <- tests2[[x]]
-      if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
-          length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
-          length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
-          length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
-        test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
-        numoft1 <- length(which(meta2$sex_diabetes==t1))
-        numoft2 <- length(which(meta2$sex_diabetes==t2))
-      } else {
-        test <- c('Sex', tests1[[x]],tests2[[x]]) # For sex only (for example Schwann cells)
-        numoft1 <- length(which(meta2$Sex==t1)) # For sex diabetes
-        numoft2 <- length(which(meta2$Sex==t2))
-      }
+      test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
+      numoft1 <- length(which(meta2$sex_diabetes==t1))
+      numoft2 <- length(which(meta2$sex_diabetes==t2))
       
       
       if (numoft1 < 3) {
@@ -2414,6 +2401,8 @@ samples <- unique(adata@meta.data$Library)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
       }
       
+      # No need for conditional formatting here
+      # Specifying test combinations
       tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
                   'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
                   'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
@@ -2425,6 +2414,7 @@ samples <- unique(adata@meta.data$Library)
       print('Preparing to run DESeq2')
       
       for (x in 1:length(tests1)){
+        # No need for conditional formatting here
         t1 <- tests1[[x]]
         t2 <- tests2[[x]]
         test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # This should not change when you test subsetted data
@@ -2501,32 +2491,20 @@ samples <- unique(adata@meta.data$Library)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
       }
       
-      if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && #Tulane
-          length(which(meta2$sex_diabetes == 'F_ND')) > 1 ) {
-          # This is now the next test. Your samples need to be > 1  
-        tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
-        tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
-      } else {
-        tests1 <- c("M")
-        tests2 <- c("F")
-      }
-      
+      # No need for conditional formatting here
+      # Specifying test combinations
+      tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
+      tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
       print('Preparing to run DESeq2')
       
       for (x in 1:length(tests1)){
+        # No need for conditional formatting here
         t1 <- tests1[[x]]
         t2 <- tests2[[x]]
-        if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && #Tulane 
-           length(which(meta2$sex_diabetes == 'F_ND')) > 1) {
-          test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
-          numoft1 <- length(which(meta2$sex_diabetes==t1))
-          numoft2 <- length(which(meta2$sex_diabetes==t2))
-        } else {
-          test <- c('Sex', tests1[[x]],tests2[[x]]) # For sex only (for example Schwann cells)
-          numoft1 <- length(which(meta2$Sex==t1)) # For sex diabetes
-          numoft2 <- length(which(meta2$Sex==t2))
-        }
-        
+        test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
+        numoft1 <- length(which(meta2$sex_diabetes==t1))
+        numoft2 <- length(which(meta2$sex_diabetes==t2))
+
         
         if (numoft1 < 3) {
           message(paste("!!WARNING CHECK METADATA!!"))
@@ -2845,6 +2823,8 @@ samples <- unique(adata@meta.data$Library)
         message(paste("!!WARNING!!"))
         message(paste(cell, "cell containing samples are <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))}
       
+      # No need for conditional formatting here
+      # Specifying test combinations
       tests1 <- c('M_white_ND', 'M_white_ND', 'M_black_ND', 'F_white_ND', 'F_white_ND', 'F_black_ND', 'M_white_ND', 'M_black_ND', 'M_hispanic_ND', 'M_white_T2D', 
                   'M_white_T2D', 'M_black_T2D', 'F_white_T2D', 'F_white_T2D', 'F_black_T2D', 'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 
                   'M_white_T2D', 'M_black_T2D', 'M_hispanic_T2D', 'F_white_T2D', 'F_black_T2D', 'F_hispanic_T2D')
@@ -2856,6 +2836,7 @@ samples <- unique(adata@meta.data$Library)
       print('Preparing to run DESeq2')
       
       for (x in 1:length(tests1)){
+        # No need for conditional formatting here
         t1 <- tests1[[x]]
         t2 <- tests2[[x]]
         test <- c('sex_ancestry_diabetes', tests1[[x]],tests2[[x]]) # This should not change when you test subsetted data
@@ -2935,38 +2916,20 @@ samples <- unique(adata@meta.data$Library)
         dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
       } else {print('samples not sufficient to test')}
       
-      if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
-          length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
-          length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
-          length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
-        # This is now the next test. Your samples need to be > 1  
-        tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
-        tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
-      } else {
-        tests1 <- c("M")
-        tests2 <- c("F")
-      }
-      
+      # No need for conditional formatting here
+      # Specifying test combinations
+      tests1 <- c('M_ND', 'M_T2D', 'F_T2D', 'M_T2D')
+      tests2 <- c('F_ND', 'M_ND', 'F_ND', 'F_T2D')
       print('Preparing to run DESeq2')
       
       for (x in 1:length(tests1)){
+        # No need for conditional formatting here
         t1 <- tests1[[x]]
         t2 <- tests2[[x]]
-        if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
-            length(which(meta2$sex_diabetes == 'M_T2D')) > 1 && 
-            length(which(meta2$sex_diabetes == 'F_ND')) > 1 && 
-            length(which(meta2$sex_diabetes == 'F_T2D')) > 1) {
-          test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
-          numoft1 <- length(which(meta2$sex_diabetes==t1))
-          numoft2 <- length(which(meta2$sex_diabetes==t2))
-        } else if (length(which(meta2$sex_diabetes == 'M_ND')) > 1 && 
-                   length(which(meta2$sex_diabetes == 'F_ND')) > 1) {
-          test <- c('Sex', tests1[[x]],tests2[[x]]) # For sex only (for example Schwann cells)
-          numoft1 <- length(which(meta2$Sex==t1)) # For sex diabetes
-          numoft2 <- length(which(meta2$Sex==t2))
-        }
-        
-        
+        test <- c('sex_diabetes', tests1[[x]],tests2[[x]]) # For Sex_diabetes
+        numoft1 <- length(which(meta2$sex_diabetes==t1))
+        numoft2 <- length(which(meta2$sex_diabetes==t2))
+       
         if (numoft1 < 3) {
           message(paste("!!WARNING CHECK METADATA!!"))
           message(paste(t1, "samples are <3 in the dataset, statistical threshold not met, analysis bypassed continuing with next iteration", sep= " "))
