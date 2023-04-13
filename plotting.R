@@ -150,7 +150,84 @@ packageVersion("EnrichmentBrowser")
 # plotting first load seurat object
 # First Plot cell Based clustering
 processed_rna <- qread(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\processed_rna.qs)")
-DimPlot(processed_rna, 
+processed_rna <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+
+# Add metadata
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+processed_rna$celltype_sex_ancestry_disease_lib <- paste(Idents(processed_rna), processed_rna$'Library', sep = "_")
+table(processed_rna$celltype_sex_ancestry_disease_lib)
+
+Idents(processed_rna) <- "celltype_sex_ancestry_disease_lib"
+processed_rna$celltype_sex_ancestry_disease_lib_source <- paste(Idents(processed_rna), processed_rna$'Tissue Source', sep = "_")
+table(processed_rna$celltype_sex_ancestry_disease_lib_source)
+
+Idents(processed_rna) <- "Diabetes Status"
+processed_rna$disease_ancestry_lib_sex <- paste(Idents(processed_rna), processed_rna$'ancestry', processed_rna$'Library', processed_rna$'Sex', sep = "_")
+table(processed_rna$disease_ancestry_lib_sex)
+
+Idents(processed_rna) <- "Diabetes Status"
+processed_rna$disease_ancestry_lib_sex_source <- paste(Idents(processed_rna), processed_rna$'ancestry', processed_rna$'Library', processed_rna$'Sex', processed_rna$'Tissue Source', sep = "_")
+table(processed_rna$disease_ancestry_lib_sex_source)
+
+Idents(processed_rna) <- "Diabetes Status"
+processed_rna$disease_ancestry_lib_sex_source_celltype <- paste(Idents(processed_rna), processed_rna$'ancestry', processed_rna$'Library', processed_rna$'Sex', processed_rna$'Tissue Source', processed_rna$'celltype_qadir', sep = "_")
+table(processed_rna$disease_ancestry_lib_sex_source_celltype)
+
+# cluster re-assignment occurs, which re-assigns clustering in my_levels
+my_levels <- c("ND_black_HP2031401_M", "ND_black_HP2110001_M", "ND_black_HP2123201_M", "ND_black_HPAP-052_M", #Black M ND
+               "ND_black_HP2106201_F", "ND_black_HP2121601_F", "ND_black_HP2132801_F", "ND_black_HP2202101_F", #Black F ND
+               
+               "ND_hispanic_HPAP-080_M", #Hispanic M ND
+               "ND_hispanic_HPAP-099_F", "ND_hispanic_HPAP-101_F", "ND_hispanic_HPAP-105_F", #Hispanic F ND
+               
+               "ND_white_HP2107001_M", "ND_white_HP2107901_M", "ND_white_HPAP-026_M", "ND_white_HPAP-035_M", "ND_white_HPAP-040_M", "ND_white_HPAP-056_M", "ND_white_HPAP-059_M", "ND_white_HPAP-075_M", "ND_white_HPAP-077_M", "ND_white_HPAP-082_M", "ND_white_SAMN15877725_M", #White M ND
+               "ND_white_HP2022801_F", "ND_white_HP2024001_F", "ND_white_HP2105501_F", "ND_white_HP2108601_F", "ND_white_HP2108901_F", "ND_white_HPAP-022_F", "ND_white_HPAP-036_F", "ND_white_HPAP-037_F", "ND_white_HPAP-053_F", "ND_white_HPAP-054_F", "ND_white_HPAP-063_F",  "ND_white_HPAP-074_F", "ND_white_HPAP-103_F", #White F ND  
+               
+               "T2D_black_HPAP-070_M", "T2D_black_HPAP-083_M", "T2D_black_HPAP-108_M", #Black M T2D  
+               "T2D_black_HPAP-051_F", "T2D_black_HPAP-058_F", "T2D_black_HPAP-061_F", #Black F T2D
+               
+               "T2D_hispanic_HPAP-079_F", "T2D_hispanic_HPAP-091_F", "T2D_hispanic_HPAP-109_F", #Hispanic F T2D) #Hispanic F T2D
+               
+               "T2D_white_HPAP-088_M", "T2D_white_HPAP-100_M", "T2D_white_HPAP-106_M", # White M T2D
+               "T2D_white_HPAP-057_F", "T2D_white_HPAP-081_F", "T2D_white_HPAP-085_F") # White F T2D
+
+table(processed_rna$disease_ancestry_lib_sex)
+
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+processed_rna$disease_ancestry_lib_sex <- factor(x = processed_rna$disease_ancestry_lib_sex, levels = my_levels)
+table(processed_rna$disease_ancestry_lib_sex)
+
+# cluster re-assignment occurs, which re-assigns clustering in my_levels
+my_levels <- c("ND_black_HP2031401_M_Tulane", "ND_black_HP2110001_M_Tulane", "ND_black_HP2123201_M_Tulane", "ND_black_HPAP-052_M_UPenn", #Black M ND
+               "ND_black_HP2106201_F_Tulane", "ND_black_HP2121601_F_Tulane", "ND_black_HP2132801_F_Tulane", "ND_black_HP2202101_F_Tulane", #Black F ND
+               
+               "ND_hispanic_HPAP-080_M_nPod", #Hispanic M ND
+               "ND_hispanic_HPAP-099_F_UPenn", "ND_hispanic_HPAP-101_F_nPod", "ND_hispanic_HPAP-105_F_nPod", #Hispanic F ND
+               
+               "ND_white_HP2107001_M_Tulane", "ND_white_HP2107901_M_Tulane", "ND_white_HPAP-026_M_nPod", "ND_white_HPAP-035_M_UPenn", "ND_white_HPAP-040_M_UPenn", "ND_white_HPAP-056_M_UPenn", "ND_white_HPAP-059_M_UPenn", "ND_white_HPAP-075_M_UPenn", "ND_white_HPAP-077_M_UPenn", "ND_white_HPAP-082_M_nPod", "ND_white_SAMN15877725_M_Tulane", #White M ND
+               "ND_white_HP2022801_F_Tulane", "ND_white_HP2024001_F_Tulane", "ND_white_HP2105501_F_Tulane", "ND_white_HP2108601_F_Tulane", "ND_white_HP2108901_F_Tulane", "ND_white_HPAP-022_F_UPenn", "ND_white_HPAP-036_F_nPod", "ND_white_HPAP-037_F_UPenn", "ND_white_HPAP-053_F_UPenn", "ND_white_HPAP-054_F_UPenn", "ND_white_HPAP-063_F_UPenn",  "ND_white_HPAP-074_F_UPenn", "ND_white_HPAP-103_F_UPenn", #White F ND  
+               
+               "T2D_black_HPAP-070_M_nPod", "T2D_black_HPAP-083_M_UPenn", "T2D_black_HPAP-108_M_nPod", #Black M T2D  
+               "T2D_black_HPAP-051_F_UPenn", "T2D_black_HPAP-058_F_nPod", "T2D_black_HPAP-061_F_UPenn", #Black F T2D
+               
+               "T2D_hispanic_HPAP-079_F_nPod", "T2D_hispanic_HPAP-091_F_nPod", "T2D_hispanic_HPAP-109_F_nPod", #Hispanic F T2D) #Hispanic F T2D
+               
+               "T2D_white_HPAP-088_M_nPod", "T2D_white_HPAP-100_M_nPod", "T2D_white_HPAP-106_M_UPenn", # White M T2D
+               "T2D_white_HPAP-057_F_UPenn", "T2D_white_HPAP-081_F_nPod", "T2D_white_HPAP-085_F_UPenn") # White F T2D
+
+table(processed_rna$disease_ancestry_lib_sex_source)
+
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+processed_rna$disease_ancestry_lib_sex_source <- factor(x = processed_rna$disease_ancestry_lib_sex_source, levels = my_levels)
+table(processed_rna$disease_ancestry_lib_sex_source)
+
+# Tulane
+Idents(processed_rna) <- 'Tissue Source'
+tulane_rna <- subset(processed_rna, idents = "Tulane")
+hpap_rna <- subset(processed_rna, idents = c("nPod", "UPenn"))
+
+
+DimPlot(processed_rna, #switch here to plot
         #split.by = "Diabetes Status", 
         group.by = "celltype_qadir", 
         label = FALSE, 
@@ -177,8 +254,10 @@ DimPlot(processed_rna,
         )
 )
 
+
 dittoBarPlot(processed_rna, "celltype_qadir", 
              retain.factor.levels = TRUE,
+             scale = "count",
              color.panel = c("dodgerblue3",      #beta
                              "turquoise2",       #beta+alpha
                              "lightseagreen",    #alpha
@@ -196,7 +275,8 @@ dittoBarPlot(processed_rna, "celltype_qadir",
                              "orchid1",          #lymphocytes
                              "red4",             #mast
                              "grey30"),          #schwann), group.by = "tx")
-                             group.by = "Library") + coord_flip()  
+                             group.by = "disease_ancestry_lib_sex_source") + coord_flip()
+
 
 # Umap of Diabetes status
 DimPlot(processed_rna, 
@@ -206,38 +286,35 @@ DimPlot(processed_rna,
         ncol = 1, 
         raster = FALSE,
         pt.size = 0.1,
-        cols = c("dodgerblue3", #ND
-                 "red4"         #T2D  
-        )
-)
+        shuffle = TRUE,
+        cols = c("dodgerblue", #ND
+                 "red2"         #T2D  
+        ))
 # Umap of sex
 DimPlot(processed_rna, 
-        #split.by = "Diabetes Status", 
+        #split.by = "Diabetes Status", http://127.0.0.1:42565/graphics/plot_zoom_png?width=1160&height=900
         group.by = "Sex", 
         label = FALSE, 
         ncol = 1, 
         raster = FALSE,
         pt.size = 0.1,
+        shuffle = TRUE,
         cols = c("red4", #ND
-                 "black"         #T2D  
-        )
-)
+                 "deepskyblue3"         #T2D  
+        ))
 # Umap of ancestry_sex
 DimPlot(processed_rna, 
         #split.by = "Diabetes Status", 
-        group.by = "ancestry_sex", 
+        group.by = "ancestry", 
         label = FALSE, 
         ncol = 1, 
         raster = FALSE,
         pt.size = 0.1,
-        cols = c("orangered", #ND
-                 "black",
-                 "khaki2",         
-                 "darkorange",          
-                 "springgreen4",             
-                 "dodgerblue3"
-        )
-)
+        shuffle = TRUE,
+        cols = c("black", #ND
+                 "darkorange",
+                 "deepskyblue3"
+                 ))
 # Umap of tissue source
 DimPlot(processed_rna, 
         #split.by = "Diabetes Status", 
@@ -246,7 +323,8 @@ DimPlot(processed_rna,
         ncol = 1, 
         raster = FALSE,
         pt.size = 0.1,
-        cols = c("dodgerblue3",
+        shuffle = TRUE,
+        cols = c("dodgerblue",
                  "springgreen4",         
                  "red4"
         )
@@ -254,25 +332,33 @@ DimPlot(processed_rna,
 
 # Heatmap
 # Make average seurat object
-Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+Idents(processed_rna) <- "disease_ancestry_lib_sex_source_celltype"
 combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
 
 # subset Tulane
 Idents(processed_rna) <- "Tissue Source"
-tulane <- subset(processed_rna, idents = c('Tulane'))
-Idents(tulane) <- "celltype_sex_ancestry_disease"
-combined_processed_rna <- AverageExpression(tulane, return.seurat = TRUE, slot = 'data')
+tulane_rna <- subset(processed_rna, idents = "Tulane")
+Idents(tulane_rna) <- "disease_ancestry_lib_sex_source_celltype"
+combined_processed_rna <- AverageExpression(tulane_rna, return.seurat = TRUE, slot = 'data')
 
 # Split Metadata and add columns
 
 {
-  combined_processed_rna$celltype_sex_ancestry_disease <- combined_processed_rna@active.ident
-  combined_processed_rna$celltype <- combined_processed_rna$orig.ident
-  Idents(combined_processed_rna) <- 'celltype_sex_ancestry_disease'
+  combined_processed_rna$disease_ancestry_lib_sex_source_celltype <- combined_processed_rna@active.ident
+  Idents(combined_processed_rna) <- 'disease_ancestry_lib_sex_source_celltype'
+  combined_processed_rna$disease <- combined_processed_rna$orig.ident
   metadat <- combined_processed_rna@meta.data
-  metadat$sex <- metadat[c('sex')] <- str_split_i(metadat$celltype_sex_ancestry_disease, '_', -3)
-  metadat$ancestry <- metadat[c('ancestry')] <- str_split_i(metadat$celltype_sex_ancestry_disease, '_', -2)
-  metadat$disease <- metadat[c('disease')] <- str_split_i(metadat$celltype_sex_ancestry_disease, '_', -1)
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "activated_stellate", "activated-stellate"))
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "quiescent_stellate", "quiescent-stellate"))
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "cycling_endo", "cycling-endo"))
+  metadat$ancestry <- metadat[c('ancestry')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, "_", -5)
+  metadat$lib <- metadat[c('lib')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -4)
+  metadat$sex <- metadat[c('sex')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -3)
+  metadat$source <- metadat[c('source')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -2)
+  metadat$celltype <- metadat[c('celltype')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -1)
   combined_processed_rna@meta.data = metadat
 }
 
@@ -292,8 +378,9 @@ dittoHeatmap(
   genes = genes.to.plot,
   # metas = NULL,
   # cells.use = NULL,
-  annot.by = c("celltype", "disease", "sex", "ancestry"),
-  order.by = c("sex", "disease"),
+  annot.by = c("ancestry", "sex", "source", "celltype", "disease"),
+  #annot.by = c("lib", "sex", "source"),
+  order.by = c("sex", "ancestry", "disease"),
   # main = NA,
   # cell.names.meta = NULL,
   # assay = .default_assay(object),
@@ -305,12 +392,12 @@ dittoHeatmap(
   # annot.colors = c(dittoColors(), dittoColors(1)[seq_len(7)]),
   # annotation_col = NULL,
   annotation_colors = list(celltype = c("acinar" = "salmon3",
-                                        "activated" = "orange",
+                                        "activated-stellate" = "orange",
                                         "alpha"= "lightseagreen",
                                         "beta" = "dodgerblue3",
                                         "beta+alpha" = "turquoise2",
                                         "beta+delta" = "burlywood3",
-                                        "cycling" = "darkseagreen2",
+                                        "cycling-endo" = "darkseagreen2",
                                         "delta" = "chartreuse3",
                                         "ductal" = "darkorange2",
                                         "endothelial" = "red",
@@ -319,15 +406,18 @@ dittoHeatmap(
                                         "lymphocyte" = "orchid1",
                                         "macrophages" = "magenta3",
                                         "mast" = "red4",
-                                        "quiescent" = "salmon",
+                                        "quiescent-stellate" = "salmon",
                                         "schwann" = "grey30"),
-                           disease = c("ND" = "dodgerblue3",
-                                       "T2D" = "red4"),
+                           disease = c("ND" = "dodgerblue",
+                                       "T2D" = "red2"),
                            sex = c("F" = "red4",
-                                   "M" = "black"),
-                           ancestry = c("white" = "dodgerblue3",
+                                   "M" = "deepskyblue3"),
+                           ancestry = c("white" = "deepskyblue3",
                                         "black" = "black",
-                                        "hispanic" = "khaki2")),
+                                        "hispanic" = "darkorange"),
+                           source = c("nPod" = "dodgerblue",
+                                      "Tulane" = "springgreen4",         
+                                      "UPenn" = "red4")),
   # # data.out = FALSE,
   # highlight.features = NULL,
   # highlight.genes = NULL,
@@ -358,7 +448,18 @@ Stacked_VlnPlot(processed_rna, features = c("XIST", "TSIX",
                                             "SEPTIN6", "EIF1AX",
                                             "KDM6A", "PUDP", "DDX3X"), x_lab_rotate = TRUE)
 
+# QC
+processed_rna[["percent.mt"]] <- PercentageFeatureSet(processed_rna, pattern = "^MT-")
+feats <- c("nFeature_RNA", "nCount_RNA", "percent.mt")
+VlnPlot(processed_rna, group.by = "Tissue Source", features = feats, pt.size = 0, ncol = 3) +
+  NoLegend()
 
+# FeatureScatter is typically used to visualize feature-feature relationships, but can be used
+# for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
+Idents(hpap_rna) <- "Tissue Source"
+plot1 <- FeatureScatter(hpap_rna, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(hpap_rna, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", plot.cor = TRUE)
+plot1 + plot2
 
 # Volcano plot
 # Plotting DE genes ###
@@ -371,10 +472,10 @@ plots <- VlnPlot(beta.cells, features = c("MT-CO3", "MT-ND1", "MT-ND4", "MT-ATP6
 wrap_plots(plots = plots, nrow = 1, ncol = 1)
 
 # Load data
-volcanodat <- read.table(r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\hpap_combined\DGE\UsingBulktests\Beta\beta.deseq.WaldTest.M_ND.vs.F_ND.tsv)",
+volcanodat <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\analysis\DE_testing\old_data\tulane_samples\no_cookscutoff\beta\beta.deseq.WaldTest.M_ND.vs.F_ND.tsv)",
                          header = TRUE, sep = '\t', row.names = 1)
-volcanodat <- volcanodat %>% 
-  mutate_at(c('pvalue'), ~replace_na(.,0.0000000000000001))
+# volcanodat <- volcanodat %>% 
+#   mutate_at(c('pvalue'), ~replace_na(.,0.0000000000000001))
 #read.table(file.path(x), sep = '\t', row.names = 1) 
 #volcanodat <- epsilon.DHT.response
 
@@ -387,67 +488,208 @@ names(keyvals) <- rep('Mid', nrow(volcanodat))
 
 # modify keyvals for variables with fold change > 1.1
 keyvals[which(volcanodat$log2FoldChange > 0.263034 & volcanodat$pvalue < 0.05)] <- 'red'
-  names(keyvals)[which(volcanodat$log2FoldChange > 0.263034 & volcanodat$pvalue < 0.05)] <- 'high'
+names(keyvals)[which(volcanodat$log2FoldChange > 0.263034 & volcanodat$pvalue < 0.05)] <- 'high'
   
-  # modify keyvals for variables with fold change < -1.1
-  keyvals[which(volcanodat$log2FoldChange < -0.32193 & volcanodat$pvalue < 0.05)] <- 'royalblue'
-    names(keyvals)[which(volcanodat$log2FoldChange < -0.32193 & volcanodat$pvalue < 0.05)] <- 'low'
+# modify keyvals for variables with fold change < -1.1
+keyvals[which(volcanodat$log2FoldChange < -0.32193 & volcanodat$pvalue < 0.05)] <- 'royalblue'
+names(keyvals)[which(volcanodat$log2FoldChange < -0.32193 & volcanodat$pvalue < 0.05)] <- 'low'
     
-    unique(names(keyvals))
+unique(names(keyvals))
     
-    unique(keyvals)
-    keyvals[1:20]
-    options(ggrepel.max.overlaps = Inf)
-    EnhancedVolcano(volcanodat,
-                    lab = rownames(volcanodat),
-                    x = 'log2FoldChange',
-                    y = 'pvalue',
-                    #selectLab = FALSE,
-                    #selectLab = rownames(volcanodat)[which(names(keyvals) %in% c('high', 'low'))],
-                    selectLab = c('XIST', 'PNLIP', 'TSIX', 'REG1B', 'SLC6A2', 'FOXC1',
-                                  'ADGRG7', 'RPS4Y1', 'EIF1AY', 'USP9Y', 'UTY', 'KDM5D'), # use this for labelling genes on plot
-                    # encircle = c('XIST', 'PNLIP', 'TSIX', 'REG1B', 'SLC6A2', 'FOXC1',
-                    #              'ADGRG7', 'RPS4Y1', 'EIF1AY', 'USP9Y', 'UTY', 'KDM5D'),
-                    #boxedLabels = TRUE,
-                    xlim = c(-10,22),
-                    ylim = c(0,20),
-                    xlab = bquote(~Log[2]~ 'fold change'),
-                    title = 'Custom colour over-ride',
-                    pCutoff = 0.05,
-                    FCcutoff = 0.137504,
-                    #pointSize = c(ifelse(volcanodat$avg_log2FC < -1 | volcanodat$avg_log2FC > 1, 6, 4)),
-                    pointSize = 3,
-                    labSize = 5,
-                    labFace = 'bold',
-                    #boxedLabels = TRUE,
-                    labCol = 'black',
-                    shape = c(20, 20, 20, 20),
-                    colCustom = keyvals,
-                    colAlpha = 2,
-                    legendPosition = 'right',
-                    legendLabSize = 15,
-                    legendIconSize = 5.0,
-                    drawConnectors = TRUE,
-                    arrowheads = FALSE,
-                    widthConnectors = 1,
-                    typeConnectors = 'closed', 
-                    max.overlaps = 40,
-                    #min.segment.length = 20,
-                    colConnectors = 'black',
-                    gridlines.major = FALSE,
-                    gridlines.minor = FALSE,
-                    border = 'partial',
-                    borderWidth = 1.5,
-                    borderColour = 'black') + theme(axis.text.x = element_text(colour = "black"),
-                                                    axis.text.y = element_text(colour = "black"),
-                                                    axis.title.x = element_text(colour = "black"),
-                                                    axis.title.y = element_text(colour = "black"))
+unique(keyvals)
+keyvals[1:20]
+options(ggrepel.max.overlaps = Inf)
+EnhancedVolcano(volcanodat,
+                lab = rownames(volcanodat),
+                x = 'log2FoldChange',
+                y = 'pvalue',
+                #selectLab = FALSE,
+                selectLab = rownames(volcanodat)[which(names(keyvals) %in% c('high', 'low'))],
+                #selectLab = c('XIST', 'PNLIP', 'TSIX', 'REG1B', 'SLC6A2', 'FOXC1',
+                #              'ADGRG7', 'RPS4Y1', 'EIF1AY', 'USP9Y', 'UTY', 'KDM5D'), # use this for labelling genes on plot
+                # encircle = c('XIST', 'PNLIP', 'TSIX', 'REG1B', 'SLC6A2', 'FOXC1',
+                #              'ADGRG7', 'RPS4Y1', 'EIF1AY', 'USP9Y', 'UTY', 'KDM5D'),
+                #boxedLabels = TRUE,
+                xlim = c(-15,15),
+                ylim = c(0,30),
+                xlab = bquote(~Log[2]~ 'fold change'),
+                title = 'Custom colour over-ride',
+                pCutoff = 0.05,
+                FCcutoff = c(--0.32192, 0.26303), 
+                pointSize = c(ifelse((volcanodat$log2FoldChange > 0.26303 & volcanodat$pvalue < 0.05) | (volcanodat$log2FoldChange < -0.32192 & volcanodat$pvalue < 0.05), 5, 2)),
+                #pointSize = 2,
+                labSize = 5,
+                labFace = 'bold',
+                #boxedLabels = TRUE,
+                labCol = 'black',
+                shape = c(20, 20, 20, 20),
+                colCustom = keyvals,
+                colAlpha = 2,
+                legendPosition = 'right',
+                legendLabSize = 15,
+                legendIconSize = 5.0,
+                drawConnectors = FALSE,
+                arrowheads = FALSE,
+                widthConnectors = 1,
+                typeConnectors = 'closed', 
+                max.overlaps = 200,
+                #min.segment.length = 20,
+                colConnectors = 'black',
+                gridlines.major = FALSE,
+                gridlines.minor = FALSE,
+                border = 'partial',
+                borderWidth = 1.5,
+                borderColour = 'black') + theme(axis.text.x = element_text(colour = "black"),
+                                                axis.text.y = element_text(colour = "black"),
+                                                axis.title.x = element_text(colour = "black"),
+                                                axis.title.y = element_text(colour = "black"))
+
+#Gene Ontology plotting
+# Load data
+# Tulane UP
+beta.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\UP\beta.F_white_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\UP\beta.M_black_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\UP\beta.M_ND.vs.F_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\UP\beta.M_white_ND.vs.F_white_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\UP\beta.M_white_ND.vs.M_black_ND.csv)", sep = ',', header = TRUE)
+
+# Tulane DOWN
+beta.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\DOWN\beta.F_white_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\DOWN\beta.M_black_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\DOWN\beta.M_ND.vs.F_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\DOWN\beta.M_white_ND.vs.F_white_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\tulane\DOWN\beta.M_white_ND.vs.M_black_ND.csv)", sep = ',', header = TRUE)
+
+# Alldat UP
+beta.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\UP\beta.F_white_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\UP\beta.M_black_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\UP\beta.M_ND.vs.F_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\UP\beta.M_white_ND.vs.F_white_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\UP\beta.M_white_ND.vs.M_black_ND.csv)", sep = ',', header = TRUE)
+
+# Alldat DOWN
+beta.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\DOWN\beta.F_white_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\DOWN\beta.M_black_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\DOWN\beta.M_ND.vs.F_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\DOWN\beta.M_white_ND.vs.F_white_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\DOWN\beta.M_white_ND.vs.M_black_ND.csv)", sep = ',', header = TRUE)
+
+# Hpap UP
+beta.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\UP\beta.F_white_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\UP\beta.M_black_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\UP\beta.M_ND.vs.F_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\UP\beta.M_white_ND.vs.F_white_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\UP\beta.M_white_ND.vs.M_black_ND.csv)", sep = ',', header = TRUE)
+
+# Hpap DOWN
+beta.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\DOWN\beta.F_white_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\DOWN\beta.M_black_ND.vs.F_black_ND.csv)", sep = ',', header = TRUE)
+beta.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\DOWN\beta.M_ND.vs.F_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\DOWN\beta.M_white_ND.vs.F_white_ND.csv)", sep = ',', header = TRUE)
+beta.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\hpap\DOWN\beta.M_white_ND.vs.M_black_ND.csv)", sep = ',', header = TRUE)
+
+# Convert frac to dec
+beta.F_white_ND.vs.F_black_ND <- beta.F_white_ND.vs.F_black_ND %>% 
+  mutate(GeneRatio = map_dbl(GeneRatio, ~eval(parse(text = .x))))
+
+beta.M_black_ND.vs.F_black_ND <- beta.M_black_ND.vs.F_black_ND %>% 
+  mutate(GeneRatio = map_dbl(GeneRatio, ~eval(parse(text = .x))))
+
+beta.M_ND.vs.F_ND <- beta.M_ND.vs.F_ND %>% 
+  mutate(GeneRatio = map_dbl(GeneRatio, ~eval(parse(text = .x))))
+
+beta.M_white_ND.vs.F_white_ND <- beta.M_white_ND.vs.F_white_ND %>% 
+  mutate(GeneRatio = map_dbl(GeneRatio, ~eval(parse(text = .x))))
+
+beta.M_white_ND.vs.M_black_ND <- beta.M_white_ND.vs.M_black_ND %>% 
+  mutate(GeneRatio = map_dbl(GeneRatio, ~eval(parse(text = .x))))
+
+# Add col identifier
+beta.F_white_ND.vs.F_black_ND["condition"] = 'beta.F_white_ND.vs.F_black_ND'
+beta.M_black_ND.vs.F_black_ND["condition"] = 'beta.M_black_ND.vs.F_black_ND'
+beta.M_ND.vs.F_ND["condition"] = 'beta.M_ND.vs.F_ND'
+beta.M_white_ND.vs.F_white_ND["condition"] = 'beta.M_white_ND.vs.F_white_ND'
+beta.M_white_ND.vs.M_black_ND["condition"] = 'beta.M_white_ND.vs.M_black_ND'
+
+# Merge
+merged.df <- do.call("rbind", list(beta.F_white_ND.vs.F_black_ND, beta.M_black_ND.vs.F_black_ND, beta.M_ND.vs.F_ND, beta.M_white_ND.vs.F_white_ND, beta.M_white_ND.vs.M_black_ND))
+table(merged.df$condition)
+
+# data to plot
+data_mod <- merged.df %>%                                     
+  arrange(desc(qvalue)) %>%
+  group_by(condition) %>%
+  slice(1:5)
+print(data_mod)
+
+
+ggplot(data = merged.df,
+       aes(x = condition, y = Description, 
+       color = `qvalue`, size = GeneRatio)) +
+  geom_point() +
+  scale_color_gradient(low = "red", high = "blue") +
+  theme_bw() + 
+  ylab("") + 
+  xlab("") + 
+  ggtitle("GO enrichment analysis") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(plot.title = element_text(size = 10, face = "bold"),
+        legend.title=element_text(size=8, face = "bold"), 
+        legend.text=element_text(size=8, face = "bold")) +
+  theme(panel.grid.minor=element_blank(),
+        panel.grid.major=element_blank())
+
+#Gene Ontology plotting
+# Load data
+# Tulane UP
+beta.deseq.WaldTest.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+beta.deseq.WaldTest.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+beta.deseq.WaldTest.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+beta.deseq.WaldTest.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+beta.deseq.WaldTest.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+
+# Extract gene lists UP
+fwvsfb <- dplyr::filter(beta.deseq.WaldTest.F_white_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
+mbvsfb <- dplyr::filter(beta.deseq.WaldTest.M_black_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
+mvsf <- dplyr::filter(beta.deseq.WaldTest.M_ND.vs.F_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
+mwvsfw <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.F_white_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
+mwvsmb <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.M_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
+
+# Extract gene lists DOWN
+fwvsfb <- dplyr::filter(beta.deseq.WaldTest.F_white_ND.vs.F_black_ND, log2FoldChange < -0.000000000014)
+mbvsfb <- dplyr::filter(beta.deseq.WaldTest.M_black_ND.vs.F_black_ND, log2FoldChange < -0.000000000014)
+mvsf <- dplyr::filter(beta.deseq.WaldTest.M_ND.vs.F_ND, log2FoldChange < -0.000000000014)
+mwvsfw <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.F_white_ND, log2FoldChange < -0.000000000014)
+mwvsmb <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.M_black_ND, log2FoldChange < -0.000000000014)
+
+fwvsfb <- rownames(fwvsfb)
+mbvsfb <- rownames(mbvsfb)
+mvsf <- rownames(mvsf)
+mwvsfw <- rownames(mwvsfw)
+mwvsmb <- rownames(mwvsmb)
+
+# Make list
+gene.list <- list("fwvsfb" = fwvsfb, "mbvsfb" = mbvsfb, "mvsf" = mvsf, "mwvsfw" = mwvsfw, "mwvsmb" = mwvsmb)
+all_genes <- rownames(beta.deseq.WaldTest.F_white_ND.vs.F_black_ND)
+# Compare
+ck <- compareCluster(geneCluster = gene.list, 
+                     fun = enrichGO, 
+                     universe = all_genes, 
+                     keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                     OrgDb = org.Hs.eg.db, 
+                     ont = c("ALL"), 
+                     pAdjustMethod = "BH", 
+                     pvalueCutoff = 1, 
+                     qvalueCutoff = 1, #if not set default is at 0.05
+                     readable = TRUE)
+ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+head(ck) 
+cluster_summary <- data.frame(ck)
+ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
+dotplot(ck, showCategory = 14)
+dotplot(ck.sub, showCategory = 14)
     
-    
-    
-    processed_rna$ancestry_sex_diabetes <-     
-      install.packages('ggalt')
-    library(ggalt)
     ############################ END ############################
     ############################ END ############################
     
