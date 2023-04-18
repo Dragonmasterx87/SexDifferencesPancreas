@@ -257,7 +257,7 @@ DimPlot(processed_rna, #switch here to plot
 
 dittoBarPlot(processed_rna, "celltype_qadir", 
              retain.factor.levels = TRUE,
-             scale = "count",
+             #scale = "count",
              color.panel = c("dodgerblue3",      #beta
                              "turquoise2",       #beta+alpha
                              "lightseagreen",    #alpha
@@ -685,9 +685,9 @@ ck <- compareCluster(geneCluster = gene.list,
                      readable = TRUE)
 ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
 head(ck) 
-cluster_summary <- data.frame(ck)
+cluster_summary <- data.frame(ck.sub)
 ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
-dotplot(ck, showCategory = 14)
+dotplot(ck, showCategory = 20)
 dotplot(ck.sub, showCategory = 14)
     
     ############################ END ############################
