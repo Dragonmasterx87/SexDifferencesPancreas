@@ -386,7 +386,8 @@ dittoHeatmap(
   # assay = .default_assay(object),
   # slot = .default_slot(object),
   # swap.rownames = NULL,
-  heatmap.colors = colorRampPalette(c("blue", "white", "red"))(50),
+  heatmap.colors = colorRampPalette(c("dodgerblue", "white", "red3"))(50),
+  breaks=seq(-2, 2, length.out=50),
   scaled.to.max = FALSE,
   # heatmap.colors.max.scaled = colorRampPalette(c("white", "red"))(25),
   # annot.colors = c(dittoColors(), dittoColors(1)[seq_len(7)]),
@@ -433,8 +434,10 @@ dittoHeatmap(
 )
 
 # Violin plot
+Idents(processed_rna) <- "ancestry"
+processed_rna$ancestry_sex <- paste(Idents(processed_rna), processed_rna$'Sex', sep = '_')
 Idents(processed_rna) <- "ancestry_sex"
-processed_rna$ancestry_sex_library <- paste(Idents(processed_rna), processed_rna$'Library', sep = "_")
+processed_rna$ancestry_sex_library <- paste(Idents(processed_rna), processed_rna$'Library', sep = '_')
 table(processed_rna@meta.data[["ancestry_sex_library"]])
 
 Idents(processed_rna) <- "ancestry_sex_library"
@@ -456,9 +459,9 @@ VlnPlot(processed_rna, group.by = "Tissue Source", features = feats, pt.size = 0
 
 # FeatureScatter is typically used to visualize feature-feature relationships, but can be used
 # for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
-Idents(hpap_rna) <- "Tissue Source"
-plot1 <- FeatureScatter(hpap_rna, feature1 = "nCount_RNA", feature2 = "percent.mt")
-plot2 <- FeatureScatter(hpap_rna, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", plot.cor = TRUE)
+Idents(processed_rna) <- "Tissue Source"
+plot1 <- FeatureScatter(processed_rna, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(processed_rna, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", plot.cor = TRUE)
 plot1 + plot2
 
 # Volcano plot
@@ -689,6 +692,52 @@ cluster_summary <- data.frame(ck.sub)
 ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
 dotplot(ck, showCategory = 20)
 dotplot(ck.sub, showCategory = 14)
+
+# Plotting venn diagrams
+beta.bmvsbf <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\bmvbf\alldata\beta.bmvsbf.csv)", row.names = 1)
+beta.wfvsbf <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\wfvbf\alldata\beta.wfvsbf.csv)", row.names = 1)
+beta.wmvsbm <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\wmvsbm\alldata\beta.wmvsbm.csv)", row.names = 1)
+beta.wmvswf <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\wmvwf\All data\beta.wmvswf.csv)", row.names = 1)
+
+sig_df_up <- dplyr::filter(beta.bmvsbf, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
+beta.bmvsbf_up <- rownames(sig_df_up)
+
+sig_df_up <- dplyr::filter(beta.wfvsbf, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
+beta.wfvsbf_up <- rownames(sig_df_up)
+
+sig_df_up <- dplyr::filter(beta.wmvsbm, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
+beta.wmvsbm_up <- rownames(sig_df_up)
+
+sig_df_up <- dplyr::filter(beta.wmvswf, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
+beta.wmvswf_up <- rownames(sig_df_up)
+
+x <- list(
+  beta.bmvsbf = beta.bmvsbf_up,
+  beta.wfvsb = beta.wfvsbf_up,
+  beta.wmvsbm = beta.wmvsbm_up,
+  beta.wmvswf = beta.wmvswf_up
+)
+
+venn <- Venn(x)
+data <- process_data(venn)
+ggplot() +
+  # 1. region count layer
+  geom_sf(aes(fill = count), data = venn_region(data)) +
+  # 2. set edge layer
+  geom_sf(aes(color = name), data = venn_setedge(data), show.legend = TRUE, size = 2) +
+  # 3. set label layer
+  geom_sf_text(aes(label = name), data = venn_setlabel(data)) +
+  # 4. region label layer
+  geom_sf_label(aes(label = paste0(count, " (", scales::percent(count/sum(count), accuracy = 2), ")")), 
+                data = venn_region(data),
+                size = 3) +
+  scale_fill_gradient(low = "white", high = "darkturquoise")+
+  scale_color_manual(values = c("beta.bmvsbf" = "black",
+                                "beta.wfvsb" ="black",
+                                "beta.wmvsbm" = 'black', 
+                                "beta.wmvswf" = 'black'),
+                     labels = c('D' = 'D = bdiv_human'))+
+  theme_void()
     
     ############################ END ############################
     ############################ END ############################
