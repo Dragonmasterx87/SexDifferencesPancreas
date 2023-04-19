@@ -257,7 +257,7 @@ DimPlot(processed_rna, #switch here to plot
 
 dittoBarPlot(processed_rna, "celltype_qadir", 
              retain.factor.levels = TRUE,
-             #scale = "count",
+             scale = "count",
              color.panel = c("dodgerblue3",      #beta
                              "turquoise2",       #beta+alpha
                              "lightseagreen",    #alpha
@@ -694,28 +694,49 @@ dotplot(ck, showCategory = 20)
 dotplot(ck.sub, showCategory = 14)
 
 # Plotting venn diagrams
-beta.bmvsbf <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\bmvbf\alldata\beta.bmvsbf.csv)", row.names = 1)
-beta.wfvsbf <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\wfvbf\alldata\beta.wfvsbf.csv)", row.names = 1)
-beta.wmvsbm <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\wmvsbm\alldata\beta.wmvsbm.csv)", row.names = 1)
-beta.wmvswf <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\Sequencing_Data\scRNAseq\updated analysis\DGE\wmvwf\All data\beta.wmvswf.csv)", row.names = 1)
+#Beta cells
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 
-sig_df_up <- dplyr::filter(beta.bmvsbf, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
-beta.bmvsbf_up <- rownames(sig_df_up)
+#Alpha cells
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 
-sig_df_up <- dplyr::filter(beta.wfvsbf, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
-beta.wfvsbf_up <- rownames(sig_df_up)
+# First compare across Sex
+#UP
+bmvsbf_up <- dplyr::filter(bmvsbf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+bmvsbf_up <- rownames(bmvsbf_up)
 
-sig_df_up <- dplyr::filter(beta.wmvsbm, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
-beta.wmvsbm_up <- rownames(sig_df_up)
+mvsf_up <- dplyr::filter(mvsf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+mvsf_up <- rownames(mvsf_up)
 
-sig_df_up <- dplyr::filter(beta.wmvswf, p_val < 0.05 & avg_log2FC < -0.32192) # >1.2x
-beta.wmvswf_up <- rownames(sig_df_up)
+wmvswf_up <- dplyr::filter(wmvswf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wmvswf_up <- rownames(wmvswf_up)
+
+#DOWN
+bmvsbf_up <- dplyr::filter(bmvsbf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+bmvsbf_up <- rownames(bmvsbf_up)
+
+mvsf_up <- dplyr::filter(mvsf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+mvsf_up <- rownames(mvsf_up)
+
+wmvswf_up <- dplyr::filter(wmvswf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+wmvswf_up <- rownames(wmvswf_up)
 
 x <- list(
-  beta.bmvsbf = beta.bmvsbf_up,
-  beta.wfvsb = beta.wfvsbf_up,
-  beta.wmvsbm = beta.wmvsbm_up,
-  beta.wmvswf = beta.wmvswf_up
+  bmvsbf = bmvsbf_up,
+  mvsf = mvsf_up,
+  wmvswf = wmvswf_up
 )
 
 venn <- Venn(x)
@@ -728,16 +749,83 @@ ggplot() +
   # 3. set label layer
   geom_sf_text(aes(label = name), data = venn_setlabel(data)) +
   # 4. region label layer
-  geom_sf_label(aes(label = paste0(count, " (", scales::percent(count/sum(count), accuracy = 2), ")")), 
+  geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
                 data = venn_region(data),
                 size = 3) +
-  scale_fill_gradient(low = "white", high = "darkturquoise")+
+  scale_fill_gradient(low = "white", high = "lightseagreen")+ # change color based on celltype
+  scale_color_manual(values = c("bmvsbf" = "black",
+                                "mvsf" ="black", 
+                                "wmvswf" = 'black'),
+                     labels = c('D' = 'D = bdiv_human'))+
+  theme_void()
+
+# Look at all sets of genes forming overlaps
+# https://github.com/yanlinlin82/ggvenn/issues/21
+mylist <- data@region[["item"]]
+names(mylist)
+names(mylist) <- data@region[["name"]]
+mylist
+
+# Second compare across Ancestry
+#UP
+wfvsbf_up <- dplyr::filter(wfvsbf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wfvsbf_up <- rownames(wfvsbf_up)
+
+wfvshf_up <- dplyr::filter(wfvshf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wfvshf_up <- rownames(wfvshf_up)
+
+wmvsbm_up <- dplyr::filter(wmvsbm, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wmvsbm_up <- rownames(wmvsbm_up)
+
+bfvshf_up <- dplyr::filter(bfvshf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+bfvshf_up <- rownames(bfvshf_up)
+
+#DOWN
+wfvsbf_up <- dplyr::filter(wfvsbf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+wfvsbf_up <- rownames(wfvsbf_up)
+
+wfvshf_up <- dplyr::filter(wfvshf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+wfvshf_up <- rownames(wfvshf_up)
+
+wmvsbm_up <- dplyr::filter(wmvsbm, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+wmvsbm_up <- rownames(wmvsbm_up)
+
+bfvshf_up <- dplyr::filter(bfvshf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+bfvshf_up <- rownames(bfvshf_up)
+
+x <- list(
+  wfvsbf = wfvsbf_up,
+  wfvshf = wfvshf_up,
+  wmvsbm = wmvsbm_up,
+  bfvshf = bfvshf_up
+)
+
+venn <- Venn(x)
+data <- process_data(venn)
+ggplot() +
+  # 1. region count layer
+  geom_sf(aes(fill = count), data = venn_region(data)) +
+  # 2. set edge layer
+  geom_sf(aes(color = name), data = venn_setedge(data), show.legend = TRUE, size = 2) +
+  # 3. set label layer
+  geom_sf_text(aes(label = name), data = venn_setlabel(data)) +
+  # 4. region label layer
+  geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
+                data = venn_region(data),
+                size = 3) +
+  scale_fill_gradient(low = "white", high = "lightseagreen")+
   scale_color_manual(values = c("beta.bmvsbf" = "black",
-                                "beta.wfvsb" ="black",
-                                "beta.wmvsbm" = 'black', 
+                                "beta.mvsf" ="black", 
                                 "beta.wmvswf" = 'black'),
                      labels = c('D' = 'D = bdiv_human'))+
   theme_void()
+
+# Look at all sets of genes forming overlaps
+# https://github.com/yanlinlin82/ggvenn/issues/21
+mylist <- data@region[["item"]]
+names(mylist)
+names(mylist) <- data@region[["name"]]
+mylist
     
     ############################ END ############################
     ############################ END ############################
