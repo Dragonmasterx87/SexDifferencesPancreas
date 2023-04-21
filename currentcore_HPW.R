@@ -3085,144 +3085,146 @@ black_F <- subset(nd.pancreas, idents = c("black_M"))
 test_seurat <- hispanic_M
 Idents(test_seurat) <- "celltype_qadir"
 
+
 plan(strategy = "multicore", workers = 80)
 beta.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "beta", 
                                       #latent.vars = "Library", 
                                       group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001, test.use = "MAST", 
                                       only.pos = TRUE)
-beta.conserved.markers$p_val_adj[beta.conserved.markers$p_val_adj == '0'] <- 2e-308
-beta.conserved.markers <- dplyr::filter(beta.conserved.markers, p_val_adj < 2e-20)
+beta.conserved.markers$p_val_adj[beta.conserved.markers$p_val_adj == 0] <- 2e-308
+beta.conserved.markers <- dplyr::filter(beta.conserved.markers, p_val_adj < 1e-20)
 
 alpha.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "alpha", 
                                        #latent.vars = "Library", 
                                        group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                        test.use = "MAST", only.pos = TRUE)
-alpha.conserved.markers$p_val_adj[alpha.conserved.markers$p_val_adj == '0'] <- 2e-308
-alpha.conserved.markers <- dplyr::filter(alpha.conserved.markers, p_val_adj < 2e-20) 
+alpha.conserved.markers$p_val_adj[alpha.conserved.markers$p_val_adj == 0] <- 2e-308
+alpha.conserved.markers <- dplyr::filter(alpha.conserved.markers, p_val_adj < 1e-20) 
 
 delta.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "delta", 
                                        #latent.vars = "Library", 
                                        group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                        test.use = "MAST", only.pos = TRUE)
-delta.conserved.markers$p_val_adj[delta.conserved.markers$p_val_adj == '0'] <- 2e-308
-delta.conserved.markers <- dplyr::filter(delta.conserved.markers, p_val_adj < 2e-20) 
+delta.conserved.markers$p_val_adj[delta.conserved.markers$p_val_adj == 0] <- 2e-308
+delta.conserved.markers <- dplyr::filter(delta.conserved.markers, p_val_adj < 1e-20) 
 
 gamma.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "gamma", 
                                        #latent.vars = "Library", 
                                        group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                        test.use = "MAST", only.pos = TRUE)
-gamma.conserved.markers$p_val_adj[gamma.conserved.markers$p_val_adj == '0'] <- 2e-308
-gamma.conserved.markers <- dplyr::filter(gamma.conserved.markers, p_val_adj < 2e-20) 
+gamma.conserved.markers$p_val_adj[gamma.conserved.markers$p_val_adj == 0] <- 2e-308
+gamma.conserved.markers <- dplyr::filter(gamma.conserved.markers, p_val_adj < 1e-20) 
 
 epsilon.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "epsilon", 
                                          #latent.vars = "Library", 
                                          group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                          test.use = "MAST", only.pos = TRUE)
-epsilon.conserved.markers$p_val_adj[epsilon.conserved.markers$p_val_adj == '0'] <- 2e-308
-epsilon.conserved.markers <- dplyr::filter(epsilon.conserved.markers, p_val_adj < 2e-20) 
+epsilon.conserved.markers$p_val_adj[epsilon.conserved.markers$p_val_adj == 0] <- 2e-308
+epsilon.conserved.markers <- dplyr::filter(epsilon.conserved.markers, p_val_adj < 1e-20) 
 
 betaalpha.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "beta+alpha", 
                                            #latent.vars = "Library", 
                                            group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                            test.use = "MAST", only.pos = TRUE)
-betaalpha.conserved.markers$p_val_adj[betaalpha.conserved.markers$p_val_adj == '0'] <- 2e-308
-betaalpha.conserved.markers <- dplyr::filter(betaalpha.conserved.markers, p_val_adj < 2e-20) 
+betaalpha.conserved.markers$p_val_adj[betaalpha.conserved.markers$p_val_adj == 0] <- 2e-308
+betaalpha.conserved.markers <- dplyr::filter(betaalpha.conserved.markers, p_val_adj < 1e-20) 
 
 betadelta.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "beta+delta", 
                                            #latent.vars = "Library", 
                                            group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                            test.use = "MAST", only.pos = TRUE)
-betadelta.conserved.markers$p_val_adj[betadelta.conserved.markers$p_val_adj == '0'] <- 2e-308
-betadelta.conserved.markers <- dplyr::filter(betadelta.conserved.markers, p_val_adj < 2e-20) 
+betadelta.conserved.markers$p_val_adj[betadelta.conserved.markers$p_val_adj == 0] <- 2e-308
+betadelta.conserved.markers <- dplyr::filter(betadelta.conserved.markers, p_val_adj < 1e-20) 
 
 cycling_endo.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "cycling_endo", 
                                               #latent.vars = "Library", 
                                               group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                               test.use = "MAST", only.pos = TRUE)
-cycling_endo.conserved.markers$p_val_adj[cycling_endo.conserved.markers$p_val_adj == '0'] <- 2e-308
-cycling_endo.conserved.markers <- dplyr::filter(cycling_endo.conserved.markers, p_val_adj < 2e-20) 
+cycling_endo.conserved.markers$p_val_adj[cycling_endo.conserved.markers$p_val_adj == 0] <- 2e-308
+cycling_endo.conserved.markers <- dplyr::filter(cycling_endo.conserved.markers, p_val_adj < 1e-20) 
 
 acinar.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "acinar", 
                                         #latent.vars = "Library", 
                                         group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                         test.use = "MAST", only.pos = TRUE)
-acinar.conserved.markers$p_val_adj[acinar.conserved.markers$p_val_adj == '0'] <- 2e-308
-acinar.conserved.markers <- dplyr::filter(acinar.conserved.markers, p_val_adj < 2e-20) 
+acinar.conserved.markers$p_val_adj[acinar.conserved.markers$p_val_adj == 0] <- 2e-308
+acinar.conserved.markers <- dplyr::filter(acinar.conserved.markers, p_val_adj < 1e-20) 
 
 ductal.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "ductal", 
                                         #latent.vars = "Library", 
                                         group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                         test.use = "MAST", only.pos = TRUE)
-ductal.conserved.markers$p_val_adj[ductal.conserved.markers$p_val_adj == '0'] <- 2e-308
-ductal.conserved.markers <- dplyr::filter(ductal.conserved.markers, p_val_adj < 2e-20) 
+ductal.conserved.markers$p_val_adj[ductal.conserved.markers$p_val_adj == 0] <- 2e-308
+ductal.conserved.markers <- dplyr::filter(ductal.conserved.markers, p_val_adj < 1e-20) 
 
 activated_stellate.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.40, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "activated_stellate", 
                                                     #latent.vars = "Library", 
                                                     group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                                     test.use = "MAST", only.pos = TRUE)
-activated_stellate.conserved.markers$p_val_adj[activated_stellate.conserved.markers$p_val_adj == '0'] <- 2e-308
-activated_stellate.conserved.markers <- dplyr::filter(activated_stellate.conserved.markers, p_val_adj < 2e-20) 
+activated_stellate.conserved.markers$p_val_adj[activated_stellate.conserved.markers$p_val_adj == 0] <- 2e-308
+activated_stellate.conserved.markers <- dplyr::filter(activated_stellate.conserved.markers, p_val_adj < 1e-20) 
 
 quiescent_stellate.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "quiescent_stellate", 
                                                     #latent.vars = "Library", 
                                                     group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                                     test.use = "MAST", only.pos = TRUE)
-quiescent_stellate.conserved.markers$p_val_adj[quiescent_stellate.conserved.markers$p_val_adj == '0'] <- 2e-308
-quiescent_stellate.conserved.markers <- dplyr::filter(quiescent_stellate.conserved.markers, p_val_adj < 2e-20) 
+quiescent_stellate.conserved.markers$p_val_adj[quiescent_stellate.conserved.markers$p_val_adj == 0] <- 2e-308
+quiescent_stellate.conserved.markers <- dplyr::filter(quiescent_stellate.conserved.markers, p_val_adj < 1e-20) 
 
 endothelial.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "endothelial", 
                                              #latent.vars = "Library", 
                                              group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                              test.use = "MAST", only.pos = TRUE)
-endothelial.conserved.markers$p_val_adj[endothelial.conserved.markers$p_val_adj == '0'] <- 2e-308
-endothelial.conserved.markers <- dplyr::filter(endothelial.conserved.markers, p_val_adj < 2e-20) 
+endothelial.conserved.markers$p_val_adj[endothelial.conserved.markers$p_val_adj == 0] <- 2e-308
+endothelial.conserved.markers <- dplyr::filter(endothelial.conserved.markers, p_val_adj < 1e-20) 
 
 lymphocyte.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "lymphocyte", 
                                             #latent.vars = "Library", 
                                             group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                             test.use = "MAST", only.pos = TRUE)
-lymphocyte.conserved.markers$p_val_adj[lymphocyte.conserved.markers$p_val_adj == '0'] <- 2e-308
-lymphocyte.conserved.markers <- dplyr::filter(lymphocyte.conserved.markers, p_val_adj < 2e-20) 
+lymphocyte.conserved.markers$p_val_adj[lymphocyte.conserved.markers$p_val_adj == 0] <- 2e-308
+lymphocyte.conserved.markers <- dplyr::filter(lymphocyte.conserved.markers, p_val_adj < 1e-20) 
 
 macrophages.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "macrophages", 
                                              #latent.vars = "Library", 
                                              group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                              test.use = "MAST", only.pos = TRUE)
-macrophages.conserved.markers$p_val_adj[macrophages.conserved.markers$p_val_adj == '0'] <- 2e-308
-macrophages.conserved.markers <- dplyr::filter(macrophages.conserved.markers, p_val_adj < 2e-20) 
+macrophages.conserved.markers$p_val_adj[macrophages.conserved.markers$p_val_adj == 0] <- 2e-308
+macrophages.conserved.markers <- dplyr::filter(macrophages.conserved.markers, p_val_adj < 1e-20) 
 
 mast.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "mast", 
                                       #latent.vars = "Library", 
                                       group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                       test.use = "MAST", only.pos = TRUE)
-mast.conserved.markers$p_val_adj[mast.conserved.markers$p_val_adj == '0'] <- 2e-308
-mast.conserved.markers <- dplyr::filter(mast.conserved.markers, p_val_adj < 2e-20) 
+mast.conserved.markers$p_val_adj[mast.conserved.markers$p_val_adj == 0] <- 2e-308
+mast.conserved.markers <- dplyr::filter(mast.conserved.markers, p_val_adj < 1e-20) 
 
 schwann.conserved.markers <- FindMarkers(test_seurat, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "data", ident.1 = "schwann", 
                                          #latent.vars = "Library", 
                                          group.by = "celltype_qadir", min.cells.group = 1, pseudocount.use = 0.001,
                                          test.use = "MAST", only.pos = TRUE)
-schwann.conserved.markers$p_val_adj[schwann.conserved.markers$p_val_adj == '0'] <- 2e-308
-schwann.conserved.markers <- dplyr::filter(schwann.conserved.markers, p_val_adj < 2e-20) 
+schwann.conserved.markers$p_val_adj[schwann.conserved.markers$p_val_adj == 0] <- 2e-308
+schwann.conserved.markers <- dplyr::filter(schwann.conserved.markers, p_val_adj < 1e-20) 
+
 
 #Save files:
-write.csv(beta.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\beta.csv")")
-write.csv(alpha.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\alpha.csv")")
-write.csv(delta.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\delta.csv")")
-write.csv(gamma.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\gamma.csv")")
-write.csv(epsilon.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\epsilon.csv")")
-write.csv(betaalpha.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\betaalpha.csv")")
-write.csv(betadelta.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\betadelta.csv")")
-write.csv(cycling_endo.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\cycling_endo.csv")")
-write.csv(acinar.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\acinar.csv")")
-write.csv(ductal.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\ductal.csv")")
-write.csv(activated_stellate.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\activated_stellate.csv")")
-write.csv(quiescent_stellate.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\quiescent_stellate.csv")")
-write.csv(endothelial.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\endothelial.csv")")
-write.csv(lymphocyte.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\lymphocyte.csv")")
-write.csv(macrophages.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\macrophages.csv")")
-write.csv(mast.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\mast.csv")")
-write.csv(schwann.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\schwann.csv")")
+write.csv(beta.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\beta.csv)")
+write.csv(alpha.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\alpha.csv)")
+write.csv(delta.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\delta.csv)")
+write.csv(gamma.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\gamma.csv)")
+write.csv(epsilon.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\epsilon.csv)")
+write.csv(betaalpha.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\betaalpha.csv)")
+write.csv(betadelta.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\betadelta.csv)")
+write.csv(cycling_endo.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\cycling_endo.csv)")
+write.csv(acinar.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\acinar.csv)")
+write.csv(ductal.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\ductal.csv)")
+write.csv(activated_stellate.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\activated_stellate.csv)")
+write.csv(quiescent_stellate.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\quiescent_stellate.csv)")
+write.csv(endothelial.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\endothelial.csv)")
+write.csv(lymphocyte.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\lymphocyte.csv)")
+write.csv(macrophages.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\macrophages.csv)")
+write.csv(mast.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\mast.csv)")
+write.csv(schwann.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\schwann.csv)")
 
 ############################ STAGE ############################
 ############################   13  ############################
