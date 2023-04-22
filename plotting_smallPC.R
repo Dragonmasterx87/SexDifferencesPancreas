@@ -1120,6 +1120,7 @@ nd.pancreas <- subset(processed_rna, idents = c("ND"))
 # Heatmap
 # Make average seurat object
 Idents(processed_rna) <- "disease_ancestry_lib_sex_source_celltype"
+#DefaultAssay(processed_rna) <- "RNA"
 combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
 
 {
@@ -1154,6 +1155,21 @@ combined_processed_rna$celltype <- factor(x = combined_processed_rna$celltype, l
 table(combined_processed_rna$celltype)
 
 genes.to.plot <- as.character(allgenes_unique)
+genes.to.plot <- c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
+                   "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
+                   "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
+                   "PPY", #gamma
+                   "GHRL", #epsilon
+                   "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
+                   "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
+                   "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
+                   "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
+                   "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
+                   "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
+                   "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
+                   "TPSAB1", "TPSB2", #mast
+                   "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
+                   "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7")
 
 dittoHeatmap(
   combined_processed_rna,
@@ -1162,7 +1178,7 @@ dittoHeatmap(
   # cells.use = NULL,
   annot.by = c("ancestry", "sex", "source", "disease", "celltype"),
   #annot.by = c("lib", "sex", "source"),
-  order.by = c("celltype"),
+  order.by = c("celltype", "source"),
   # main = NA,
   # cell.names.meta = NULL,
   # assay = .default_assay(object),
@@ -1202,12 +1218,26 @@ dittoHeatmap(
                                       "Tulane" = "springgreen4",         
                                       "UPenn" = "red4")),
   # # data.out = FALSE,
-  highlight.features = c("INS"),
+  highlight.features = c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
+                         "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
+                         "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
+                         "PPY", #gamma
+                         "GHRL", #epsilon
+                         "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
+                         "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
+                         "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
+                         "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
+                         "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
+                         "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
+                         "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
+                         "TPSAB1", "TPSB2", #mast
+                         "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
+                         "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7"), #macrophages
   # highlight.genes = NULL,
   # show_colnames = isBulk(object),
   # show_rownames = TRUE,
   # scale = "row",
-  # cluster_row = FALSE
+  cluster_row = FALSE
   # cluster_cols = FALSE,
   # border_color = NA,
   # legend_breaks = NA,
