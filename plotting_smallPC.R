@@ -70,6 +70,7 @@ install.packages("archive")
 install.packages("R.utils")
 install.packages("qs")
 install.packages('metap')
+install.packages('magick')
 
 
 # Run the following code once you have Seurat installed
@@ -126,6 +127,7 @@ suppressWarnings(
     library(multtest)
     library(metap)
     library(MAST)
+    library(magick)
   }
 )
 
@@ -1087,31 +1089,29 @@ schwann_genes <- (gene_lists$Schwann)[!is.na(gene_lists$Schwann)]
 macro_genes <- (gene_lists$Macrophages)[!is.na(gene_lists$Macrophages)]
 
 x <- list(
-  beta_genes=beta_genes,
-  alpha_genes=alpha_genes,
-  delta_genes=delta_genes,
-  gamma_genes=gamma_genes,
-  epsilon_genes=epsilon_genes,
-  #betaalpha_genes=betaalpha_genes,
-  betadelta_genes=betadelta_genes,
-  cycendo_genes=cycendo_genes,
-  ductal_genes=ductal_genes,
-  acinar_genes=acinar_genes,
-  activatedstellate_genes=activatedstellate_genes,
-  quiescentstellate_genes=quiescentstellate_genes,
-  endothelial_genes=endothelial_genes,
-  lymphocytes_genes=lymphocytes_genes,
-  mast_genes=mast_genes,
-  schwann_genes=schwann_genes,
-  macro_genes=macro_genes
+  delta_genes=as.character(delta_genes),
+  betadelta_genes=as.character(betadelta_genes),
+  beta_genes=as.character(beta_genes),
+  #betaalpha_genes=as.character(betaalpha_genes),
+  alpha_genes=as.character(alpha_genes),
+  gamma_genes=as.character(gamma_genes),
+  epsilon_genes=as.character(epsilon_genes),
+  cycendo_genes=as.character(cycendo_genes),
+  ductal_genes=as.character(ductal_genes),
+  acinar_genes=as.character(acinar_genes),
+  activatedstellate_genes=as.character(activatedstellate_genes),
+  quiescentstellate_genes=as.character(quiescentstellate_genes),
+  endothelial_genes=as.character(endothelial_genes),
+  lymphocytes_genes=as.character(lymphocytes_genes),
+  macro_genes=as.character(macro_genes),
+  mast_genes=as.character(mast_genes),
+  schwann_genes=as.character(schwann_genes)
 )
 
-# Look for overlaps
-venn <- Venn(x)
-overlap(venn)
-
-# no overlaps so make one union of genes
-allgenes_unique <- Reduce(c, x)
+# Concatenate and remove dupliates
+Reduce(intersect, x)
+allgenes <- unlist(x, use.names = FALSE)
+allgenes_unique <- unique(allgenes)
 
 # Find markers to make lists of genes different across cells
 Idents(processed_rna) <- "Diabetes Status"
@@ -1120,6 +1120,7 @@ nd.pancreas <- subset(processed_rna, idents = c("ND"))
 # Heatmap
 # Make average seurat object
 Idents(processed_rna) <- "disease_ancestry_lib_sex_source_celltype"
+
 #DefaultAssay(processed_rna) <- "RNA"
 combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
 
@@ -1153,40 +1154,80 @@ table(combined_processed_rna$celltype)
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
 combined_processed_rna$celltype <- factor(x = combined_processed_rna$celltype, levels = my_levels)
 table(combined_processed_rna$celltype)
+Idents(combined_processed_rna) <- "celltype"
 
-genes.to.plot <- as.character(allgenes_unique)
-genes.to.plot <- c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
-                   "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
-                   "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
-                   "PPY", #gamma
-                   "GHRL", #epsilon
-                   "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
-                   "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
-                   "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
-                   "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
-                   "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
-                   "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
-                   "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
-                   "TPSAB1", "TPSB2", #mast
-                   "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
-                   "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7")
+genes.to.plot <- as.character(as.character(allgenes_unique))
+write.csv(genes.to.plot, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\genes.csv)")
+# genes.to.plot <- c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
+#                    "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
+#                    "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
+#                    "PPY", #gamma
+#                    "GHRL", #epsilon
+#                    "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
+#                    "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
+#                    "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
+#                    "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
+#                    "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
+#                    "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
+#                    "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
+#                    "TPSAB1", "TPSB2", #mast
+#                    "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
+#                    "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7")
 
+# Get the genes we want to label.
+label_genes <- c("INS", "MAFA", "NKX6-1", "PDX1", #beta
+                 "GCG", "TTR", "ARX", "TM4SF4", #alpha
+                 "SST", "RBP4", "HHEX", "LY6H", #delta
+                 "PPY", #gamma
+                 "GHRL", #epsilon
+                 "TOP2A", "CCNB2", "CDKN3", "MKI67", #cycendo
+                 "SPP1", "KRT19", "ONECUT1", "TM4SF1", #ductal
+                 "CTRB1", "PRSS2", "PNLIP", "CELA2A", #acinar
+                 "DCN", "COL1A1", "LUM", "PTGDS", #activated
+                 "GADD45B", "HMGB1", "PDGFRB", "RGS5", #quiescent
+                 "PECAM1", "VWF", "CD59", "ESM1", #endo
+                 "CCL5", "CD3E", "TRAC", "HLA-B", #lymphocyte
+                 "TPSAB1", "TPSB2", #mast
+                 "CRYAB", "SOX10", "NGFR", "CDH19", #schwann
+                 "SDS", "CD68", "APOE", "MS4A7") #macrophages
+
+label_genes <- c("HHEX", 
+                 "BMP5",
+                 "AC132217.2",
+                 "ABLIM1",
+                 "PPY",
+                 "GHRL",
+                 "ANLN",
+                 "ABCC3",
+                 "AKR1C3",
+                 "A2M",
+                 "ADAMTS4",
+                 "ADGRF5",
+                 "CKLF",
+                 "ABCA1",
+                 "TPSAB1",
+                 "ANK3")
+
+# Get the indices of said genes in the original object
+#locs <- match(label_genes, rownames(combined_processed_rna[genes,]))
+pdf(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\figure.pdf)",
+    width = 16,
+    height = 6)
 dittoHeatmap(
-  combined_processed_rna,
+  object = combined_processed_rna,#(subset(combined_processed_rna, idents = c("alpha"))),
   genes = genes.to.plot,
   # metas = NULL,
   # cells.use = NULL,
   annot.by = c("ancestry", "sex", "source", "disease", "celltype"),
   #annot.by = c("lib", "sex", "source"),
-  order.by = c("celltype", "source"),
+  order.by = c("celltype"),
   # main = NA,
   # cell.names.meta = NULL,
   # assay = .default_assay(object),
   # slot = .default_slot(object),
   # swap.rownames = NULL,
   heatmap.colors = colorRampPalette(c("dodgerblue", "white", "red3"))(50),
-  breaks=seq(-2, 2, length.out=50),
-  scaled.to.max = FALSE,
+  # scaled.to.max = FALSE,
   # heatmap.colors.max.scaled = colorRampPalette(c("white", "red"))(25),
   # annot.colors = c(dittoColors(), dittoColors(1)[seq_len(7)]),
   # annotation_col = NULL,
@@ -1218,33 +1259,52 @@ dittoHeatmap(
                                       "Tulane" = "springgreen4",         
                                       "UPenn" = "red4")),
   # # data.out = FALSE,
-  highlight.features = c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
-                         "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
-                         "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
-                         "PPY", #gamma
-                         "GHRL", #epsilon
-                         "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
-                         "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
-                         "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
-                         "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
-                         "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
-                         "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
-                         "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
-                         "TPSAB1", "TPSB2", #mast
-                         "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
-                         "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7"), #macrophages
-  # highlight.genes = NULL,
+  # highlight.features = c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
+  #                        "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
+  #                        "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
+  #                        "PPY", #gamma
+  #                        "GHRL", #epsilon
+  #                        "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
+  #                        "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
+  #                        "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
+  #                        "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
+  #                        "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
+  #                        "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
+  #                        "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
+  #                        "TPSAB1", "TPSB2", #mast
+  #                        "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
+  #                        "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7"), #macrophages
+  #right_annotations = rowAnnotation(foo = anno_mark(at = c(1), labels = c("HHEX"))),
   # show_colnames = isBulk(object),
   # show_rownames = TRUE,
   # scale = "row",
-  cluster_row = FALSE
+  cluster_row = FALSE,
   # cluster_cols = FALSE,
   # border_color = NA,
   # legend_breaks = NA,
   # drop_levels = FALSE,
-  # breaks = NA,
-  # complex = FALSE
-)
+  breaks=seq(-2, 2, length.out=50),
+  complex = TRUE,
+  #column_km = 1,
+  use_raster = TRUE,
+  raster_quality = 5,
+  #column_split = combined_processed_rna$celltype,
+  #border_color = "black",
+  gaps_col = c(52, 104, 156, 208, 260, 311, 343, 379, 431, 483, 535, 587, 639, 690, 742, 793),
+  gaps_row = c(6, 16, 44, 195, 196, 197, 220, 394, 480, 611, 632, 922, 1030, 1087, 1089)
+) + rowAnnotation(mark = anno_mark(at = match(label_genes, 
+                                              rownames(combined_processed_rna[genes.to.plot,])), 
+                                   labels = label_genes, 
+                                   which = "row",
+                                   labels_gp = list(cex=0.3),
+                                   #link_width = unit(4, "mm"), link_height = unit(4, "mm"),
+                                   padding = 0.1
+                                   )
+                                   )
+
+dev.off()
+dev.off()
+
 
 allseuratgenes <- as.character(rownames(combined_processed_rna@assays[["RNA"]]))
 intersect_genes <- intersect(allseuratgenes, allgenes_unique)
