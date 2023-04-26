@@ -37,13 +37,16 @@ BiocManager::install("org.Hs.eg.db")
 BiocManager::install("AnnotationHub")
 BiocManager::install("GenomeInfoDb")
 BiocManager::install("MeSHDbi")
-BiocManager::install("clusterProfiler")
+BiocManager::install("clusterProfiler", force = TRUE)
 BiocManager::install("DOSE")
 BiocManager::install("dittoSeq")
 BiocManager::install("escape")
 BiocManager::install("ComplexHeatmap")
 BiocManager::install(c("DropletUtils", "Nebulosa"))
 BiocManager::install("hdf5r", force = TRUE)
+BiocManager::install('multtest')
+BiocManager::install("MAST")
+BiocManager::install("enrichplot")
 
 # install Seurat from Github (automatically updates sctransform)
 setRepositories(ind=1:3) # needed to automatically install Bioconductor dependencies
@@ -67,6 +70,8 @@ install.packages("devtools")
 install.packages("archive")
 install.packages("R.utils")
 install.packages("qs")
+install.packages('metap')
+install.packages('magick')
 
 
 # Run the following code once you have Seurat installed
@@ -120,6 +125,11 @@ suppressWarnings(
     library(devtools)
     library(R.utils)
     library(qs)
+    library(multtest)
+    library(metap)
+    library(MAST)
+    library(magick)
+    library(enrichplot)
   }
 )
 
@@ -146,13 +156,17 @@ packageVersion("signac")
 packageVersion("EnrichmentBrowser")
 
 ############################ STAGE ############################
-############################   7   ############################
+############################   12   ############################
 # plotting first load seurat object
 # First Plot cell Based clustering
 processed_rna <- qread(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\processed_rna.qs)")
 processed_rna <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 
 # Add metadata
+Idents(processed_rna) <- "ancestry"
+processed_rna$ancestry_sex <- paste(Idents(processed_rna), processed_rna$'Sex', sep = "_")
+table(processed_rna$ancestry_sex)
+
 Idents(processed_rna) <- "celltype_sex_ancestry_disease"
 processed_rna$celltype_sex_ancestry_disease_lib <- paste(Idents(processed_rna), processed_rna$'Library', sep = "_")
 table(processed_rna$celltype_sex_ancestry_disease_lib)
@@ -694,7 +708,7 @@ dotplot(ck, showCategory = 20)
 dotplot(ck.sub, showCategory = 14)
 
 # Plotting venn diagrams
-#Beta cells
+#Beta cells ND
 wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
@@ -703,7 +717,7 @@ wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\
 wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
 bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 
-#Alpha cells
+#Alpha cells ND
 wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
@@ -712,31 +726,175 @@ wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\
 wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
 bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 
+#Delta cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Gamma cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Epsilon cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Beta+alpha cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Beta+delta cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+
+#Cycling Endo cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Acinar cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Ductal cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Activated stellate cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Quiescent stellate cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Endothelial cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#Lymphocyte cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#macrophages cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#mast cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+#schwann cells ND
+wfvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+wfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+bmvsbf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+mvsf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+wmvswf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+wmvsbm <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+bfvshf <- read.table(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
+# Sometimes enough comparisons are not present, for example we dont have enough hispanic males
+# if else conditional formatting allows us to eliminate 
 # First compare across Sex
 #UP
-bmvsbf_up <- dplyr::filter(bmvsbf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
-bmvsbf_up <- rownames(bmvsbf_up)
+if (exists("bmvsbf")) {
+bmvsbf_genes <- dplyr::filter(bmvsbf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+bmvsbf_genes <- rownames(bmvsbf_genes) } else {bmvsbf_genes <- character()}
 
-mvsf_up <- dplyr::filter(mvsf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
-mvsf_up <- rownames(mvsf_up)
+if (exists("mvsf")) {
+mvsf_genes <- dplyr::filter(mvsf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+mvsf_genes <- rownames(mvsf_genes)} else {mvsf_genes <- character()}
 
-wmvswf_up <- dplyr::filter(wmvswf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
-wmvswf_up <- rownames(wmvswf_up)
+if (exists("wmvswf")) {
+wmvswf_genes <- dplyr::filter(wmvswf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wmvswf_genes <- rownames(wmvswf_genes) } else {wmvswf_genes <- character()}
 
 #DOWN
-bmvsbf_up <- dplyr::filter(bmvsbf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
-bmvsbf_up <- rownames(bmvsbf_up)
-
-mvsf_up <- dplyr::filter(mvsf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
-mvsf_up <- rownames(mvsf_up)
-
-wmvswf_up <- dplyr::filter(wmvswf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
-wmvswf_up <- rownames(wmvswf_up)
+if (exists("bmvsbf")) {
+bmvsbf_genes <- dplyr::filter(bmvsbf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+bmvsbf_genes <- rownames(bmvsbf_genes) } else {bmvsbf_genes <- character()}
+  
+if (exists("mvsf")) {
+mvsf_genes <- dplyr::filter(mvsf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+mvsf_genes <- rownames(mvsf_genes)} else {mvsf_genes <- character()}
+    
+if (exists("wmvswf")) {
+wmvswf_genes <- dplyr::filter(wmvswf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+wmvswf_genes <- rownames(wmvswf_genes) } else {wmvswf_genes <- character()}
 
 x <- list(
-  bmvsbf = bmvsbf_up,
-  mvsf = mvsf_up,
-  wmvswf = wmvswf_up
+  bmvsbf = bmvsbf_genes,
+  mvsf = mvsf_genes,
+  wmvswf = wmvswf_genes
 )
 
 venn <- Venn(x)
@@ -752,11 +910,11 @@ ggplot() +
   geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
                 data = venn_region(data),
                 size = 3) +
-  scale_fill_gradient(low = "white", high = "lightseagreen")+ # change color based on celltype
+  scale_fill_gradient(low = "white", high = "red4") + # change color based on celltype
   scale_color_manual(values = c("bmvsbf" = "black",
                                 "mvsf" ="black", 
                                 "wmvswf" = 'black'),
-                     labels = c('D' = 'D = bdiv_human'))+
+                     labels = c('D' = 'D = bdiv_human')) +
   theme_void()
 
 # Look at all sets of genes forming overlaps
@@ -766,38 +924,47 @@ names(mylist)
 names(mylist) <- data@region[["name"]]
 mylist
 
+
 # Second compare across Ancestry
 #UP
-wfvsbf_up <- dplyr::filter(wfvsbf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
-wfvsbf_up <- rownames(wfvsbf_up)
+if (exists("wfvsbf")) {
+wfvsbf_genes <- dplyr::filter(wfvsbf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wfvsbf_genes <- rownames(wfvsbf_genes) } else {wfvsbf_genes <- character()}
 
-wfvshf_up <- dplyr::filter(wfvshf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
-wfvshf_up <- rownames(wfvshf_up)
+if (exists("wfvshf")) {
+wfvshf_genes <- dplyr::filter(wfvshf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wfvshf_genes <- rownames(wfvshf_genes)} else {wfvshf_genes <- character()}
 
-wmvsbm_up <- dplyr::filter(wmvsbm, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
-wmvsbm_up <- rownames(wmvsbm_up)
+if (exists("wmvsbm")) {
+wmvsbm_genes <- dplyr::filter(wmvsbm, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+wmvsbm_genes <- rownames(wmvsbm_genes) } else {wmvsbm_genes <- character()}
 
-bfvshf_up <- dplyr::filter(bfvshf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
-bfvshf_up <- rownames(bfvshf_up)
+if (exists("bfvshf")) {
+bfvshf_genes <- dplyr::filter(bfvshf, padj < 0.1 & log2FoldChange > 0.000000000014) # >1.2x
+bfvshf_genes <- rownames(bfvshf_genes) } else {bfvshf_genes <- character()}
 
 #DOWN
-wfvsbf_up <- dplyr::filter(wfvsbf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
-wfvsbf_up <- rownames(wfvsbf_up)
+if (exists("wfvsbf")) {
+  wfvsbf_genes <- dplyr::filter(wfvsbf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+  wfvsbf_genes <- rownames(wfvsbf_genes) } else {wfvsbf_genes <- character()}
 
-wfvshf_up <- dplyr::filter(wfvshf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
-wfvshf_up <- rownames(wfvshf_up)
+if (exists("wfvshf")) {
+  wfvshf_genes <- dplyr::filter(wfvshf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+  wfvshf_genes <- rownames(wfvshf_genes)} else {wfvshf_genes <- character()}
 
-wmvsbm_up <- dplyr::filter(wmvsbm, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
-wmvsbm_up <- rownames(wmvsbm_up)
+if (exists("wmvsbm")) {
+  wmvsbm_genes <- dplyr::filter(wmvsbm, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+  wmvsbm_genes <- rownames(wmvsbm_genes) } else {wmvsbm_genes <- character()}
 
-bfvshf_up <- dplyr::filter(bfvshf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
-bfvshf_up <- rownames(bfvshf_up)
+if (exists("bfvshf")) {
+  bfvshf_genes <- dplyr::filter(bfvshf, padj < 0.1 & log2FoldChange < -0.000000000014) # >1.2x
+  bfvshf_genes <- rownames(bfvshf_genes) } else {bfvshf_genes <- character()}
 
 x <- list(
-  wfvsbf = wfvsbf_up,
-  wfvshf = wfvshf_up,
-  wmvsbm = wmvsbm_up,
-  bfvshf = bfvshf_up
+  wfvsbf = wfvsbf_genes,
+  wfvshf = wfvshf_genes,
+  wmvsbm = wmvsbm_genes,
+  bfvshf = bfvshf_genes
 )
 
 venn <- Venn(x)
@@ -813,11 +980,11 @@ ggplot() +
   geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
                 data = venn_region(data),
                 size = 3) +
-  scale_fill_gradient(low = "white", high = "lightseagreen")+
+  scale_fill_gradient(low = "white", high = "red4") + # change color based on celltype
   scale_color_manual(values = c("beta.bmvsbf" = "black",
                                 "beta.mvsf" ="black", 
                                 "beta.wmvswf" = 'black'),
-                     labels = c('D' = 'D = bdiv_human'))+
+                     labels = c('D' = 'D = bdiv_human')) +
   theme_void()
 
 # Look at all sets of genes forming overlaps
@@ -827,8 +994,481 @@ names(mylist)
 names(mylist) <- data@region[["name"]]
 mylist
     
-    ############################ END ############################
-    ############################ END ############################
+
+# Venn diagrams of all celltypes
+#Beta cells ND
+black_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\black_F\schwann.csv)", sep = ',', row.names = 1)
+black_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\black_M\schwann.csv)", sep = ',', row.names = 1)
+white_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\white_F\schwann.csv)", sep = ',', row.names = 1)
+white_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\white_M\schwann.csv)", sep = ',', row.names = 1)
+hispanic_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\schwann.csv)", sep = ',', row.names = 1)
+hispanic_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\schwann.csv)", sep = ',', row.names = 1)
+
+# Second compare across Ancestry
+#UP
+if (exists("black_F")) {
+  black_F_genes <- dplyr::filter(black_F, p_val_adj < 1e-20) 
+  black_F_genes <- rownames(black_F_genes) } else {black_F_genes <- character()}
+
+if (exists("black_M")) {
+  black_M_genes <- dplyr::filter(black_M, p_val_adj < 1e-20)
+  black_M_genes <- rownames(black_M_genes)} else {black_M_genes <- character()}
+
+if (exists("white_F")) {
+  white_F_genes <- dplyr::filter(white_F, p_val_adj < 1e-20)
+  white_F_genes <- rownames(white_F_genes) } else {white_F_genes <- character()}
+
+if (exists("white_M")) {
+  white_M_genes <- dplyr::filter(white_M, p_val_adj < 1e-20)
+  white_M_genes <- rownames(white_M_genes) } else {bfvshf_genes <- character()}
+
+if (exists("hispanic_F")) {
+  hispanic_F_genes <- dplyr::filter(hispanic_F, p_val_adj < 1e-20)
+  hispanic_F_genes <- rownames(hispanic_F_genes) } else {hispanic_F_genes <- character()}
+
+if (exists("hispanic_M")) {
+  hispanic_M_genes <- dplyr::filter(hispanic_M, p_val_adj < 1e-20)
+  hispanic_M_genes <- rownames(hispanic_M_genes) } else {hispanic_M_genes <- character()}
+
+
+x <- list(
+  black_F_genes = black_F_genes,
+  black_M_genes = black_M_genes,
+  white_F_genes = white_F_genes,
+  white_M_genes = white_M_genes,
+  hispanic_F_genes = hispanic_F_genes,
+  hispanic_M_genes = hispanic_M_genes
+)
+
+venn <- Venn(x)
+overlap(venn) # https://cran.r-project.org/web/packages/RVenn/vignettes/vignette.html
+data <- process_data(venn)
+ggplot() +
+  # 1. region count layer
+  geom_sf(aes(fill = count), data = venn_region(data)) +
+  # 2. set edge layer
+  geom_sf(aes(color = name), data = venn_setedge(data), show.legend = TRUE, size = 2) +
+  # 3. set label layer
+  geom_sf_text(aes(label = name), data = venn_setlabel(data)) +
+  # 4. region label layer
+  geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
+                data = venn_region(data),
+                size = 3) +
+  scale_fill_gradient(low = "white", high = "grey30") + # change color based on celltype
+  scale_color_manual(values = c("beta.bmvsbf" = "black",
+                                "beta.mvsf" ="black", 
+                                "beta.wmvswf" = 'black'),
+                     labels = c('D' = 'D = bdiv_human')) +
+  theme_void()
+
+# Look at all sets of genes forming overlaps
+# https://github.com/yanlinlin82/ggvenn/issues/21
+mylist <- data@region[["item"]]
+names(mylist)
+names(mylist) <- data@region[["name"]]
+mylist
+
+# Make a list of all unique genes
+gene_lists <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\Conserved_genes_acrossall.csv)", header = TRUE, sep = ",")
+gene_lists[gene_lists == ""] <- NA
+  
+beta_genes <- (gene_lists$Beta)[!is.na(gene_lists$Beta)]
+alpha_genes <- (gene_lists$Alpha)[!is.na(gene_lists$Alpha)]
+delta_genes <- (gene_lists$Delta)[!is.na(gene_lists$Delta)]
+gamma_genes <- (gene_lists$Gamma)[!is.na(gene_lists$Gamma)]
+epsilon_genes <- (gene_lists$Epsilon)[!is.na(gene_lists$Epsilon)]
+betaalpha_genes <- (gene_lists$Betaalpha)[!is.na(gene_lists$Betaalpha)]
+betadelta_genes <- (gene_lists$Betadelta)[!is.na(gene_lists$Betadelta)]
+cycendo_genes <- (gene_lists$Cyc_endo)[!is.na(gene_lists$Cyc_endo)]
+ductal_genes <- (gene_lists$Ductal)[!is.na(gene_lists$Ductal)]
+acinar_genes <- (gene_lists$Acinar)[!is.na(gene_lists$Acinar)]
+activatedstellate_genes <- (gene_lists$Activated_stellate)[!is.na(gene_lists$Activated_stellate)]
+quiescentstellate_genes <- (gene_lists$Quiescent_stellate)[!is.na(gene_lists$Quiescent_stellate)]
+endothelial_genes <- (gene_lists$Endothelial)[!is.na(gene_lists$Endothelial)]
+lymphocytes_genes <- (gene_lists$Lymphocytes)[!is.na(gene_lists$Lymphocytes)]
+mast_genes <- (gene_lists$Mast)[!is.na(gene_lists$Mast)]
+schwann_genes <- (gene_lists$Schwann)[!is.na(gene_lists$Schwann)]
+macro_genes <- (gene_lists$Macrophages)[!is.na(gene_lists$Macrophages)]
+
+x <- list(
+  delta_genes=as.character(delta_genes),
+  betadelta_genes=as.character(betadelta_genes),
+  beta_genes=as.character(beta_genes),
+  #betaalpha_genes=as.character(betaalpha_genes),
+  alpha_genes=as.character(alpha_genes),
+  gamma_genes=as.character(gamma_genes),
+  epsilon_genes=as.character(epsilon_genes),
+  cycendo_genes=as.character(cycendo_genes),
+  ductal_genes=as.character(ductal_genes),
+  acinar_genes=as.character(acinar_genes),
+  activatedstellate_genes=as.character(activatedstellate_genes),
+  quiescentstellate_genes=as.character(quiescentstellate_genes),
+  endothelial_genes=as.character(endothelial_genes),
+  lymphocytes_genes=as.character(lymphocytes_genes),
+  macro_genes=as.character(macro_genes),
+  mast_genes=as.character(mast_genes),
+  schwann_genes=as.character(schwann_genes)
+)
+
+# Concatenate and remove dupliates
+Reduce(intersect, x)
+allgenes <- unlist(x, use.names = FALSE)
+allgenes_unique <- unique(allgenes)
+
+# Find markers to make lists of genes different across cells
+Idents(processed_rna) <- "Diabetes Status"
+nd.pancreas <- subset(processed_rna, idents = c("ND"))
+
+# Heatmap
+# Make average seurat object
+Idents(processed_rna) <- "disease_ancestry_lib_sex_source_celltype"
+
+#DefaultAssay(processed_rna) <- "RNA"
+combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
+
+{
+  combined_processed_rna$disease_ancestry_lib_sex_source_celltype <- combined_processed_rna@active.ident
+  Idents(combined_processed_rna) <- 'disease_ancestry_lib_sex_source_celltype'
+  combined_processed_rna$disease <- combined_processed_rna$orig.ident
+  metadat <- combined_processed_rna@meta.data
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "activated_stellate", "activated-stellate"))
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "quiescent_stellate", "quiescent-stellate"))
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "cycling_endo", "cycling-endo"))
+  metadat$ancestry <- metadat[c('ancestry')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, "_", -5)
+  metadat$lib <- metadat[c('lib')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -4)
+  metadat$sex <- metadat[c('sex')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -3)
+  metadat$source <- metadat[c('source')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -2)
+  metadat$celltype <- metadat[c('celltype')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -1)
+  combined_processed_rna@meta.data = metadat
+}
+
+# cluster re-assignment occurs, which re-assigns clustering in my_levels
+my_levels <- c("delta", "beta+delta", "beta", "beta+alpha", "alpha", "gamma", "epsilon", "cycling-endo",
+               "ductal", "acinar",
+               "activated-stellate", "quiescent-stellate", "endothelial",
+               "lymphocyte", "macrophages", "mast", "schwann") 
+
+table(combined_processed_rna$celltype)
+
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+combined_processed_rna$celltype <- factor(x = combined_processed_rna$celltype, levels = my_levels)
+table(combined_processed_rna$celltype)
+Idents(combined_processed_rna) <- "celltype"
+
+genes.to.plot <- as.character(as.character(allgenes_unique))
+write.csv(genes.to.plot, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\genes.csv)")
+# genes.to.plot <- c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
+#                    "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
+#                    "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
+#                    "PPY", #gamma
+#                    "GHRL", #epsilon
+#                    "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
+#                    "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
+#                    "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
+#                    "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
+#                    "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
+#                    "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
+#                    "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
+#                    "TPSAB1", "TPSB2", #mast
+#                    "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
+#                    "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7")
+
+# Get the genes we want to label.
+label_genes <- c("INS", "MAFA", "NKX6-1", "PDX1", #beta
+                 "GCG", "TTR", "ARX", "TM4SF4", #alpha
+                 "SST", "RBP4", "HHEX", "LY6H", #delta
+                 "PPY", #gamma
+                 "GHRL", #epsilon
+                 "TOP2A", "CCNB2", "CDKN3", "MKI67", #cycendo
+                 "SPP1", "KRT19", "ONECUT1", "TM4SF1", #ductal
+                 "CTRB1", "PRSS2", "PNLIP", "CELA2A", #acinar
+                 "DCN", "COL1A1", "LUM", "PTGDS", #activated
+                 "GADD45B", "HMGB1", "PDGFRB", "RGS5", #quiescent
+                 "PECAM1", "VWF", "CD59", "ESM1", #endo
+                 "CCL5", "CD3E", "TRAC", "HLA-B", #lymphocyte
+                 "TPSAB1", "TPSB2", #mast
+                 "CRYAB", "SOX10", "NGFR", "CDH19", #schwann
+                 "SDS", "CD68", "APOE", "MS4A7") #macrophages
+
+label_genes <- c("HHEX", 
+                 "BMP5",
+                 "AC132217.2",
+                 "ABLIM1",
+                 "PPY",
+                 "GHRL",
+                 "ANLN",
+                 "ABCC3",
+                 "AKR1C3",
+                 "A2M",
+                 "ADAMTS4",
+                 "ADGRF5",
+                 "CKLF",
+                 "ABCA1",
+                 "TPSAB1",
+                 "ANK3")
+
+# Get the indices of said genes in the original object
+#locs <- match(label_genes, rownames(combined_processed_rna[genes,]))
+pdf(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\figure.pdf)",
+    width = 16,
+    height = 6)
+dittoHeatmap(
+  object = combined_processed_rna,#(subset(combined_processed_rna, idents = c("alpha"))),
+  genes = genes.to.plot,
+  # metas = NULL,
+  # cells.use = NULL,
+  annot.by = c("ancestry", "sex", "source", "disease", "celltype"),
+  #annot.by = c("lib", "sex", "source"),
+  order.by = c("celltype"),
+  # main = NA,
+  # cell.names.meta = NULL,
+  # assay = .default_assay(object),
+  # slot = .default_slot(object),
+  # swap.rownames = NULL,
+  heatmap.colors = colorRampPalette(c("dodgerblue", "white", "red3"))(50),
+  # scaled.to.max = FALSE,
+  # heatmap.colors.max.scaled = colorRampPalette(c("white", "red"))(25),
+  # annot.colors = c(dittoColors(), dittoColors(1)[seq_len(7)]),
+  # annotation_col = NULL,
+  annotation_colors = list(celltype = c("acinar" = "salmon3",
+                                        "activated-stellate" = "orange",
+                                        "alpha"= "lightseagreen",
+                                        "beta" = "dodgerblue3",
+                                        "beta+alpha" = "turquoise2",
+                                        "beta+delta" = "burlywood3",
+                                        "cycling-endo" = "darkseagreen2",
+                                        "delta" = "chartreuse3",
+                                        "ductal" = "darkorange2",
+                                        "endothelial" = "red",
+                                        "epsilon" = "khaki2",
+                                        "gamma" = "springgreen4",
+                                        "lymphocyte" = "orchid1",
+                                        "macrophages" = "magenta3",
+                                        "mast" = "red4",
+                                        "quiescent-stellate" = "salmon",
+                                        "schwann" = "grey30"),
+                           disease = c("ND" = "dodgerblue",
+                                       "T2D" = "red2"),
+                           sex = c("F" = "red4",
+                                   "M" = "deepskyblue3"),
+                           ancestry = c("white" = "deepskyblue3",
+                                        "black" = "black",
+                                        "hispanic" = "darkorange"),
+                           source = c("nPod" = "dodgerblue",
+                                      "Tulane" = "springgreen4",         
+                                      "UPenn" = "red4")),
+  # # data.out = FALSE,
+  # highlight.features = c("INS", "MAFA", "IAPP", "ENTPD3", "NKX6-1", "PDX1", #beta
+  #                        "GCG", "TTR", "IRX2", "ARX", "TM4SF4", "PCSK1N", #alpha
+  #                        "SST", "RBP4", "HHEX", "LY6H", "F5", "BHLHE41", #delta
+  #                        "PPY", #gamma
+  #                        "GHRL", #epsilon
+  #                        "TOP2A", "CCNB2", "HMGB2", "CDKN3", "MKI67", "CENPF", #cycendo
+  #                        "SPP1", "TFPI2", "KRT19", "ONECUT1", "TM4SF1", #ductal
+  #                        "CTRB1", "CTRB2", "PRSS2", "PRSS1", "PNLIP", "CELA2A", #acinar
+  #                        "SFRP2", "VIM", "DCN", "COL1A1", "LUM", "PTGDS", #activated
+  #                        "GADD45B", "HMGB1", "PDGFRB", "PRDX1", "PTMA", "RGS5", #quiescent
+  #                        "PECAM1", "VWF", "SOX18", "FCN3", "CD59", "ESM1", #endo
+  #                        "CCL5", "NKG7", "CD3E", "IL32", "TRAC", "HLA-B", #lymphocyte
+  #                        "TPSAB1", "TPSB2", #mast
+  #                        "CRYAB", "SOX10", "NGFR", "RUNX2", "BTC", "CDH19", #schwann
+  #                        "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7"), #macrophages
+  #right_annotations = rowAnnotation(foo = anno_mark(at = c(1), labels = c("HHEX"))),
+  # show_colnames = isBulk(object),
+  # show_rownames = TRUE,
+  # scale = "row",
+  cluster_row = FALSE,
+  # cluster_cols = FALSE,
+  # border_color = NA,
+  # legend_breaks = NA,
+  # drop_levels = FALSE,
+  breaks=seq(-2, 2, length.out=50),
+  complex = TRUE,
+  #column_km = 1,
+  use_raster = TRUE,
+  raster_quality = 5,
+  #column_split = combined_processed_rna$celltype,
+  #border_color = "black",
+  gaps_col = c(52, 104, 156, 208, 260, 311, 343, 379, 431, 483, 535, 587, 639, 690, 742, 793),
+  gaps_row = c(6, 16, 44, 195, 196, 197, 220, 394, 480, 611, 632, 922, 1030, 1087, 1089)
+) + rowAnnotation(mark = anno_mark(at = match(label_genes, 
+                                              rownames(combined_processed_rna[genes.to.plot,])), 
+                                   labels = label_genes, 
+                                   which = "row",
+                                   labels_gp = list(cex=0.3),
+                                   #link_width = unit(4, "mm"), link_height = unit(4, "mm"),
+                                   padding = 0.1
+                                   )
+                                   )
+
+dev.off()
+dev.off()
+
+
+allseuratgenes <- as.character(rownames(combined_processed_rna@assays[["RNA"]]))
+intersect_genes <- intersect(allseuratgenes, allgenes_unique)
+write.csv(allseuratgenes, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\allseuratgenes.csv)")
+x <- list(
+  allseuratgenes = allseuratgenes,
+  allgenes_unique = allgenes_unique
+  )
+
+venn <- Venn(x)
+overlap(venn) # https://cran.r-project.org/web/packages/RVenn/vignettes/vignette.html
+data <- process_data(venn)
+ggplot() +
+  # 1. region count layer
+  geom_sf(aes(fill = count), data = venn_region(data)) +
+  # 2. set edge layer
+  geom_sf(aes(color = name), data = venn_setedge(data), show.legend = TRUE, size = 2) +
+  # 3. set label layer
+  geom_sf_text(aes(label = name), data = venn_setlabel(data)) +
+  # 4. region label layer
+  geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
+                data = venn_region(data),
+                size = 3) +
+  scale_fill_gradient(low = "white", high = "chartreuse3") + # change color based on celltype
+  scale_color_manual(values = c("beta.bmvsbf" = "black",
+                                "beta.mvsf" ="black", 
+                                "beta.wmvswf" = 'black'),
+                     labels = c('D' = 'D = bdiv_human')) +
+  theme_void()
+
+# Look at all sets of genes forming overlaps
+# https://github.com/yanlinlin82/ggvenn/issues/21
+mylist <- data@region[["item"]]
+names(mylist)
+names(mylist) <- data@region[["name"]]
+mylist
+
+#Gene Ontology plotting
+# Load data
+# Make a list of all unique genes
+gene_lists <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\Conserved_genes_acrossall.csv)", header = TRUE, sep = ",")
+gene_lists[gene_lists == ""] <- NA
+
+beta_genes <- (gene_lists$Beta)[!is.na(gene_lists$Beta)]
+alpha_genes <- (gene_lists$Alpha)[!is.na(gene_lists$Alpha)]
+delta_genes <- (gene_lists$Delta)[!is.na(gene_lists$Delta)]
+gamma_genes <- (gene_lists$Gamma)[!is.na(gene_lists$Gamma)]
+epsilon_genes <- (gene_lists$Epsilon)[!is.na(gene_lists$Epsilon)]
+betaalpha_genes <- (gene_lists$Betaalpha)[!is.na(gene_lists$Betaalpha)]
+betadelta_genes <- (gene_lists$Betadelta)[!is.na(gene_lists$Betadelta)]
+cycendo_genes <- (gene_lists$Cyc_endo)[!is.na(gene_lists$Cyc_endo)]
+ductal_genes <- (gene_lists$Ductal)[!is.na(gene_lists$Ductal)]
+acinar_genes <- (gene_lists$Acinar)[!is.na(gene_lists$Acinar)]
+activatedstellate_genes <- (gene_lists$Activated_stellate)[!is.na(gene_lists$Activated_stellate)]
+quiescentstellate_genes <- (gene_lists$Quiescent_stellate)[!is.na(gene_lists$Quiescent_stellate)]
+endothelial_genes <- (gene_lists$Endothelial)[!is.na(gene_lists$Endothelial)]
+lymphocytes_genes <- (gene_lists$Lymphocytes)[!is.na(gene_lists$Lymphocytes)]
+mast_genes <- (gene_lists$Mast)[!is.na(gene_lists$Mast)]
+schwann_genes <- (gene_lists$Schwann)[!is.na(gene_lists$Schwann)]
+macro_genes <- (gene_lists$Macrophages)[!is.na(gene_lists$Macrophages)]
+
+gene.list <- list(
+  delta_genes=as.character(delta_genes),
+  betadelta_genes=as.character(betadelta_genes),
+  beta_genes=as.character(beta_genes),
+  #betaalpha_genes=as.character(betaalpha_genes),
+  alpha_genes=as.character(alpha_genes),
+  gamma_genes=as.character(gamma_genes),
+  epsilon_genes=as.character(epsilon_genes),
+  cycendo_genes=as.character(cycendo_genes),
+  ductal_genes=as.character(ductal_genes),
+  acinar_genes=as.character(acinar_genes),
+  activatedstellate_genes=as.character(activatedstellate_genes),
+  quiescentstellate_genes=as.character(quiescentstellate_genes),
+  endothelial_genes=as.character(endothelial_genes),
+  lymphocytes_genes=as.character(lymphocytes_genes),
+  macro_genes=as.character(macro_genes),
+  mast_genes=as.character(mast_genes),
+  schwann_genes=as.character(schwann_genes)
+)
+
+# Compare
+ck <- compareCluster(geneCluster = gene.list, 
+                     fun = enrichGO, 
+                     universe = rownames(processed_rna@assays[["RNA"]]@counts), 
+                     keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                     OrgDb = org.Hs.eg.db, 
+                     ont = c("ALL"), 
+                     pAdjustMethod = "BH", 
+                     pvalueCutoff = 1, 
+                     qvalueCutoff = 0.1, #if not set default is at 0.05
+                     readable = TRUE)
+ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+head(ck) 
+cluster_summary <- data.frame(ck.sub)
+ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
+dotplot(ck, showCategory = 20)
+dotplot(ck, showCategory = 1)
+ck.save <- ck@compareClusterResult
+write.csv(ck.save, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\ORA\ck.save.csv)")
+
+dotplot(ck, showCategory = c("digestion", "response to nutrient",
+                             "peptide hormone secretion", "hormone transport",
+                             "insulin secretion", "response to glucose", "second-messenger-mediated signaling", "endocrine system development",
+                             "regulation of exocytosis", "amino acid transport", "neurotransmitter secretion", "regulation of sodium ion transport",
+                             "neuropeptide signaling pathway",
+                             "glucocorticoid secretion",
+                             "nuclear division", "mitotic cell cycle phase transition", "mitotic cytokinesis",
+                             "positive regulation of ion transport", "cell-cell junction organization", "gland development", "SMAD protein complex assembly",
+                             "extracellular matrix organization", "cellular response to transforming growth factor beta stimulus", "collagen fibril organization",
+                             "endothelin receptor signaling pathway", "smooth muscle cell differentiation",
+                             "regulation of angiogenesis", "endothelial cell migration",
+                             "T cell activation", "T cell differentiation",
+                             "antigen processing and presentation of exogenous peptide antigen via MHC class II", "MHC class II protein complex assembly",
+                             "extracellular structure organization",
+                             "axon development", "neuron projection regeneration", "ensheathment of neurons"), font.size=14)
+
+cnetplot(ck)
+
+beta.alpha.delta <- list(
+    delta_genes=as.character(delta_genes),
+    beta_genes=as.character(beta_genes),
+    alpha_genes=as.character(alpha_genes)
+    )
+
+# Compare
+ck.bad <- compareCluster(geneCluster = beta.alpha.delta, 
+                     fun = enrichGO, 
+                     universe = rownames(processed_rna@assays[["RNA"]]@counts), 
+                     keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                     OrgDb = org.Hs.eg.db, 
+                     ont = c("ALL"), 
+                     pAdjustMethod = "BH", 
+                     pvalueCutoff = 1, 
+                     qvalueCutoff = 0.1, #if not set default is at 0.05
+                     readable = TRUE)
+ck.bad <- setReadable(ck.bad, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+cnetplot(ck.bad,
+         showCategory = 10,
+         foldChange = NULL,
+         layout = "kk",
+         colorEdge = TRUE,
+         circular = FALSE,
+         node_label = "category",
+         cex_category = 1,
+         cex_gene = 0.5,
+         node_label_size = NULL,
+         cex_label_category = 1,
+         cex_label_gene = 1) + scale_fill_manual(values = c("chartreuse3", "dodgerblue3", "lightseagreen"))
+
+eg <- bitr(as.character(alpha_genes), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
+edox <- enrichDGN(as.character(eg$ENTREZID), readable = TRUE)
+edox <- setReadable(edox, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+edox <- pairwise_termsim(edox)
+emapplot(ck)
+treeplot(edox)
+mutate(edox, qscore = -log(p.adjust, base=10)) %>% 
+  barplot(x="qscore")
+
+
+############################ END ############################
+############################ END ############################
     
     Idents(processed_rna) <- "ancestry_sex"
     processed_rna$ancestry_sex_diabetes <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
