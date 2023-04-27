@@ -37,7 +37,7 @@ BiocManager::install("org.Hs.eg.db")
 BiocManager::install("AnnotationHub")
 BiocManager::install("GenomeInfoDb")
 BiocManager::install("MeSHDbi")
-BiocManager::install("clusterProfiler")
+BiocManager::install("clusterProfiler", force = TRUE)
 BiocManager::install("DOSE")
 BiocManager::install("dittoSeq")
 BiocManager::install("escape")
@@ -46,6 +46,7 @@ BiocManager::install(c("DropletUtils", "Nebulosa"))
 BiocManager::install("hdf5r", force = TRUE)
 BiocManager::install('multtest')
 BiocManager::install("MAST")
+BiocManager::install("enrichplot")
 
 # install Seurat from Github (automatically updates sctransform)
 setRepositories(ind=1:3) # needed to automatically install Bioconductor dependencies
@@ -71,6 +72,7 @@ install.packages("R.utils")
 install.packages("qs")
 install.packages('metap')
 install.packages('magick')
+install.packages("corrplot")
 
 
 # Run the following code once you have Seurat installed
@@ -128,6 +130,9 @@ suppressWarnings(
     library(metap)
     library(MAST)
     library(magick)
+    library(enrichplot)
+    library(corrplot)
+    library(DESeq2)
   }
 )
 
@@ -354,7 +359,6 @@ Idents(tulane_rna) <- "disease_ancestry_lib_sex_source_celltype"
 combined_processed_rna <- AverageExpression(tulane_rna, return.seurat = TRUE, slot = 'data')
 
 # Split Metadata and add columns
-
 {
   combined_processed_rna$disease_ancestry_lib_sex_source_celltype <- combined_processed_rna@active.ident
   Idents(combined_processed_rna) <- 'disease_ancestry_lib_sex_source_celltype'
@@ -995,26 +999,26 @@ mylist
 
 # Venn diagrams of all celltypes
 #Beta cells ND
-black_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\black_F\quiescent_stellate.csv)", sep = ',', row.names = 1)
-black_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\black_M\quiescent_stellate.csv)", sep = ',', row.names = 1)
-white_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\white_F\quiescent_stellate.csv)", sep = ',', row.names = 1)
-white_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\white_M\quiescent_stellate.csv)", sep = ',', row.names = 1)
-hispanic_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\quiescent_stellate.csv)", sep = ',', row.names = 1)
-hispanic_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\quiescent_stellate.csv)", sep = ',', row.names = 1)
+black_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\black_F\schwann.csv)", sep = ',', row.names = 1)
+black_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\black_M\schwann.csv)", sep = ',', row.names = 1)
+white_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\white_F\schwann.csv)", sep = ',', row.names = 1)
+white_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\white_M\schwann.csv)", sep = ',', row.names = 1)
+hispanic_F <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_F\schwann.csv)", sep = ',', row.names = 1)
+hispanic_M <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\hispanic_M\schwann.csv)", sep = ',', row.names = 1)
 
 # Second compare across Ancestry
 #UP
 if (exists("black_F")) {
   black_F_genes <- dplyr::filter(black_F, p_val_adj < 1e-20) 
-  black_F_genes <- rownames(black_F_genes) } else {wfvsbf_genes <- character()}
+  black_F_genes <- rownames(black_F_genes) } else {black_F_genes <- character()}
 
 if (exists("black_M")) {
   black_M_genes <- dplyr::filter(black_M, p_val_adj < 1e-20)
-  black_M_genes <- rownames(black_M_genes)} else {wfvshf_genes <- character()}
+  black_M_genes <- rownames(black_M_genes)} else {black_M_genes <- character()}
 
 if (exists("white_F")) {
   white_F_genes <- dplyr::filter(white_F, p_val_adj < 1e-20)
-  white_F_genes <- rownames(white_F_genes) } else {wmvsbm_genes <- character()}
+  white_F_genes <- rownames(white_F_genes) } else {white_F_genes <- character()}
 
 if (exists("white_M")) {
   white_M_genes <- dplyr::filter(white_M, p_val_adj < 1e-20)
@@ -1022,11 +1026,11 @@ if (exists("white_M")) {
 
 if (exists("hispanic_F")) {
   hispanic_F_genes <- dplyr::filter(hispanic_F, p_val_adj < 1e-20)
-  hispanic_F_genes <- rownames(hispanic_F_genes) } else {wmvsbm_genes <- character()}
+  hispanic_F_genes <- rownames(hispanic_F_genes) } else {hispanic_F_genes <- character()}
 
 if (exists("hispanic_M")) {
   hispanic_M_genes <- dplyr::filter(hispanic_M, p_val_adj < 1e-20)
-  hispanic_M_genes <- rownames(hispanic_M_genes) } else {bfvshf_genes <- character()}
+  hispanic_M_genes <- rownames(hispanic_M_genes) } else {hispanic_M_genes <- character()}
 
 
 x <- list(
@@ -1052,7 +1056,7 @@ ggplot() +
   geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
                 data = venn_region(data),
                 size = 3) +
-  scale_fill_gradient(low = "white", high = "chartreuse3") + # change color based on celltype
+  scale_fill_gradient(low = "white", high = "grey30") + # change color based on celltype
   scale_color_manual(values = c("beta.bmvsbf" = "black",
                                 "beta.mvsf" ="black", 
                                 "beta.wmvswf" = 'black'),
@@ -1122,6 +1126,7 @@ nd.pancreas <- subset(processed_rna, idents = c("ND"))
 Idents(processed_rna) <- "disease_ancestry_lib_sex_source_celltype"
 
 #DefaultAssay(processed_rna) <- "RNA"
+#DefaultAssay(processed_rna) <- "SCT"
 combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
 
 {
@@ -1341,6 +1346,258 @@ mylist <- data@region[["item"]]
 names(mylist)
 names(mylist) <- data@region[["name"]]
 mylist
+
+#Gene Ontology plotting
+# Load data
+# Make a list of all unique genes
+gene_lists <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\Conserved_genes_acrossall.csv)", header = TRUE, sep = ",")
+gene_lists[gene_lists == ""] <- NA
+
+beta_genes <- (gene_lists$Beta)[!is.na(gene_lists$Beta)]
+alpha_genes <- (gene_lists$Alpha)[!is.na(gene_lists$Alpha)]
+delta_genes <- (gene_lists$Delta)[!is.na(gene_lists$Delta)]
+gamma_genes <- (gene_lists$Gamma)[!is.na(gene_lists$Gamma)]
+epsilon_genes <- (gene_lists$Epsilon)[!is.na(gene_lists$Epsilon)]
+betaalpha_genes <- (gene_lists$Betaalpha)[!is.na(gene_lists$Betaalpha)]
+betadelta_genes <- (gene_lists$Betadelta)[!is.na(gene_lists$Betadelta)]
+cycendo_genes <- (gene_lists$Cyc_endo)[!is.na(gene_lists$Cyc_endo)]
+ductal_genes <- (gene_lists$Ductal)[!is.na(gene_lists$Ductal)]
+acinar_genes <- (gene_lists$Acinar)[!is.na(gene_lists$Acinar)]
+activatedstellate_genes <- (gene_lists$Activated_stellate)[!is.na(gene_lists$Activated_stellate)]
+quiescentstellate_genes <- (gene_lists$Quiescent_stellate)[!is.na(gene_lists$Quiescent_stellate)]
+endothelial_genes <- (gene_lists$Endothelial)[!is.na(gene_lists$Endothelial)]
+lymphocytes_genes <- (gene_lists$Lymphocytes)[!is.na(gene_lists$Lymphocytes)]
+mast_genes <- (gene_lists$Mast)[!is.na(gene_lists$Mast)]
+schwann_genes <- (gene_lists$Schwann)[!is.na(gene_lists$Schwann)]
+macro_genes <- (gene_lists$Macrophages)[!is.na(gene_lists$Macrophages)]
+
+gene.list <- list(
+  delta_genes=as.character(delta_genes),
+  betadelta_genes=as.character(betadelta_genes),
+  beta_genes=as.character(beta_genes),
+  #betaalpha_genes=as.character(betaalpha_genes),
+  alpha_genes=as.character(alpha_genes),
+  gamma_genes=as.character(gamma_genes),
+  epsilon_genes=as.character(epsilon_genes),
+  cycendo_genes=as.character(cycendo_genes),
+  ductal_genes=as.character(ductal_genes),
+  acinar_genes=as.character(acinar_genes),
+  activatedstellate_genes=as.character(activatedstellate_genes),
+  quiescentstellate_genes=as.character(quiescentstellate_genes),
+  endothelial_genes=as.character(endothelial_genes),
+  lymphocytes_genes=as.character(lymphocytes_genes),
+  macro_genes=as.character(macro_genes),
+  mast_genes=as.character(mast_genes),
+  schwann_genes=as.character(schwann_genes)
+)
+
+# Compare
+ck <- compareCluster(geneCluster = gene.list, 
+                     fun = enrichGO, 
+                     universe = rownames(processed_rna@assays[["RNA"]]@counts), 
+                     keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                     OrgDb = org.Hs.eg.db, 
+                     ont = c("ALL"), 
+                     pAdjustMethod = "BH", 
+                     pvalueCutoff = 1, 
+                     qvalueCutoff = 0.1, #if not set default is at 0.05
+                     readable = TRUE)
+ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+head(ck) 
+cluster_summary <- data.frame(ck.sub)
+ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
+dotplot(ck, showCategory = 20)
+dotplot(ck, showCategory = 1)
+ck.save <- ck@compareClusterResult
+write.csv(ck.save, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\ORA\ck.save.csv)")
+
+dotplot(ck, showCategory = c("digestion", "response to nutrient",
+                             "peptide hormone secretion", "hormone transport",
+                             "insulin secretion", "response to glucose", "second-messenger-mediated signaling", "endocrine system development",
+                             "regulation of exocytosis", "amino acid transport", "neurotransmitter secretion", "regulation of sodium ion transport",
+                             "neuropeptide signaling pathway",
+                             "glucocorticoid secretion",
+                             "nuclear division", "mitotic cell cycle phase transition", "mitotic cytokinesis",
+                             "positive regulation of ion transport", "cell-cell junction organization", "gland development", "SMAD protein complex assembly",
+                             "extracellular matrix organization", "cellular response to transforming growth factor beta stimulus", "collagen fibril organization",
+                             "endothelin receptor signaling pathway", "smooth muscle cell differentiation",
+                             "regulation of angiogenesis", "endothelial cell migration",
+                             "T cell activation", "T cell differentiation",
+                             "antigen processing and presentation of exogenous peptide antigen via MHC class II", "MHC class II protein complex assembly",
+                             "extracellular structure organization",
+                             "axon development", "neuron projection regeneration", "ensheathment of neurons"), font.size=14)
+
+cnetplot(ck)
+
+beta.alpha.delta <- list(
+    delta_genes=as.character(delta_genes),
+    beta_genes=as.character(beta_genes),
+    alpha_genes=as.character(alpha_genes)
+    )
+
+# Compare
+ck.bad <- compareCluster(geneCluster = beta.alpha.delta, 
+                     fun = enrichGO, 
+                     universe = rownames(processed_rna@assays[["RNA"]]@counts), 
+                     keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                     OrgDb = org.Hs.eg.db, 
+                     ont = c("ALL"), 
+                     pAdjustMethod = "BH", 
+                     pvalueCutoff = 1, 
+                     qvalueCutoff = 0.1, #if not set default is at 0.05
+                     readable = TRUE)
+ck.bad <- setReadable(ck.bad, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+cnetplot(ck.bad,
+         showCategory = 10,
+         foldChange = NULL,
+         layout = "kk",
+         colorEdge = TRUE,
+         circular = FALSE,
+         node_label = "category",
+         cex_category = 1,
+         cex_gene = 0.5,
+         node_label_size = NULL,
+         cex_label_category = 1,
+         cex_label_gene = 1) + scale_fill_manual(values = c("chartreuse3", "dodgerblue3", "lightseagreen"))
+
+eg <- bitr(as.character(alpha_genes), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
+edox <- enrichDGN(as.character(eg$ENTREZID), readable = TRUE)
+edox <- setReadable(edox, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+edox <- pairwise_termsim(edox)
+emapplot(ck)
+treeplot(edox)
+mutate(edox, qscore = -log(p.adjust, base=10)) %>% 
+  barplot(x="qscore")
+
+# Corr plot
+# you must have generated a combined pseudobulk seurat obj first (called: combined_processed_rna)
+# Idents(combined_processed_rna) <- "celltype"
+# cells_tocorr <- subset(combined_processed_rna, idents = c("beta", "endothelial"))
+# av.exp <- cor(GetAssayData(cells_tocorr, slot = combined_processed_rna@assays[["RNA"]]@counts))
+# corrplot(av.exp, method = "circle",
+#          tl.cex = 0.1)
+# cor.exp$x <- rownames(cor.exp)
+# cor.df <- tidyr::gather(data = cor.exp, y, correlation, c('0', '1', '2'))
+# ggplot(cor.df, aes(x, y, fill = correlation)) +
+#   geom_tile()
+
+# PCA
+# you must have generated a combined pseudobulk seurat obj first (called: combined_processed_rna)
+test_rna <- combined_processed_rna
+Idents(test_rna) <- "celltype"
+test_rna$celltype_sex <- paste(Idents(test_rna), test_rna$'sex', sep = "_")
+Idents(test_rna) <- "celltype_sex"
+test_rna$celltype_sex_ancestry <- paste(Idents(test_rna), test_rna$'ancestry', sep = "_")
+table(test_rna$celltype_sex_ancestry)
+
+Idents(test_rna) <- "celltype"
+testing_rna <- subset(test_rna, idents = c("beta"))
+
+testing_rna <- FindVariableFeatures(testing_rna, selection.method = "vst", nfeatures = 2000)
+testing_rna <- RunPCA(testing_rna, features = VariableFeatures(object = combined_processed_rna))
+testing_rna <- FindNeighbors(testing_rna, dims = 1:10)
+testing_rna <- FindClusters(testing_rna, resolution = 0.5)
+testing_rna <- RunUMAP(testing_rna, dims = 1:10)
+
+Idents(testing_rna) <- "sex"
+DimPlot(testing_rna, reduction = "umap")
+
+#Create pseudobulk matrix from all cell types
+# Make average seurat object
+Idents(processed_rna) <- "disease_ancestry_lib_sex_source_celltype"
+combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
+
+# Split Metadata and add columns
+{
+  combined_processed_rna$disease_ancestry_lib_sex_source_celltype <- combined_processed_rna@active.ident
+  Idents(combined_processed_rna) <- 'disease_ancestry_lib_sex_source_celltype'
+  combined_processed_rna$disease <- combined_processed_rna$orig.ident
+  metadat <- combined_processed_rna@meta.data
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "activated_stellate", "activated-stellate"))
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "quiescent_stellate", "quiescent-stellate"))
+  metadat <- metadat %>% 
+    mutate(disease_ancestry_lib_sex_source_celltype = str_replace(disease_ancestry_lib_sex_source_celltype, "cycling_endo", "cycling-endo"))
+  metadat$ancestry <- metadat[c('ancestry')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, "_", -5)
+  metadat$lib <- metadat[c('lib')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -4)
+  metadat$sex <- metadat[c('sex')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -3)
+  metadat$source <- metadat[c('source')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -2)
+  metadat$celltype <- metadat[c('celltype')] <- str_split_i(metadat$disease_ancestry_lib_sex_source_celltype, '_', -1)
+  combined_processed_rna@meta.data = metadat
+}
+
+
+meta <- processed_rna@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status', 'celltype_qadir')]
+rownames(meta) <- NULL
+meta <- meta[!duplicated(meta),]
+meta <- meta %>% 
+  rename("tissue_source" = "Tissue Source",
+         "diabetes" = "Diabetes Status")
+meta$diabetes_ancestry_library_sex_source_celltype <- paste0(meta$'diabetes', '_', meta$ancestry, '_', meta$Library, '_', meta$Sex, '_', meta$'tissue_source', '_', meta$celltype_qadir)
+meta$Sex_ancestry_diabetes <- paste0(meta$Sex, '_', meta$ancestry, '_',  meta$'diabetes')
+samples <- meta$diabetes_ancestry_library_sex_source_celltype
+
+Idents(combined_processed_rna) <- "RNA"
+combined_processed_rna <- FindVariableFeatures(combined_processed_rna, selection.method = "vst", nfeatures = 3000)
+bulk <- as.data.frame(GetAssayData(object = combined_processed_rna, slot = "counts", assay = "RNA"))
+
+# adding +1
+bulk <- (bulk + 1)
+bulk <- dplyr::filter(bulk, row.names(bulk) %in% combined_processed_rna@assays[["RNA"]]@var.features)
+bulk <- as.matrix(round(bulk))
+length(rownames(bulk))
+length(combined_processed_rna@assays[["RNA"]]@var.features)
+
+"INS" %in% combined_processed_rna@assays[["RNA"]]@var.features
+
+dds_bulk <- DESeqDataSetFromMatrix(
+  countData = bulk,
+  meta,
+  design= ~Sex_ancestry_diabetes + Chemistry + tissue_source)
+
+dds_bulk <- estimateSizeFactors(dds_bulk)
+dds_bulk <- estimateDispersions(dds_bulk)    
+vsd_bulk <- varianceStabilizingTransformation(dds_bulk)
+
+#Make a PCA
+options(repr.plot.height = 7, repr.plot.width = 14)
+pcaData <- plotPCA(vsd_bulk, intgroup=c('Sex', 'celltype_qadir'), returnData=TRUE, ntop=5000)
+percentVar <- round(100 * attr(pcaData, 'percentVar'))
+ggplot(pcaData, aes(PC1, PC2, color=celltype_qadir, shape=Sex)) +
+  geom_point(size=3) +
+  xlab(paste0('PC1: ',percentVar[1],'% variance')) +
+  ylab(paste0('PC2: ',percentVar[2],'% variance')) + 
+  coord_fixed() + theme_minimal() + scale_color_manual(values = c("dodgerblue3",
+                                                                  "turquoise2",
+                                                                  "lightseagreen",
+                                                                  "darkseagreen2",
+                                                                  "khaki2",
+                                                                  "springgreen4",
+                                                                  "chartreuse3",
+                                                                  "burlywood3",
+                                                                  "darkorange2",
+                                                                  "salmon3",
+                                                                  "orange",
+                                                                  "salmon",
+                                                                  "red",
+                                                                  "magenta3",
+                                                                  "orchid1",
+                                                                  "red4",
+                                                                  "grey30"))
+
+#Make a heatmap
+options(repr.plot.height = 15, repr.plot.width = 20)
+sampleDists <- dist(t(assay(vsd_bulk)))
+sampleDistMatrix <- as.matrix(sampleDists)
+rownames(sampleDistMatrix) <- vsd_bulk$Library
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors)
+
 
 ############################ END ############################
 ############################ END ############################
