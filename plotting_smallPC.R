@@ -73,6 +73,7 @@ install.packages("qs")
 install.packages('metap')
 install.packages('magick')
 install.packages("corrplot")
+install.packages("RColorBrewer")
 
 
 # Run the following code once you have Seurat installed
@@ -133,6 +134,7 @@ suppressWarnings(
     library(enrichplot)
     library(corrplot)
     library(DESeq2)
+    library(RColorBrewer)
   }
 )
 
@@ -205,14 +207,14 @@ my_levels <- c("ND_black_HP2031401_M", "ND_black_HP2110001_M", "ND_black_HP21232
                
                "T2D_hispanic_HPAP-079_F", "T2D_hispanic_HPAP-091_F", "T2D_hispanic_HPAP-109_F", #Hispanic F T2D) #Hispanic F T2D
                
-               "T2D_white_HPAP-088_M", "T2D_white_HPAP-100_M", "T2D_white_HPAP-106_M", # White M T2D
+               "T2D_white_HPAP-088_M", "T2D_white_HPAP-100_M", "T2D_white_HPAP-106_M", "T2D_white_HPAP-065_M_nPod",# White M T2D
                "T2D_white_HPAP-057_F", "T2D_white_HPAP-081_F", "T2D_white_HPAP-085_F") # White F T2D
-
+                   
 table(processed_rna$disease_ancestry_lib_sex)
 
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
 processed_rna$disease_ancestry_lib_sex <- factor(x = processed_rna$disease_ancestry_lib_sex, levels = my_levels)
-table(processed_rna$disease_ancestry_lib_sex)
+table(unique((processed_rna$disease_ancestry_lib_sex)))
 
 # cluster re-assignment occurs, which re-assigns clustering in my_levels
 my_levels <- c("ND_black_HP2031401_M_Tulane", "ND_black_HP2110001_M_Tulane", "ND_black_HP2123201_M_Tulane", "ND_black_HPAP-052_M_UPenn", #Black M ND
@@ -229,7 +231,7 @@ my_levels <- c("ND_black_HP2031401_M_Tulane", "ND_black_HP2110001_M_Tulane", "ND
                
                "T2D_hispanic_HPAP-079_F_nPod", "T2D_hispanic_HPAP-091_F_nPod", "T2D_hispanic_HPAP-109_F_nPod", #Hispanic F T2D) #Hispanic F T2D
                
-               "T2D_white_HPAP-088_M_nPod", "T2D_white_HPAP-100_M_nPod", "T2D_white_HPAP-106_M_UPenn", # White M T2D
+               "T2D_white_HPAP-088_M_nPod", "T2D_white_HPAP-100_M_nPod", "T2D_white_HPAP-106_M_UPenn", "T2D_white_HPAP-065_M_nPod",# White M T2D
                "T2D_white_HPAP-057_F_UPenn", "T2D_white_HPAP-081_F_nPod", "T2D_white_HPAP-085_F_UPenn") # White F T2D
 
 table(processed_rna$disease_ancestry_lib_sex_source)
@@ -396,7 +398,7 @@ dittoHeatmap(
   # cells.use = NULL,
   annot.by = c("ancestry", "sex", "source", "celltype", "disease"),
   #annot.by = c("lib", "sex", "source"),
-  order.by = c("sex", "ancestry", "disease"),
+  order.by = c("sex", "celltype", "ancestry", "disease"),
   # main = NA,
   # cell.names.meta = NULL,
   # assay = .default_assay(object),
@@ -1502,12 +1504,12 @@ testing_rna <- RunUMAP(testing_rna, dims = 1:10)
 Idents(testing_rna) <- "sex"
 DimPlot(testing_rna, reduction = "umap")
 
-#Create pseudobulk matrix from all cell types
+#Create pseudobulk matrix from ALL CELL TYPES
 # Make average seurat object
 Idents(processed_rna) <- "disease_ancestry_lib_sex_source_celltype"
 combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
 
-# Split Metadata and add columns
+# Split Metadata and add columns, this is because the pseudobulk seurat obj loses metadata
 {
   combined_processed_rna$disease_ancestry_lib_sex_source_celltype <- combined_processed_rna@active.ident
   Idents(combined_processed_rna) <- 'disease_ancestry_lib_sex_source_celltype'
@@ -1527,7 +1529,8 @@ combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE,
   combined_processed_rna@meta.data = metadat
 }
 
-
+# Choice 1 (choose this or Choice 2)
+# Make meta df and select samples
 meta <- processed_rna@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status', 'celltype_qadir')]
 rownames(meta) <- NULL
 meta <- meta[!duplicated(meta),]
@@ -1535,15 +1538,86 @@ meta <- meta %>%
   rename("tissue_source" = "Tissue Source",
          "diabetes" = "Diabetes Status")
 meta$diabetes_ancestry_library_sex_source_celltype <- paste0(meta$'diabetes', '_', meta$ancestry, '_', meta$Library, '_', meta$Sex, '_', meta$'tissue_source', '_', meta$celltype_qadir)
-meta$Sex_ancestry_diabetes <- paste0(meta$Sex, '_', meta$ancestry, '_',  meta$'diabetes')
+meta$ancestry_sex <- paste0(meta$ancestry, '_', meta$Sex)
+meta$disease_sex <- paste0(meta$'diabetes', '_',meta$Sex)
 samples <- meta$diabetes_ancestry_library_sex_source_celltype
 
-Idents(combined_processed_rna) <- "RNA"
+# Create bulk matrix, calc var genes for use later (3K)
+DefaultAssay(combined_processed_rna) <- "RNA"
 combined_processed_rna <- FindVariableFeatures(combined_processed_rna, selection.method = "vst", nfeatures = 3000)
 bulk <- as.data.frame(GetAssayData(object = combined_processed_rna, slot = "counts", assay = "RNA"))
 
-# adding +1
+# adding +1 to adjust for 0s and selecting var genes only
 bulk <- (bulk + 1)
+bulk <- dplyr::filter(bulk, row.names(bulk) %in% combined_processed_rna@assays[["RNA"]]@var.features)
+bulk <- as.matrix(round(bulk))
+length(rownames(bulk))
+length(combined_processed_rna@assays[["RNA"]]@var.features)
+"INS" %in% combined_processed_rna@assays[["RNA"]]@var.features
+
+# Run deseq2
+dds_bulk <- DESeqDataSetFromMatrix(
+  countData = bulk,
+  meta,
+  design= ~Sex + Chemistry + tissue_source) #Sex_ancestry_diabetes
+dds_bulk <- estimateSizeFactors(dds_bulk)
+dds_bulk <- estimateDispersions(dds_bulk)    
+vsd_bulk <- varianceStabilizingTransformation(dds_bulk)
+
+#Batch corr using limma
+mat <- assay(vsd_bulk)
+mm <- model.matrix(~Sex, colData(vsd_bulk))
+mat <- limma::removeBatchEffect(mat, batch=vsd_bulk$tissue_source, design=mm)
+assay(vsd_bulk) <- mat
+
+#Make a PCA
+options(repr.plot.height = 7, repr.plot.width = 14)
+pcaData <- plotPCA(vsd_bulk, intgroup=c('ancestry_sex', 'celltype_qadir'), returnData=TRUE, ntop=5000)
+pcaData <- plotPCA(vsd_bulk, intgroup=c('disease_sex', 'celltype_qadir'), returnData=TRUE, ntop=5000)
+percentVar <- round(100 * attr(pcaData, 'percentVar'))
+ggplot(pcaData, aes(PC1, PC2, color=celltype_qadir, shape=disease_sex)) +
+  geom_point(size=3) +
+  xlab(paste0('PC1: ',percentVar[1],'% variance')) +
+  ylab(paste0('PC2: ',percentVar[2],'% variance')) + 
+  coord_fixed() + theme_minimal() + scale_color_manual(values = c("dodgerblue3",
+                                                                  "turquoise2",
+                                                                  "lightseagreen",
+                                                                  "darkseagreen2",
+                                                                  "khaki2",
+                                                                  "springgreen4",
+                                                                  "chartreuse3",
+                                                                  "burlywood3",
+                                                                  "darkorange2",
+                                                                  "salmon3",
+                                                                  "orange",
+                                                                  "salmon",
+                                                                  "red",
+                                                                  "magenta3",
+                                                                  "orchid1",
+                                                                  "red4",
+                                                                  "grey30"))
+
+
+#Choice 2
+# Make average seurat object only SAMPLES
+processed_rna$ancestry_sex_lib <- paste0(processed_rna$ancestry, '_', processed_rna$Sex, '_', processed_rna$Library)
+Idents(processed_rna) <- "ancestry_sex_lib"
+combined_processed_rna <- AverageExpression(processed_rna, return.seurat = TRUE, slot = 'data')
+meta <- processed_rna@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status', 'ancestry_sex_lib')]
+rownames(meta) <- NULL
+meta <- meta[!duplicated(meta),]
+meta <- meta %>% 
+  rename("tissue_source" = "Tissue Source",
+         "diabetes" = "Diabetes Status")
+meta$Sex_ancestry_diabetes <- paste0(meta$Sex, '_', meta$ancestry, '_',  meta$'diabetes')
+meta$ancestry_sex <- paste0(meta$ancestry, '_', meta$Sex)
+meta$disease_sex <- paste0(meta$'diabetes', '_',meta$Sex)
+samples <- meta$ancestry_sex_lib
+DefaultAssay(combined_processed_rna) <- "RNA"
+combined_processed_rna <- FindVariableFeatures(combined_processed_rna, selection.method = "vst", nfeatures = 3000)
+bulk <- as.data.frame(GetAssayData(object = combined_processed_rna, slot = "counts", assay = "RNA"))
+
+# Some kung fu
 bulk <- dplyr::filter(bulk, row.names(bulk) %in% combined_processed_rna@assays[["RNA"]]@var.features)
 bulk <- as.matrix(round(bulk))
 length(rownames(bulk))
@@ -1551,20 +1625,51 @@ length(combined_processed_rna@assays[["RNA"]]@var.features)
 
 "INS" %in% combined_processed_rna@assays[["RNA"]]@var.features
 
+# Deseq2
 dds_bulk <- DESeqDataSetFromMatrix(
   countData = bulk,
   meta,
-  design= ~Sex_ancestry_diabetes + Chemistry + tissue_source)
+  design= ~Sex + Chemistry + tissue_source) #Sex_ancestry_diabetes
 
 dds_bulk <- estimateSizeFactors(dds_bulk)
 dds_bulk <- estimateDispersions(dds_bulk)    
 vsd_bulk <- varianceStabilizingTransformation(dds_bulk)
 
+#Batch corr using limma
+mat <- assay(vsd_bulk)
+mm <- model.matrix(~Sex, colData(vsd_bulk))
+mat <- limma::removeBatchEffect(mat, batch=vsd_bulk$tissue_source, design=mm)
+assay(vsd_bulk) <- mat
+
 #Make a PCA
 options(repr.plot.height = 7, repr.plot.width = 14)
-pcaData <- plotPCA(vsd_bulk, intgroup=c('Sex', 'celltype_qadir'), returnData=TRUE, ntop=5000)
+pcaData <- plotPCA(vsd_bulk, intgroup=c('ancestry_sex', 'tissue_source'), returnData=TRUE, ntop=5000)
+pcaData <- plotPCA(vsd_bulk, intgroup=c('ancestry_sex', 'diabetes'), returnData=TRUE, ntop=5000)
 percentVar <- round(100 * attr(pcaData, 'percentVar'))
-ggplot(pcaData, aes(PC1, PC2, color=celltype_qadir, shape=Sex)) +
+ggplot(pcaData, aes(PC1, PC2, color=tissue_source, shape=ancestry_sex)) +
+  geom_point(size=3) +
+  xlab(paste0('PC1: ',percentVar[1],'% variance')) +
+  ylab(paste0('PC2: ',percentVar[2],'% variance')) + 
+  coord_fixed() + theme_minimal() + scale_color_manual(values = c("dodgerblue",
+                                                                  "springgreen4",         
+                                                                  "red4")) + theme(aspect.ratio=1)
+
+ggplot(pcaData, aes(PC1, PC2, color=diabetes, shape=ancestry_sex)) +
+  geom_point(size=3) +
+  xlab(paste0('PC1: ',percentVar[1],'% variance')) +
+  ylab(paste0('PC2: ',percentVar[2],'% variance')) + 
+  coord_fixed() + theme_minimal() + scale_color_manual(values = c("dodgerblue",
+                                                                  "red2")) + theme(aspect.ratio=1)
+
+mat <- assay(vsd_bulk)
+mm <- model.matrix(~Sex, colData(vsd_bulk))
+mat <- limma::removeBatchEffect(mat, batch=vsd_bulk$tissue_source, design=mm)
+assay(vsd_bulk) <- mat
+plotPCA(vsd_bulk, intgroup=c('diabetes', 'Sex'))
+pcaData <- plotPCA(vsd_bulk, intgroup=c('Sex', 'diabetes'), returnData=TRUE, ntop=5000)
+
+percentVar <- round(100 * attr(pcaData, 'percentVar'))
+ggplot(pcaData, aes(PC1, PC2, color=diabetes, shape=Sex)) +
   geom_point(size=3) +
   xlab(paste0('PC1: ',percentVar[1],'% variance')) +
   ylab(paste0('PC2: ',percentVar[2],'% variance')) + 
@@ -1593,6 +1698,10 @@ sampleDistMatrix <- as.matrix(sampleDists)
 rownames(sampleDistMatrix) <- vsd_bulk$Library
 colnames(sampleDistMatrix) <- NULL
 colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+
+# prep sample annotations
+samp_annot <- data.frame(row.names = rownames(d), cyl = factor(d[,2]))
+
 pheatmap(sampleDistMatrix,
          clustering_distance_rows=sampleDists,
          clustering_distance_cols=sampleDists,
