@@ -3356,109 +3356,196 @@ Idents(combined_processed_rna) <- "celltype"
 
 # Add pseudocount
 combined_processed_rna[["RNA"]]@counts<-as.matrix(combined_processed_rna[["RNA"]]@counts)+1
-
+{
 plan(strategy = "multicore", workers = 80)
 beta.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "beta", 
                                       group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                       only.pos = TRUE)
 beta.conserved.markers <- dplyr::filter(beta.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 1)
+beta.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "beta", 
+                                      latent.vars ="Library",
+                                      group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                      only.pos = TRUE)
+beta.conserved.markers.mast <- dplyr::filter(beta.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 alpha.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "alpha", 
                                        group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                        only.pos = TRUE)
 alpha.conserved.markers <- dplyr::filter(alpha.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 1) 
+alpha.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "alpha", 
+                                           latent.vars ="Library",
+                                           group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                           only.pos = TRUE)
+alpha.conserved.markers.mast <- dplyr::filter(alpha.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 delta.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "delta", 
                                        group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                        only.pos = TRUE)
 delta.conserved.markers <- dplyr::filter(delta.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+delta.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                            latent.vars ="Library",
+                                            group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                            only.pos = TRUE)
+delta.conserved.markers.mast <- dplyr::filter(delta.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
+
 
 
 gamma.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "gamma", 
                                        group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                        only.pos = TRUE)
 gamma.conserved.markers <- dplyr::filter(gamma.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+gamma.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                            latent.vars ="Library",
+                                            group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                            only.pos = TRUE)
+gamma.conserved.markers.mast <- dplyr::filter(gamma.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
+
 
 
 epsilon.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "epsilon", 
                                          group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                          only.pos = TRUE)
 epsilon.conserved.markers <- dplyr::filter(epsilon.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+epsilon.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                            latent.vars ="Library",
+                                            group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                            only.pos = TRUE)
+epsilon.conserved.markers.mast <- dplyr::filter(epsilon.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 betaalpha.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "beta+alpha", 
                                            group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                            only.pos = TRUE)
 betaalpha.conserved.markers <- dplyr::filter(betaalpha.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+betaalpha.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                              latent.vars ="Library",
+                                              group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                              only.pos = TRUE)
+betaalpha.conserved.markers.mast <- dplyr::filter(betaalpha.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 betadelta.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "beta+delta", 
                                            group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                            only.pos = TRUE)
 betadelta.conserved.markers <- dplyr::filter(betadelta.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+betadelta.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                latent.vars ="Library",
+                                                group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                only.pos = TRUE)
+betadelta.conserved.markers.mast <- dplyr::filter(betadelta.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 cycling_endo.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "cycling-endo", 
                                               group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                               only.pos = TRUE)
 cycling_endo.conserved.markers <- dplyr::filter(cycling_endo.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+cycling_endo.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                latent.vars ="Library",
+                                                group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                only.pos = TRUE)
+cycling_endo.conserved.markers.mast <- dplyr::filter(cycling_endo.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 acinar.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "acinar", 
                                         group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                         only.pos = TRUE)
 acinar.conserved.markers <- dplyr::filter(acinar.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+acinar.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                   latent.vars ="Library",
+                                                   group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                   only.pos = TRUE)
+acinar.conserved.markers.mast <- dplyr::filter(acinar.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 ductal.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "ductal", 
                                         group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                         only.pos = TRUE)
 ductal.conserved.markers <- dplyr::filter(ductal.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+ductal.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                             latent.vars ="Library",
+                                             group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                             only.pos = TRUE)
+ductal.conserved.markers.mast <- dplyr::filter(ductal.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 activated_stellate.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "activated-stellate", 
                                                     group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                                     only.pos = TRUE)
 activated_stellate.conserved.markers <- dplyr::filter(activated_stellate.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+activated_stellate.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                             latent.vars ="Library",
+                                             group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                             only.pos = TRUE)
+activated_stellate.conserved.markers.mast <- dplyr::filter(activated_stellate.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 quiescent_stellate.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "quiescent-stellate", 
                                                     group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                                     only.pos = TRUE)
 quiescent_stellate.conserved.markers <- dplyr::filter(quiescent_stellate.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+quiescent_stellate.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                         latent.vars ="Library",
+                                                         group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                         only.pos = TRUE)
+quiescent_stellate.conserved.markers.mast <- dplyr::filter(quiescent_stellate.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 endothelial.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "endothelial", 
                                              group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                              only.pos = TRUE)
 endothelial.conserved.markers <- dplyr::filter(endothelial.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+endothelial.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                         latent.vars ="Library",
+                                                         group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                         only.pos = TRUE)
+endothelial.conserved.markers.mast <- dplyr::filter(endothelial.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 lymphocyte.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "lymphocyte", 
                                             group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                             only.pos = TRUE)
 lymphocyte.conserved.markers <- dplyr::filter(lymphocyte.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+lymphocyte.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                  latent.vars ="Library",
+                                                  group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                  only.pos = TRUE)
+lymphocyte.conserved.markers.mast <- dplyr::filter(lymphocyte.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 macrophages.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "macrophages", 
                                              group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                              only.pos = TRUE)
 macrophages.conserved.markers <- dplyr::filter(macrophages.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+macrophages.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                 latent.vars ="Library",
+                                                 group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                 only.pos = TRUE)
+macrophages.conserved.markers.mast <- dplyr::filter(macrophages.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 mast.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "mast", 
                                       group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                       only.pos = TRUE)
 mast.conserved.markers <- dplyr::filter(mast.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
+mast.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                                  latent.vars ="Library",
+                                                  group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                                  only.pos = TRUE)
+mast.conserved.markers.mast <- dplyr::filter(mast.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
 
 
 schwann.conserved.markers <- FindMarkers(combined_processed_rna, min.pct = 0.25, logfc.threshold = 1, assay = "RNA", slot = "counts", ident.1 = "schwann", 
                                          group.by = "celltype", min.cells.group = 1, test.use = "DESeq2", 
                                          only.pos = TRUE)
 schwann.conserved.markers <- dplyr::filter(schwann.conserved.markers, p_val_adj < 1e-2 & avg_log2FC >= 0.001) 
-
+schwann.conserved.markers.mast <- FindMarkers(nd.pancreas, min.pct = 0.25, logfc.threshold = 0.25, assay = "RNA", slot = "data", ident.1 = "delta", 
+                                           latent.vars ="Library",
+                                           group.by = "celltype_qadir", min.cells.group = 1, test.use = "MAST", 
+                                           only.pos = TRUE)
+schwann.conserved.markers.mast <- dplyr::filter(schwann.conserved.markers.mast, p_val_adj < 1e-2 & avg_log2FC >= 0.25)
+}
 
 #Save files:
 write.csv(beta.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\DEseq2\beta.csv)")
@@ -3479,6 +3566,23 @@ write.csv(macrophages.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa
 write.csv(mast.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\DEseq2\mast.csv)")
 write.csv(schwann.conserved.markers, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\DEseq2\schwann.csv)")
 
+write.csv(beta.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\beta.csv)")
+write.csv(alpha.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\alpha.csv)")
+write.csv(delta.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\delta.csv)")
+write.csv(gamma.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\gamma.csv)")
+write.csv(epsilon.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\epsilon.csv)")
+write.csv(betaalpha.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\betaalpha.csv)")
+write.csv(betadelta.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\betadelta.csv)")
+write.csv(cycling_endo.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\cycling_endo.csv)")
+write.csv(acinar.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\acinar.csv)")
+write.csv(ductal.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\ductal.csv)")
+write.csv(activated_stellate.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\activated_stellate.csv)")
+write.csv(quiescent_stellate.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\quiescent_stellate.csv)")
+write.csv(endothelial.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\endothelial.csv)")
+write.csv(lymphocyte.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\lymphocyte.csv)")
+write.csv(macrophages.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\macrophages.csv)")
+write.csv(mast.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\mast.csv)")
+write.csv(schwann.conserved.markers.mast, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\mast\schwann.csv)")
 
 
 
