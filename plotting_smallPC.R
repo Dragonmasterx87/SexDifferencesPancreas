@@ -664,36 +664,45 @@ ggplot(data = merged.df,
 
 #Gene Ontology plotting
 # Load data
-# Tulane UP
-beta.deseq.WaldTest.F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
-beta.deseq.WaldTest.M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
-beta.deseq.WaldTest.M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
-beta.deseq.WaldTest.M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
-beta.deseq.WaldTest.M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\tulane\beta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+# Alldata
+M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+
+F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+
 
 # Extract gene lists UP
-fwvsfb <- dplyr::filter(beta.deseq.WaldTest.F_white_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
-mbvsfb <- dplyr::filter(beta.deseq.WaldTest.M_black_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
-mvsf <- dplyr::filter(beta.deseq.WaldTest.M_ND.vs.F_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
-mwvsfw <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.F_white_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
-mwvsmb <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.M_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014)
+mvsf <- rownames(dplyr::filter(M_ND.vs.F_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
+
+fwvsfb <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
 
 # Extract gene lists DOWN
-fwvsfb <- dplyr::filter(beta.deseq.WaldTest.F_white_ND.vs.F_black_ND, log2FoldChange < -0.000000000014)
-mbvsfb <- dplyr::filter(beta.deseq.WaldTest.M_black_ND.vs.F_black_ND, log2FoldChange < -0.000000000014)
-mvsf <- dplyr::filter(beta.deseq.WaldTest.M_ND.vs.F_ND, log2FoldChange < -0.000000000014)
-mwvsfw <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.F_white_ND, log2FoldChange < -0.000000000014)
-mwvsmb <- dplyr::filter(beta.deseq.WaldTest.M_white_ND.vs.M_black_ND, log2FoldChange < -0.000000000014)
+fvsm <- rownames(dplyr::filter(M_ND.vs.F_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
 
-fwvsfb <- rownames(fwvsfb)
-mbvsfb <- rownames(mbvsfb)
-mvsf <- rownames(mvsf)
-mwvsfw <- rownames(mwvsfw)
-mwvsmb <- rownames(mwvsmb)
+fbvsfw <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
+
 
 # Make list
-gene.list <- list("fwvsfb" = fwvsfb, "mbvsfb" = mbvsfb, "mvsf" = mvsf, "mwvsfw" = mwvsfw, "mwvsmb" = mwvsmb)
-all_genes <- rownames(beta.deseq.WaldTest.F_white_ND.vs.F_black_ND)
+gene.list <- list("mvsf" = mvsf, "mbvsfb" = mbvsfb, "mwvsfw" = mwvsfw, 
+                  "fwvsfb" = fwvsfb, "fwvsfh" = fwvsfh, "mwvsmb" = mwvsmb, "fbvsfh" = fbvsfh,
+                  "fvsm" = fvsm, "fbvsmb" = fbvsmb, "fwvsmw" = fwvsmw, 
+                  "fbvsfw" = fbvsfw, "fhvsfw" = fhvsfw, "mbvsmw" = mbvsmw, "fhvsfb" = fhvsfb)
+
+all_genes <- rownames(M_ND.vs.F_ND)
 # Compare
 ck <- compareCluster(geneCluster = gene.list, 
                      fun = enrichGO, 
@@ -703,14 +712,46 @@ ck <- compareCluster(geneCluster = gene.list,
                      ont = c("ALL"), 
                      pAdjustMethod = "BH", 
                      pvalueCutoff = 1, 
-                     qvalueCutoff = 1, #if not set default is at 0.05
+                     qvalueCutoff = 0.1, #if not set default is at 0.05
                      readable = TRUE)
 ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
 head(ck) 
-cluster_summary <- data.frame(ck.sub)
-ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
-dotplot(ck, showCategory = 20)
-dotplot(ck.sub, showCategory = 14)
+cluster_summary <- data.frame(ck)
+write.csv(cluster_summary, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\clustersummary_alpha.csv)")
+#ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
+# Beta
+dotplot(ck, showCategory = c("histone lysine demethylation", "protein dealkylation", #mvsf
+                             "histone lysine demethylation", "protein dealkylation", #mbvsfb
+                             "histone lysine demethylation", "protein dealkylation", "BMP signaling pathway", "male sex determination", "regulation of androgen receptor signaling pathway", #mwvsfw
+                             "keratan sulfate biosynthetic process", "O-glycan processing", "protein glycosylation", #fwvsfb
+                             #fwvsfh
+                             "protein processing", "protein maturation", #mwvsmb
+                             "primary alcohol catabolic process", "COPII-coated vesicle cargo loading", #fbvsfh
+                             "positive regulation of cysteine-type endopeptidase activity", "protein acetylation", "dosage compensation by inactivation of X chromosome", "histone H3-K4 methylation", "mitochondrial fission", "ribosome biogenesis", #fvsm
+                             "dosage compensation by inactivation of X chromosome", "protein maturation", #fbvsmb
+                             "maintenance of cell polarity", "regulation of gene expression, epigenetic", "establishment or maintenance of cell polarity", #fwvsmw
+                             "dopamine receptor signaling pathway", "adenylate cyclase-activating G protein-coupled receptor signaling pathway", "amino acid transport", #fbvsfw
+                             "ceramide transport", "ribosomal small subunit biogenesis", "Notch signaling pathway", #fhvsfw
+                             "positive regulation of interleukin-13 production", "positive regulation of interleukin-17 production", "acrosome assembly", "melanosome transport" #mbvsmw
+                             #fhvsfb
+                             ), font.size=14)
+
+#Alpha
+dotplot(ck, showCategory = c("histone demethylase activity", #mvsf
+                             "histone lysine demethylation", "protein dealkylation", #mbvsfb
+                             "histone lysine demethylation", "protein dealkylation", #mwvsfw
+                             "secretory granule membrane", #fwvsfb
+                             "MyD88-independent toll-like receptor signaling pathway", #fwvsfh
+                             "protein processing", "protein maturation", #mwvsmb
+                             #fbvsfh
+                             "histone lysine demethylation", "protein dealkylation", #fvsm
+                             "dosage compensation by inactivation of X chromosome", "protein localization to plasma membrane", "mitochondrial transcription", "response to cAMP", #fbvsmb
+                             "MAP kinase activity", "ATPase activator activity", #fwvsmw
+                             #fbvsfw
+                             "positive regulation of protein sumoylation", "Golgi ribbon formation", "regulation of cAMP-mediated signaling", #fhvsfw
+                             "epithelial structure maintenance", "tissue homeostasis" #mbvsmw
+                             #fhvsfb
+), font.size=14)
 
 # Plotting venn diagrams
 #Beta cells ND
@@ -1075,7 +1116,7 @@ endothelial_genes <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding
 lymphocyte_genes <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\1. conserved_genes_deseq2\lymphocyte.csv)", sep = ',')
 macrophages_genes <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\1. conserved_genes_deseq2\macrophages.csv)", sep = ',')
 mast_genes <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\1. conserved_genes_deseq2\mast.csv)", sep = ',')
-schwann_genes <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\1. conserved_genes_deseq2\schwann.csv)", sep = ',')
+schwann_genes <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\Conserved markers\DEtesting\1. conserved_genes_deseq2\schwann_100.csv)", sep = ',')
 
 beta_genes <- (beta_genes$x)
 alpha_genes <- (alpha_genes$x)
@@ -1141,21 +1182,15 @@ dotplot(ck, showCategory = c("synapse organization", "gamma-aminobutyric acid si
                              "neuropeptide signaling pathway", "protein secretion", "glucagon secretion",
                              "glucocorticoid secretion", "growth hormone secretion", "positive regulation of feeding behavior",
                              "nuclear division", "mitotic cell cycle phase transition", "organelle fission",
-                             "epithelial cell proliferation", "digestive tract development", "water homeostasis", "organic anion transport",
-                             ""
-                             
-                             "regulation of exocytosis", "amino acid transport", "neurotransmitter secretion", "regulation of sodium ion transport",
-                             "neuropeptide signaling pathway",
-                             "glucocorticoid secretion",
-                             "nuclear division", "mitotic cell cycle phase transition", "mitotic cytokinesis",
-                             "positive regulation of ion transport", "cell-cell junction organization", "gland development", "SMAD protein complex assembly",
-                             "extracellular matrix organization", "cellular response to transforming growth factor beta stimulus", "collagen fibril organization",
-                             "endothelin receptor signaling pathway", "smooth muscle cell differentiation",
-                             "regulation of angiogenesis", "endothelial cell migration",
-                             "T cell activation", "T cell differentiation",
-                             "antigen processing and presentation of exogenous peptide antigen via MHC class II", "MHC class II protein complex assembly",
-                             "extracellular structure organization",
-                             "axon development", "neuron projection regeneration", "ensheathment of neurons"), font.size=14)
+                             "epithelial cell proliferation", "digestive tract development", "water homeostasis", "organic anion transport", "SMAD protein signal transduction",
+                             "digestion", "morphogenesis of a branching structure", "primary alcohol metabolic process",
+                             "extracellular matrix organization", "collagen fibril organization",
+                             "muscle contraction", "muscle cell differentiation", "regulation of systemic arterial blood pressure by hormone",
+                             "regulation of angiogenesis", "blood vessel endothelial cell migration",
+                             "T cell activation", "lymphocyte mediated immunity", "T cell selection",
+                             "myeloid leukocyte activation", "antigen processing and presentation", "cell chemotaxis",
+                             "immune response-regulating cell surface receptor signaling pathway", "mast cell activation", "activation of immune response",
+                             "central nervous system myelination", "ensheathment of neurons", "axon development"), font.size=14)
 
 cnetplot(ck)
 
@@ -1178,13 +1213,15 @@ ck.bad <- compareCluster(geneCluster = beta.alpha.delta,
                      readable = TRUE)
 ck.bad <- setReadable(ck.bad, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
 cnetplot(ck.bad,
-         showCategory = 10,
+         showCategory = c("synapse organization", "gamma-aminobutyric acid signaling pathway", "hormone secretion",
+                          "peptide transport", "cilium assembly", "peptide hormone secretion", "calcium-ion regulated exocytosis", "epithelial cilium movement involved in extracellular fluid movement",
+                          "cellular response to glucose starvation", "neurotransmitter secretion", "amide transport", "Golgi to endosome transport", "potassium channel complex"),
          foldChange = NULL,
          layout = "kk",
          colorEdge = TRUE,
          circular = FALSE,
          node_label = "category",
-         cex_category = 1,
+         cex_category = 2,
          cex_gene = 0.5,
          node_label_size = NULL,
          cex_label_category = 1,
