@@ -697,10 +697,10 @@ fhvsfb <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND, padj < 0.1 & log2F
 
 
 # Make list
-gene.list <- list("mvsf" = mvsf, "mbvsfb" = mbvsfb, "mwvsfw" = mwvsfw, 
-                  "fwvsfb" = fwvsfb, "fwvsfh" = fwvsfh, "mwvsmb" = mwvsmb, "fbvsfh" = fbvsfh,
-                  "fvsm" = fvsm, "fbvsmb" = fbvsmb, "fwvsmw" = fwvsmw, 
-                  "fbvsfw" = fbvsfw, "fhvsfw" = fhvsfw, "mbvsmw" = mbvsmw, "fhvsfb" = fhvsfb)
+gene.list <- list("fvsm" = fvsm, "fbvsmb" = fbvsmb, "fwvsmw" = fwvsmw,
+                  "mvsf" = mvsf, "mbvsfb" = mbvsfb, "mwvsfw" = mwvsfw, 
+                  "fwvsfb" = fwvsfb, "fbvsfw" = fbvsfw, "fwvsfh" = fwvsfh, "fhvsfw" = fhvsfw, "fbvsfh" = fbvsfh, "fhvsfb" = fhvsfb,   
+                  "mwvsmb" = mwvsmb, "mbvsmw" = mbvsmw)
 
 all_genes <- rownames(M_ND.vs.F_ND)
 # Compare
