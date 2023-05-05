@@ -268,77 +268,6 @@ system.time({
 }
 
 
-# Sample specific Metadata addition
-{
-  HP2022801$sample <- "HP2022801"
-  SAMN15877725$sample <- "SAMN15877725"
-  HP2024001$sample <- "HP2024001"
-  HP2031401$sample <- "HP2031401"
-  HP2105501$sample <- "HP2105501"
-  HP2106201$sample <- "HP2106201"
-  HP2107001$sample <- "HP2107001"
-  HP2107901$sample <- "HP2107901"
-  HP2108601$sample <- "HP2108601"
-  HP2108901$sample <- "HP2108901"
-  HP2110001$sample <- "HP2110001"
-  HP2121601$sample <- "HP2121601"
-  HP2123201$sample <- "HP2123201"
-  HP2132801$sample <- "HP2132801"
-  HP2202101$sample <- "HP2202101"
-  
-  
-  # Sex specific Metadata addition
-  HP2022801$sex <- "male"
-  SAMN15877725$sex <- "male"
-  HP2024001$sex <- "female"
-  HP2031401$sex <- "male"
-  HP2105501$sex <- "female"
-  HP2106201$sex <- "female"
-  HP2107001$sex <- "male"
-  HP2107901$sex <- "male"
-  HP2108601$sex <- "female"
-  HP2108901$sex <- "female"
-  HP2110001$sex <- "male"
-  HP2121601$sex <- "female"
-  HP2123201$sex <- "male"
-  HP2132801$sex <- "female"
-  HP2202101$sex <- "female"
-  
-  # Ancestry specific Metadata addition
-  HP2022801$ancestry <- "white"
-  SAMN15877725$ancestry <- "white"
-  HP2024001$ancestry <- "white"
-  HP2031401$ancestry <- "black"
-  HP2105501$ancestry <- "white"
-  HP2106201$ancestry <- "black"
-  HP2107001$ancestry <- "white"
-  HP2107901$ancestry <- "white"
-  HP2108601$ancestry <- "white"
-  HP2108901$ancestry <- "white"
-  HP2110001$ancestry <- "black"
-  HP2121601$ancestry <- "black"
-  HP2123201$ancestry <- "black"
-  HP2132801$ancestry <- "black"
-  HP2202101$ancestry <- "black"
-                                
-  # Ancestry and sex specific UNION Metadata addition
-  HP2022801$ancestry_sex <- "white_male"
-  SAMN15877725$ancestry_sex <- "white_male"
-  HP2024001$ancestry_sex <- "white_female"
-  HP2031401$ancestry_sex <- "black_male"
-  HP2105501$ancestry_sex <- "white_female"
-  HP2106201$ancestry_sex <- "black_female"
-  HP2107001$ancestry_sex <- "white_male"
-  HP2107901$ancestry_sex <- "white_male"
-  HP2108601$ancestry_sex <- "white_female"
-  HP2108901$ancestry_sex <- "white_female"
-  HP2110001$ancestry_sex <- "black_male"
-  HP2121601$ancestry_sex <- "black_female"
-  HP2123201$ancestry_sex <- "black_male"
-  HP2132801$ancestry_sex <- "black_female"
-  HP2202101$ancestry_sex <- "black_female"
-}
-  
 # Doublet removal
 # Optimization
 {
@@ -516,146 +445,6 @@ system.time({
 hpap <- readRDS(file=r"(E:\2.SexbasedStudyCurrent\RDS files\Ruth_data\Raw_hpap_file\hpap_islet_scRNAseq.rds)")
 table(hpap@meta.data[["Library"]])
 
-Idents(hpap) <- "Library"
-hpap$ancestry <- plyr::mapvalues(
-  x= hpap$Library,
-  from = c("HPAP-019",
-           "HPAP-020",
-           "HPAP-021",
-           "HPAP-022",
-           "HPAP-023",
-           "HPAP-024",
-           "HPAP-026",
-           "HPAP-028",
-           "HPAP-029",
-           "HPAP-032",
-           "HPAP-034",
-           "HPAP-035",
-           "HPAP-036",
-           "HPAP-037",
-           "HPAP-038",
-           "HPAP-039",
-           "HPAP-040",
-           "HPAP-042",
-           "HPAP-043",
-           "HPAP-044",
-           "HPAP-045",
-           "HPAP-047",
-           "HPAP-049",
-           "HPAP-050",
-           "HPAP-051",
-           "HPAP-052",
-           "HPAP-053",
-           "HPAP-054",
-           "HPAP-055",
-           "HPAP-056",
-           "HPAP-057",
-           "HPAP-058",
-           "HPAP-059",
-           "HPAP-061",
-           "HPAP-063",
-           "HPAP-064",
-           "HPAP-065",
-           "HPAP-070",
-           "HPAP-071",
-           "HPAP-072",
-           "HPAP-074",
-           "HPAP-075",
-           "HPAP-077",
-           "HPAP-079",
-           "HPAP-080",
-           "HPAP-081",
-           "HPAP-082",
-           "HPAP-083",
-           "HPAP-084",
-           "HPAP-085",
-           "HPAP-087",
-           "HPAP-088",
-           "HPAP-090",
-           "HPAP-091",
-           "HPAP-092",
-           "HPAP-099",
-           "HPAP-100",
-           "HPAP-101",
-           "HPAP-103",
-           "HPAP-104",
-           "HPAP-105",
-           "HPAP-106",
-           "HPAP-107",
-           "HPAP-108",
-           "HPAP-109"),
-  to = c("white", #"HPAP-019",
-         "white", #"HPAP-020",
-         "white", #"HPAP-021",
-         "white", #"HPAP-022",
-         "white", #"HPAP-023",
-         "white", #"HPAP-024",
-         "white", #"HPAP-026",
-         "white", #"HPAP-028",
-         "white", #"HPAP-029",
-         "white", #"HPAP-032",
-         "white", #"HPAP-034",
-         "white", #"HPAP-035",
-         "white", #"HPAP-036",
-         "white", #"HPAP-037",
-         "white", #"HPAP-038",
-         "white", #"HPAP-039",
-         "white", #"HPAP-040",
-         "white", #"HPAP-042",
-         "hispanic", #"HPAP-043",
-         "white", #"HPAP-044",
-         "white", #"HPAP-045",
-         "white", #"HPAP-047",
-         "white",  #"HPAP-049",
-         "hispanic", #"HPAP-050",
-         "black", #"HPAP-051",
-         "black", #"HPAP-052",
-         "white", #"HPAP-053",
-         "white", #"HPAP-054",
-         "hispanic", #"HPAP-055",
-         "white", #"HPAP-056",
-         "white", #"HPAP-057",
-         "black", #"HPAP-058",
-         "white", #"HPAP-059",
-         "black", #"HPAP-061",
-         "white", #"HPAP-063",
-         "black", #"HPAP-064",
-         "white", #"HPAP-065",
-         "black", #"HPAP-070",
-         "white", #"HPAP-071",
-         "hispanic", #"HPAP-072",
-         "white", #"HPAP-074",
-         "white", #"HPAP-075",
-         "white", #"HPAP-077",
-         "hispanic", #"HPAP-079",
-         "hispanic", #"HPAP-080",
-         "white", #"HPAP-081",
-         "white", #"HPAP-082",
-         "black", #"HPAP-083",
-         "white", #"HPAP-084",
-         "white", #"HPAP-085",
-         "white", #"HPAP-087",
-         "white", #"HPAP-088",
-         "white", #"HPAP-090",
-         "hispanic", #"HPAP-091",
-         "hispanic", #"HPAP-092",
-         "hispanic",  #"HPAP-099",
-         "white", #"HPAP-100",
-         "hispanic", #"HPAP-101",
-         "white", #"HPAP-103",
-         "hispanic", #"HPAP-104",
-         "hispanic", #"HPAP-105",
-         "white", #"HPAP-106",
-         "white", #"HPAP-107",
-         "black", #"HPAP-108",
-         "hispanic" #"HPAP-109"
-  )
-)
-
-table(hpap@meta.data[["Library"]])
-table(hpap@meta.data[["Sex"]])
-table(hpap@meta.data[["ancestry"]])
-
 # Subsetting data
 Idents(hpap) <- "Library"
 {
@@ -726,29 +515,30 @@ Idents(hpap) <- "Library"
   HPAP_109 <- subset(hpap, idents = c("HPAP-109"))
 }
 
-pancreas.list <- list("HPAP_019" = HPAP_019, "HPAP_020" = HPAP_020, "HPAP_021" = HPAP_021, "HPAP-022" = HPAP_022, "HPAP_023" = HPAP_023,
-                      "HPAP_024" = HPAP_024, "HPAP_026" = HPAP_026, "HPAP_028" = HPAP_028, "HPAP_029" = HPAP_029, "HPAP_032" = HPAP_032,
-                      "HPAP_034" = HPAP_034, "HPAP_035" = HPAP_035, "HPAP_036" = HPAP_036, "HPAP_037" = HPAP_037, "HPAP_038" = HPAP_038,
-                      "HPAP_039" = HPAP_039, "HPAP_040" = HPAP_040, "HPAP_042" = HPAP_042, "HPAP_043" = HPAP_043, "HPAP_044" = HPAP_044,
-                      "HPAP_045" = HPAP_045, "HPAP_047" = HPAP_047, "HPAP_049" = HPAP_049, "HPAP_050" = HPAP_050, "HPAP_051" = HPAP_051,
-                      "HPAP_052" = HPAP_052, "HPAP_053" = HPAP_053, "HPAP_054" = HPAP_054, "HPAP_055" = HPAP_055, "HPAP_056" = HPAP_056,
-                      "HPAP_057" = HPAP_057, "HPAP_058" = HPAP_058, "HPAP_059" = HPAP_059, "HPAP_061" = HPAP_061, "HPAP_063" = HPAP_063,
-                      "HPAP_064" = HPAP_064, "HPAP_065" = HPAP_065, "HPAP_070" = HPAP_070, "HPAP_071" = HPAP_071, "HPAP_072" = HPAP_072,
-                      "HPAP_074" = HPAP_074, "HPAP_075" = HPAP_075, "HPAP_077" = HPAP_077, "HPAP_079" = HPAP_079, "HPAP_080" = HPAP_080,
-                      "HPAP_081" = HPAP_081, "HPAP_082" = HPAP_082, "HPAP_083" = HPAP_083, "HPAP_084" = HPAP_084, "HPAP_085" = HPAP_085,
-                      "HPAP_087" = HPAP_087, "HPAP_088" = HPAP_088, "HPAP_090" = HPAP_090, "HPAP_091" = HPAP_091, "HPAP_092" = HPAP_092,
-                      "HPAP_099" = HPAP_099, "HPAP_100" = HPAP_100, "HPAP_101" = HPAP_101, "HPAP_103" = HPAP_103, "HPAP_104" = HPAP_104,
-                      "HPAP_105" = HPAP_105, "HPAP_106" = HPAP_106, "HPAP_107" = HPAP_107, "HPAP_108" = HPAP_108, "HPAP_109" = HPAP_109
+pancreas.list <- list("HPAP-019" = HPAP_019, "HPAP-020" = HPAP_020, "HPAP-021" = HPAP_021, "HPAP-022" = HPAP_022, "HPAP-023" = HPAP_023,
+                      "HPAP-024" = HPAP_024, "HPAP-026" = HPAP_026, "HPAP-028" = HPAP_028, "HPAP-029" = HPAP_029, "HPAP-032" = HPAP_032,
+                      "HPAP-034" = HPAP_034, "HPAP-035" = HPAP_035, "HPAP-036" = HPAP_036, "HPAP-037" = HPAP_037, "HPAP-038" = HPAP_038,
+                      "HPAP-039" = HPAP_039, "HPAP-040" = HPAP_040, "HPAP-042" = HPAP_042, "HPAP-043" = HPAP_043, "HPAP-044" = HPAP_044,
+                      "HPAP-045" = HPAP_045, "HPAP-047" = HPAP_047, "HPAP-049" = HPAP_049, "HPAP-050" = HPAP_050, "HPAP-051" = HPAP_051,
+                      "HPAP-052" = HPAP_052, "HPAP-053" = HPAP_053, "HPAP-054" = HPAP_054, "HPAP-055" = HPAP_055, "HPAP-056" = HPAP_056,
+                      "HPAP-057" = HPAP_057, "HPAP-058" = HPAP_058, "HPAP-059" = HPAP_059, "HPAP-061" = HPAP_061, "HPAP-063" = HPAP_063,
+                      "HPAP-064" = HPAP_064, "HPAP-065" = HPAP_065, "HPAP-070" = HPAP_070, "HPAP-071" = HPAP_071, "HPAP-072" = HPAP_072,
+                      "HPAP-074" = HPAP_074, "HPAP-075" = HPAP_075, "HPAP-077" = HPAP_077, "HPAP-079" = HPAP_079, "HPAP-080" = HPAP_080,
+                      "HPAP-081" = HPAP_081, "HPAP-082" = HPAP_082, "HPAP-083" = HPAP_083, "HPAP-084" = HPAP_084, "HPAP-085" = HPAP_085,
+                      "HPAP-087" = HPAP_087, "HPAP-088" = HPAP_088, "HPAP-090" = HPAP_090, "HPAP-091" = HPAP_091, "HPAP-092" = HPAP_092,
+                      "HPAP-099" = HPAP_099, "HPAP-100" = HPAP_100, "HPAP-101" = HPAP_101, "HPAP-103" = HPAP_103, "HPAP-104" = HPAP_104,
+                      "HPAP-105" = HPAP_105, "HPAP-106" = HPAP_106, "HPAP-107" = HPAP_107, "HPAP-108" = HPAP_108, "HPAP-109" = HPAP_109
 )
 
 # Pulling data for analysis
-pancreas_subset <- pancreas.list[c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP_040", "HPAP_044", "HPAP_051", 
-                                     "HPAP_052", "HPAP_053", "HPAP_054", "HPAP_056", "HPAP_057", "HPAP_058", "HPAP_059", "HPAP_061", 
-                                     "HPAP_063", "HPAP_065", "HPAP_070", "HPAP_074", "HPAP_075", "HPAP_077", "HPAP_079", "HPAP_080", 
-                                     "HPAP_081", "HPAP_082", "HPAP_083", "HPAP_085", "HPAP_088", "HPAP_090", "HPAP_091", "HPAP_099",
-                                     "HPAP_100", "HPAP_101", "HPAP_103", "HPAP_105", "HPAP_106", "HPAP_108", "HPAP_109")
-]
+# Subset out AAB+, T1D and metadata error individuals
+pancreas_subset <- pancreas.list[c("HPAP-022", "HPAP-026", "HPAP-035", "HPAP-036", "HPAP-037", "HPAP-040", "HPAP-051", "HPAP-052", 
+                                   "HPAP-053", "HPAP-054", "HPAP-056", "HPAP-057", "HPAP-058", "HPAP-059", "HPAP-061", "HPAP-063", 
+                                   "HPAP-065", "HPAP-070", "HPAP-074", "HPAP-075", "HPAP-077", "HPAP-079", "HPAP-080", "HPAP-081",
+                                   "HPAP-082", "HPAP-083", "HPAP-085", "HPAP-088", "HPAP-091", "HPAP-099", "HPAP-100", "HPAP-101", 
+                                   "HPAP-103", "HPAP-105", "HPAP-106", "HPAP-108", "HPAP-109")]
 
+options(future.globals.maxSize = 1000 * 1024^2)
 pancreas_subset <- lapply(X = pancreas_subset, 
                             FUN = function(x){
                               x[['percent.mt']] <- PercentageFeatureSet(x, 
@@ -759,6 +549,7 @@ pancreas_subset <- lapply(X = pancreas_subset,
                                                return.only.var.genes = FALSE, 
                                                vst.flavor = "v2")
                             })
+options(future.globals.maxSize = 1000 * 1024^2)
 
 # Read in SoupX corrected/doublet classified data
 {
@@ -783,7 +574,7 @@ pancreas_subset <- lapply(X = pancreas_subset,
 # Adjust and add metadata
 # Sex specific Metadata addition
 {
-  HP2022801$Sex <- "M"
+  HP2022801$Sex <- "F"
   SAMN15877725$Sex <- "M"
   HP2024001$Sex <- "F"
   HP2031401$Sex <- "M"
@@ -798,8 +589,8 @@ pancreas_subset <- lapply(X = pancreas_subset,
   HP2123201$Sex <- "M"
   HP2132801$Sex <- "F"
   HP2202101$Sex <- "F"
-  
-  
+
+
   HP2022801@meta.data[["Tissue Source"]] <- "Tulane"
   SAMN15877725@meta.data[["Tissue Source"]] <- "Tulane"
   HP2024001@meta.data[["Tissue Source"]] <- "Tulane"
@@ -815,25 +606,25 @@ pancreas_subset <- lapply(X = pancreas_subset,
   HP2123201@meta.data[["Tissue Source"]] <- "Tulane"
   HP2132801@meta.data[["Tissue Source"]] <- "Tulane"
   HP2202101@meta.data[["Tissue Source"]] <- "Tulane"
-  
-  
-  HP2022801@meta.data[["Library"]] <- deparse(substitute(HP2022801))
-  SAMN15877725@meta.data[["Library"]] <- deparse(substitute(SAMN15877725))
-  HP2024001@meta.data[["Library"]] <- deparse(substitute(HP2024001))
-  HP2031401@meta.data[["Library"]] <- deparse(substitute(HP2031401))
-  HP2105501@meta.data[["Library"]] <- deparse(substitute(HP2105501))
-  HP2106201@meta.data[["Library"]] <- deparse(substitute(HP2106201))
-  HP2107001@meta.data[["Library"]] <- deparse(substitute(HP2107001))
-  HP2107901@meta.data[["Library"]] <- deparse(substitute(HP2107901))
-  HP2108601@meta.data[["Library"]] <- deparse(substitute(HP2108601))
-  HP2108901@meta.data[["Library"]] <- deparse(substitute(HP2108901))
-  HP2110001@meta.data[["Library"]] <- deparse(substitute(HP2110001))
-  HP2121601@meta.data[["Library"]] <- deparse(substitute(HP2121601))
-  HP2123201@meta.data[["Library"]] <- deparse(substitute(HP2123201))
-  HP2132801@meta.data[["Library"]] <- deparse(substitute(HP2132801))
-  HP2202101@meta.data[["Library"]] <- deparse(substitute(HP2202101))
-  
-  
+
+
+HP2022801@meta.data[["Library"]] <- deparse(substitute(HP2022801))
+SAMN15877725@meta.data[["Library"]] <- deparse(substitute(SAMN15877725))
+HP2024001@meta.data[["Library"]] <- deparse(substitute(HP2024001))
+HP2031401@meta.data[["Library"]] <- deparse(substitute(HP2031401))
+HP2105501@meta.data[["Library"]] <- deparse(substitute(HP2105501))
+HP2106201@meta.data[["Library"]] <- deparse(substitute(HP2106201))
+HP2107001@meta.data[["Library"]] <- deparse(substitute(HP2107001))
+HP2107901@meta.data[["Library"]] <- deparse(substitute(HP2107901))
+HP2108601@meta.data[["Library"]] <- deparse(substitute(HP2108601))
+HP2108901@meta.data[["Library"]] <- deparse(substitute(HP2108901))
+HP2110001@meta.data[["Library"]] <- deparse(substitute(HP2110001))
+HP2121601@meta.data[["Library"]] <- deparse(substitute(HP2121601))
+HP2123201@meta.data[["Library"]] <- deparse(substitute(HP2123201))
+HP2132801@meta.data[["Library"]] <- deparse(substitute(HP2132801))
+HP2202101@meta.data[["Library"]] <- deparse(substitute(HP2202101))
+
+
   HP2022801@meta.data[["sample"]] <- NULL
   SAMN15877725@meta.data[["sample"]] <- NULL
   HP2024001@meta.data[["sample"]] <- NULL
@@ -849,8 +640,8 @@ pancreas_subset <- lapply(X = pancreas_subset,
   HP2123201@meta.data[["sample"]] <- NULL
   HP2132801@meta.data[["sample"]] <- NULL
   HP2202101@meta.data[["sample"]] <- NULL
-  
-  
+
+
   HP2022801@meta.data[["Chemistry"]] <- "10Xv3"
   SAMN15877725@meta.data[["Chemistry"]] <- "10Xv3"
   HP2024001@meta.data[["Chemistry"]] <- "10Xv3"
@@ -866,8 +657,8 @@ pancreas_subset <- lapply(X = pancreas_subset,
   HP2123201@meta.data[["Chemistry"]] <- "10Xv3"
   HP2132801@meta.data[["Chemistry"]] <- "10Xv3"
   HP2202101@meta.data[["Chemistry"]] <- "10Xv3"
-  
-  
+
+
   HP2022801@meta.data[["Diabetes Status"]] <- "ND"
   SAMN15877725@meta.data[["Diabetes Status"]] <- "ND"
   HP2024001@meta.data[["Diabetes Status"]] <- "ND"
@@ -905,18 +696,19 @@ pancreas_qadir <- lapply(X = pancreas_qadir,
 pancreas_combined <- c(pancreas_subset, pancreas_qadir)
 
 # merge data sets
-sampleset <- c("HPAP-022", "HPAP_026", "HPAP_035", "HPAP_036", "HPAP_037", "HPAP_040", "HPAP_044", "HPAP_051", 
-               "HPAP_052", "HPAP_053", "HPAP_054", "HPAP_056", "HPAP_057", "HPAP_058", "HPAP_059", "HPAP_061", 
-               "HPAP_063", "HPAP_065", "HPAP_070", "HPAP_074", "HPAP_075", "HPAP_077", "HPAP_079", "HPAP_080", 
-               "HPAP_081", "HPAP_082", "HPAP_083", "HPAP_085", "HPAP_088", "HPAP_090", "HPAP_091", "HPAP_099",
-               "HPAP_100", "HPAP_101", "HPAP_103", "HPAP_105", "HPAP_106", "HPAP_108", "HPAP_109", "HP2022801", 
-               "SAMN15877725", "HP2107001", "HP2107901", "HP2024001", "HP2105501", "HP2108601", "HP2108901", 
-               "HP2031401", "HP2110001", "HP2123201", "HP2106201", "HP2121601", "HP2132801", "HP2202101")
+sampleset <- names(pancreas_combined)
+# sampleset <- c("HPAP-022", "HPAP-026", "HPAP-035", "HPAP-036", "HPAP-037", "HPAP-040", "HPAP-051", "HPAP-052", 
+#                "HPAP-053", "HPAP-054", "HPAP-056", "HPAP-057", "HPAP-058", "HPAP-059", "HPAP-061", "HPAP-063", 
+#                "HPAP-065", "HPAP-070", "HPAP-074", "HPAP-075", "HPAP-077", "HPAP-079", "HPAP-080", "HPAP-081",
+#                "HPAP-082", "HPAP-083", "HPAP-085", "HPAP-088", "HPAP-091", "HPAP-099", "HPAP-100", "HPAP-101", 
+#                "HPAP-103", "HPAP-105", "HPAP-106", "HPAP-108", "HPAP-109", 
+#                "HP2022801", "SAMN15877725", "HP2107001", "HP2107901", "HP2024001", "HP2105501", "HP2108601", "HP2108901", 
+#                "HP2031401", "HP2110001", "HP2123201", "HP2106201", "HP2121601", "HP2132801", "HP2202101")
 
 pancreas_rna <- merge(pancreas_combined[[sampleset[[1]]]], 
-                     y=pancreas_combined[sampleset[2:length(sampleset)]], 
-                     project='pancreas', 
-                     merge.data = TRUE)
+                      y=pancreas_combined[sampleset[2:length(sampleset)]], 
+                      project='pancreas', 
+                      merge.data = TRUE)
 
 # Inspect data
 Idents(pancreas_rna) <- "Tissue Source"
@@ -936,6 +728,683 @@ table(pancreas_rna@meta.data[["ancestry"]])
 table(pancreas_rna@meta.data[["doublets"]])
 table(pancreas_rna@meta.data[["Cell Type"]])
 
+# Metadata classification, paranoia edition
+Idents(pancreas_rna) <- "Library"
+unique(pancreas_rna$Library)
+pancreas_rna$Sex <- NULL
+pancreas_rna$Sex <- plyr::mapvalues(
+  x= pancreas_rna$Library,
+  from = c("HPAP-022", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+           "HPAP-026", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+           "HPAP-035", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+           "HPAP-036", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+           "HPAP-037", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+           "HPAP-040", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+           "HPAP-051", #Female	45.49	43	African American	6.7	T2DM	UPENN
+           "HPAP-052", #Male	38.72	27	African American	5.2	T2D control	UPENN
+           "HPAP-053", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+           "HPAP-054", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+           "HPAP-056", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+           "HPAP-057", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+           "HPAP-058", #Female	29.26	34	African American	9.4	T2DM	nPOD
+           "HPAP-059", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+           "HPAP-061", #Female	38.27	59	African American	5.9	T2DM	nPOD
+           "HPAP-063", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+           "HPAP-065", #Male	37.47	40	African American	9.5	T2DM	nPOD
+           "HPAP-070", #Male	17.09	55	African American	7	T2DM	UPENN
+           "HPAP-074", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+           "HPAP-075", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+           "HPAP-077", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+           "HPAP-079", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+           "HPAP-080", #Male	35.71	22	African American	5.4	T2D control	nPOD
+           "HPAP-081", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+           "HPAP-082", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+           "HPAP-083", #Male	35.62	45	African American	5	T2DM	UPENN
+           "HPAP-085", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+           "HPAP-088", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+           "HPAP-091", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+           "HPAP-099", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+           "HPAP-100", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+           "HPAP-101", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+           "HPAP-103", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+           "HPAP-105", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+           "HPAP-106", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+           "HPAP-108", #Male	33	42	African American	10.8	T2DM	nPOD
+           "HPAP-109", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+           "HP2022801", #F 25.6 36 W 5.5 ND Tulane
+           "SAMN15877725", #M 27.4 31 White N/A ND Tulane
+           "HP2107001", #M 22.7 39 white 5.1 ND Tulane
+           "HP2107901", #M 22.6 59 white 5.2 ND Tulane
+           "HP2024001", #F 23.5 42 white 5.4 ND Tulane
+           "HP2105501", #F 31.6 36 white 5.6 ND Tulane
+           "HP2108601", #F 25.6 31 white 5.1 ND Tulane
+           "HP2108901", #F 30.8 42 white 5.9 ND Tulane
+           "HP2031401", #M 28.0 37 black 5.4 ND Tulane
+           "HP2110001", #M 34.3 66 black 5.5 ND Tulane
+           "HP2123201", #M 29.8 52 black 5.3 ND Tulane
+           "HP2106201", #F 28.0 41 black 5.3 ND Tulane
+           "HP2121601", #F 31.8 54 black 5.8 ND Tulane
+           "HP2132801", #F 35.9 40 black 5.5 ND Tulane
+           "HP2202101"), #F 23.2 52 black 5.5 ND Tulane
+  to = c("F", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+         "M", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+         "M", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+         "F", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+         "F", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+         "M", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+         "F", #Female	45.49	43	African American	6.7	T2DM	UPENN
+         "M", #Male	38.72	27	African American	5.2	T2D control	UPENN
+         "F", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+         "F", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+         "M", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+         "F", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+         "F", #Female	29.26	34	African American	9.4	T2DM	nPOD
+         "M", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+         "F", #Female	38.27	59	African American	5.9	T2DM	nPOD
+         "F", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+         "M", #Male	37.47	40	African American	9.5	T2DM	nPOD
+         "M", #Male	17.09	55	African American	7	T2DM	UPENN
+         "F", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+         "M", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+         "M", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+         "F", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+         "M", #Male	35.71	22	African American	5.4	T2D control	nPOD
+         "F", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+         "M", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+         "M", #Male	35.62	45	African American	5	T2DM	UPENN
+         "F", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+         "M", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+         "F", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+         "F", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+         "M", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+         "F", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+         "F", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+         "F", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+         "M", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+         "M", #Male	33	42	African American	10.8	T2DM	nPOD
+         "F", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+         "F", #F 25.6 36 W 5.5 ND Tulane
+         "M", #M 27.4 31 White N/A ND Tulane
+         "M", #M 22.7 39 white 5.1 ND Tulane
+         "M", #M 22.6 59 white 5.2 ND Tulane
+         "F", #F 23.5 42 white 5.4 ND Tulane
+         "F", #F 31.6 36 white 5.6 ND Tulane
+         "F", #F 25.6 31 white 5.1 ND Tulane
+         "F", #F 30.8 42 white 5.9 ND Tulane
+         "M", #M 28.0 37 black 5.4 ND Tulane
+         "M", #M 34.3 66 black 5.5 ND Tulane
+         "M", #M 29.8 52 black 5.3 ND Tulane
+         "F", #F 28.0 41 black 5.3 ND Tulane
+         "F", #F 31.8 54 black 5.8 ND Tulane
+         "F", #F 35.9 40 black 5.5 ND Tulane
+         "F")) #F 23.2 52 black 5.5 ND Tulane
+table(pancreas_rna@meta.data[["Sex"]])
+
+Idents(pancreas_rna) <- "Library"
+table(pancreas_rna$Library)
+pancreas_rna$bmi <- NULL
+pancreas_rna$bmi <- plyr::mapvalues(
+  x= pancreas_rna$Library,
+  from = c("HPAP-022", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+           "HPAP-026", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+           "HPAP-035", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+           "HPAP-036", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+           "HPAP-037", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+           "HPAP-040", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+           "HPAP-051", #Female	45.49	43	African American	6.7	T2DM	UPENN
+           "HPAP-052", #Male	38.72	27	African American	5.2	T2D control	UPENN
+           "HPAP-053", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+           "HPAP-054", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+           "HPAP-056", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+           "HPAP-057", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+           "HPAP-058", #Female	29.26	34	African American	9.4	T2DM	nPOD
+           "HPAP-059", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+           "HPAP-061", #Female	38.27	59	African American	5.9	T2DM	nPOD
+           "HPAP-063", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+           "HPAP-065", #Male	37.47	40	African American	9.5	T2DM	nPOD
+           "HPAP-070", #Male	17.09	55	African American	7	T2DM	UPENN
+           "HPAP-074", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+           "HPAP-075", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+           "HPAP-077", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+           "HPAP-079", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+           "HPAP-080", #Male	35.71	22	African American	5.4	T2D control	nPOD
+           "HPAP-081", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+           "HPAP-082", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+           "HPAP-083", #Male	35.62	45	African American	5	T2DM	UPENN
+           "HPAP-085", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+           "HPAP-088", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+           "HPAP-091", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+           "HPAP-099", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+           "HPAP-100", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+           "HPAP-101", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+           "HPAP-103", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+           "HPAP-105", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+           "HPAP-106", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+           "HPAP-108", #Male	33	42	African American	10.8	T2DM	nPOD
+           "HPAP-109", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+           "HP2022801", #F 25.6 36 W 5.5 ND Tulane
+           "SAMN15877725", #M 27.4 31 White N/A ND Tulane
+           "HP2107001", #M 22.7 39 white 5.1 ND Tulane
+           "HP2107901", #M 22.6 59 white 5.2 ND Tulane
+           "HP2024001", #F 23.5 42 white 5.4 ND Tulane
+           "HP2105501", #F 31.6 36 white 5.6 ND Tulane
+           "HP2108601", #F 25.6 31 white 5.1 ND Tulane
+           "HP2108901", #F 30.8 42 white 5.9 ND Tulane
+           "HP2031401", #M 28.0 37 black 5.4 ND Tulane
+           "HP2110001", #M 34.3 66 black 5.5 ND Tulane
+           "HP2123201", #M 29.8 52 black 5.3 ND Tulane
+           "HP2106201", #F 28.0 41 black 5.3 ND Tulane
+           "HP2121601", #F 31.8 54 black 5.8 ND Tulane
+           "HP2132801", #F 35.9 40 black 5.5 ND Tulane
+           "HP2202101"), #F 23.2 52 black 5.5 ND Tulane
+  to = c("34.7", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+           "20.8", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+           "26.91", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+           "16", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+           "21.9", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+           "23.98", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+           "45.49", #Female	45.49	43	African American	6.7	T2DM	UPENN
+           "38.72", #Male	38.72	27	African American	5.2	T2D control	UPENN
+           "24.2", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+           "30.85", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+           "32.89", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+           "30.49", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+           "29.26", #Female	29.26	34	African American	9.4	T2DM	nPOD
+           "37.96", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+           "38.27", #Female	38.27	59	African American	5.9	T2DM	nPOD
+           "38.41", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+           "37.47", #Male	37.47	40	African American	9.5	T2DM	nPOD
+           "17.09", #Male	17.09	55	African American	7	T2DM	UPENN
+           "36.88", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+           "27.52", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+           "32.78", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+           "28.38", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+           "35.71", #Male	35.71	22	African American	5.4	T2D control	nPOD
+           "28.91", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+           "23.96", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+           "35.62", #Male	35.62	45	African American	5	T2DM	UPENN
+           "39.78", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+           "32.81", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+           "35.58", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+           "24.7", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+           "28.83", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+           "38.01", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+           "36.44", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+           "28.1", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+           "28.12", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+           "33", #Male	33	42	African American	10.8	T2DM	nPOD
+           "29.49", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+           "25.6", #F 25.6 36 W 5.5 ND Tulane
+           "27.4", #M 27.4 31 White N/A ND Tulane
+           "22.7", #M 22.7 39 white 5.1 ND Tulane
+           "22.6", #M 22.6 59 white 5.2 ND Tulane
+           "23.5", #F 23.5 42 white 5.4 ND Tulane
+           "31.6", #F 31.6 36 white 5.6 ND Tulane
+           "25.6", #F 25.6 31 white 5.1 ND Tulane
+           "30.8", #F 30.8 42 white 5.9 ND Tulane
+           "28.0", #M 28.0 37 black 5.4 ND Tulane
+           "34.3", #M 34.3 66 black 5.5 ND Tulane
+           "29.8", #M 29.8 52 black 5.3 ND Tulane
+           "28.0", #F 28.0 41 black 5.3 ND Tulane
+           "31.8", #F 31.8 54 black 5.8 ND Tulane
+           "35.9", #F 35.9 40 black 5.5 ND Tulane
+           "23.2")) #F 23.2 52 black 5.5 ND Tulane))
+unique(pancreas_rna$bmi)
+
+Idents(pancreas_rna) <- "Library"
+unique(pancreas_rna$Library)
+pancreas_rna$age <- NULL
+pancreas_rna$age <- plyr::mapvalues(
+  x= pancreas_rna$Library,
+  from = c("HPAP-022", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+           "HPAP-026", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+           "HPAP-035", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+           "HPAP-036", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+           "HPAP-037", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+           "HPAP-040", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+           "HPAP-051", #Female	45.49	43	African American	6.7	T2DM	UPENN
+           "HPAP-052", #Male	38.72	27	African American	5.2	T2D control	UPENN
+           "HPAP-053", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+           "HPAP-054", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+           "HPAP-056", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+           "HPAP-057", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+           "HPAP-058", #Female	29.26	34	African American	9.4	T2DM	nPOD
+           "HPAP-059", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+           "HPAP-061", #Female	38.27	59	African American	5.9	T2DM	nPOD
+           "HPAP-063", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+           "HPAP-065", #Male	37.47	40	African American	9.5	T2DM	nPOD
+           "HPAP-070", #Male	17.09	55	African American	7	T2DM	UPENN
+           "HPAP-074", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+           "HPAP-075", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+           "HPAP-077", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+           "HPAP-079", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+           "HPAP-080", #Male	35.71	22	African American	5.4	T2D control	nPOD
+           "HPAP-081", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+           "HPAP-082", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+           "HPAP-083", #Male	35.62	45	African American	5	T2DM	UPENN
+           "HPAP-085", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+           "HPAP-088", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+           "HPAP-091", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+           "HPAP-099", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+           "HPAP-100", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+           "HPAP-101", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+           "HPAP-103", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+           "HPAP-105", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+           "HPAP-106", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+           "HPAP-108", #Male	33	42	African American	10.8	T2DM	nPOD
+           "HPAP-109", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+           "HP2022801", #F 25.6 36 W 5.5 ND Tulane
+           "SAMN15877725", #M 27.4 31 White N/A ND Tulane
+           "HP2107001", #M 22.7 39 white 5.1 ND Tulane
+           "HP2107901", #M 22.6 59 white 5.2 ND Tulane
+           "HP2024001", #F 23.5 42 white 5.4 ND Tulane
+           "HP2105501", #F 31.6 36 white 5.6 ND Tulane
+           "HP2108601", #F 25.6 31 white 5.1 ND Tulane
+           "HP2108901", #F 30.8 42 white 5.9 ND Tulane
+           "HP2031401", #M 28.0 37 black 5.4 ND Tulane
+           "HP2110001", #M 34.3 66 black 5.5 ND Tulane
+           "HP2123201", #M 29.8 52 black 5.3 ND Tulane
+           "HP2106201", #F 28.0 41 black 5.3 ND Tulane
+           "HP2121601", #F 31.8 54 black 5.8 ND Tulane
+           "HP2132801", #F 35.9 40 black 5.5 ND Tulane
+           "HP2202101"), #F 23.2 52 black 5.5 ND Tulane
+  to = c("39",
+         "24",
+         "35",
+         "23",
+         "35",
+         "35",
+         "43",
+         "27",
+         "58",
+         "40",
+         "33",
+         "50",
+         "34",
+         "35",
+         "59",
+         "45",
+         "40",
+         "55",
+         "40",
+         "35",
+         "47",
+         "52",
+         "22",
+         "45",
+         "25",
+         "45",
+         "48",
+         "37",
+         "50",
+         "28",
+         "41",
+         "55",
+         "48",
+         "51",
+         "55",
+         "42",
+         "59",
+         "36",
+         "31",
+         "39",
+         "59",
+         "42",
+         "36",
+         "31",
+         "42",
+         "37",
+         "66",
+         "52",
+         "41",
+         "54",
+         "40",
+         "52"))
+unique(pancreas_rna$age)
+
+Idents(pancreas_rna) <- "Library"
+unique(pancreas_rna$Library)
+pancreas_rna$ancestry <- NULL
+pancreas_rna$ancestry <- plyr::mapvalues(
+  x= pancreas_rna$Library,
+  from = c("HPAP-022", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+           "HPAP-026", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+           "HPAP-035", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+           "HPAP-036", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+           "HPAP-037", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+           "HPAP-040", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+           "HPAP-051", #Female	45.49	43	African American	6.7	T2DM	UPENN
+           "HPAP-052", #Male	38.72	27	African American	5.2	T2D control	UPENN
+           "HPAP-053", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+           "HPAP-054", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+           "HPAP-056", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+           "HPAP-057", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+           "HPAP-058", #Female	29.26	34	African American	9.4	T2DM	nPOD
+           "HPAP-059", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+           "HPAP-061", #Female	38.27	59	African American	5.9	T2DM	nPOD
+           "HPAP-063", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+           "HPAP-065", #Male	37.47	40	African American	9.5	T2DM	nPOD
+           "HPAP-070", #Male	17.09	55	African American	7	T2DM	UPENN
+           "HPAP-074", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+           "HPAP-075", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+           "HPAP-077", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+           "HPAP-079", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+           "HPAP-080", #Male	35.71	22	African American	5.4	T2D control	nPOD
+           "HPAP-081", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+           "HPAP-082", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+           "HPAP-083", #Male	35.62	45	African American	5	T2DM	UPENN
+           "HPAP-085", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+           "HPAP-088", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+           "HPAP-091", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+           "HPAP-099", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+           "HPAP-100", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+           "HPAP-101", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+           "HPAP-103", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+           "HPAP-105", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+           "HPAP-106", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+           "HPAP-108", #Male	33	42	African American	10.8	T2DM	nPOD
+           "HPAP-109", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+           "HP2022801", #F 25.6 36 W 5.5 ND Tulane
+           "SAMN15877725", #M 27.4 31 White N/A ND Tulane
+           "HP2107001", #M 22.7 39 white 5.1 ND Tulane
+           "HP2107901", #M 22.6 59 white 5.2 ND Tulane
+           "HP2024001", #F 23.5 42 white 5.4 ND Tulane
+           "HP2105501", #F 31.6 36 white 5.6 ND Tulane
+           "HP2108601", #F 25.6 31 white 5.1 ND Tulane
+           "HP2108901", #F 30.8 42 white 5.9 ND Tulane
+           "HP2031401", #M 28.0 37 black 5.4 ND Tulane
+           "HP2110001", #M 34.3 66 black 5.5 ND Tulane
+           "HP2123201", #M 29.8 52 black 5.3 ND Tulane
+           "HP2106201", #F 28.0 41 black 5.3 ND Tulane
+           "HP2121601", #F 31.8 54 black 5.8 ND Tulane
+           "HP2132801", #F 35.9 40 black 5.5 ND Tulane
+           "HP2202101"), #F 23.2 52 black 5.5 ND Tulane
+  to = c("white", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+                "white", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+                "white", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+                "white", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+                "white", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+                "white", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+                "black", #Female	45.49	43	African American	6.7	T2DM	UPENN
+                "black", #Male	38.72	27	African American	5.2	T2D control	UPENN
+                "white", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+                "white", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+                "white", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+                "white", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+                "black", #Female	29.26	34	African American	9.4	T2DM	nPOD
+                "white", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+                "black", #Female	38.27	59	African American	5.9	T2DM	nPOD
+                "white", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+                "black", #Male	37.47	40	African American	9.5	T2DM	nPOD
+                "black", #Male	17.09	55	African American	7	T2DM	UPENN
+                "white", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+                "white", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+                "white", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+                "hispanic", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+                "black", #Male	35.71	22	African American	5.4	T2D control	nPOD
+                "white", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+                "white", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+                "black", #Male	35.62	45	African American	5	T2DM	UPENN
+                "white", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+                "white", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+                "hispanic", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+                "hispanic", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+                "white", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+                "hispanic", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+                "white", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+                "hispanic", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+                "white", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+                "black", #Male	33	42	African American	10.8	T2DM	nPOD
+                "hispanic", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+                "white", #F 25.6 36 White 5.5 ND Tulane
+                "white", #M 27.4 31 White N/A ND Tulane
+                "white", #M 22.7 39 white 5.1 ND Tulane
+                "white", #M 22.6 59 white 5.2 ND Tulane
+                "white", #F 23.5 42 white 5.4 ND Tulane
+                "white", #F 31.6 36 white 5.6 ND Tulane
+                "white", #F 25.6 31 white 5.1 ND Tulane
+                "white", #F 30.8 42 white 5.9 ND Tulane
+                "black", #M 28.0 37 black 5.4 ND Tulane
+                "black", #M 34.3 66 black 5.5 ND Tulane
+                "black", #M 29.8 52 black 5.3 ND Tulane
+                "black", #F 28.0 41 black 5.3 ND Tulane
+                "black", #F 31.8 54 black 5.8 ND Tulane
+                "black", #F 35.9 40 black 5.5 ND Tulane
+                "black")) #F 23.2 52 black 5.5 ND Tulane
+unique(pancreas_rna$ancestry) 
+
+Idents(pancreas_rna) <- "Library"
+unique(pancreas_rna$Library)
+pancreas_rna$'Tissue Source' <- NULL
+pancreas_rna$tissue_source <- plyr::mapvalues(
+  x= pancreas_rna$Library,
+  from = c("HPAP-022", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+           "HPAP-026", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+           "HPAP-035", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+           "HPAP-036", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+           "HPAP-037", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+           "HPAP-040", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+           "HPAP-051", #Female	45.49	43	African American	6.7	T2DM	UPENN
+           "HPAP-052", #Male	38.72	27	African American	5.2	T2D control	UPENN
+           "HPAP-053", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+           "HPAP-054", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+           "HPAP-056", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+           "HPAP-057", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+           "HPAP-058", #Female	29.26	34	African American	9.4	T2DM	nPOD
+           "HPAP-059", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+           "HPAP-061", #Female	38.27	59	African American	5.9	T2DM	nPOD
+           "HPAP-063", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+           "HPAP-065", #Male	37.47	40	African American	9.5	T2DM	nPOD
+           "HPAP-070", #Male	17.09	55	African American	7	T2DM	UPENN
+           "HPAP-074", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+           "HPAP-075", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+           "HPAP-077", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+           "HPAP-079", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+           "HPAP-080", #Male	35.71	22	African American	5.4	T2D control	nPOD
+           "HPAP-081", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+           "HPAP-082", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+           "HPAP-083", #Male	35.62	45	African American	5	T2DM	UPENN
+           "HPAP-085", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+           "HPAP-088", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+           "HPAP-091", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+           "HPAP-099", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+           "HPAP-100", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+           "HPAP-101", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+           "HPAP-103", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+           "HPAP-105", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+           "HPAP-106", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+           "HPAP-108", #Male	33	42	African American	10.8	T2DM	nPOD
+           "HPAP-109", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+           "HP2022801", #F 25.6 36 W 5.5 ND Tulane
+           "SAMN15877725", #M 27.4 31 White N/A ND Tulane
+           "HP2107001", #M 22.7 39 white 5.1 ND Tulane
+           "HP2107901", #M 22.6 59 white 5.2 ND Tulane
+           "HP2024001", #F 23.5 42 white 5.4 ND Tulane
+           "HP2105501", #F 31.6 36 white 5.6 ND Tulane
+           "HP2108601", #F 25.6 31 white 5.1 ND Tulane
+           "HP2108901", #F 30.8 42 white 5.9 ND Tulane
+           "HP2031401", #M 28.0 37 black 5.4 ND Tulane
+           "HP2110001", #M 34.3 66 black 5.5 ND Tulane
+           "HP2123201", #M 29.8 52 black 5.3 ND Tulane
+           "HP2106201", #F 28.0 41 black 5.3 ND Tulane
+           "HP2121601", #F 31.8 54 black 5.8 ND Tulane
+           "HP2132801", #F 35.9 40 black 5.5 ND Tulane
+           "HP2202101"), #F 23.2 52 black 5.5 ND Tulane
+  to = c("UPENN", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+         "nPOD", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+         "UPENN", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+         "nPOD", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+         "UPENN", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+         "UPENN", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+         "UPENN", #Female	45.49	43	African American	6.7	T2DM	UPENN
+         "UPENN", #Male	38.72	27	African American	5.2	T2D control	UPENN
+         "UPENN", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+         "UPENN", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+         "UPENN", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+         "UPENN", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+         "nPOD", #Female	29.26	34	African American	9.4	T2DM	nPOD
+         "UPENN", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+         "nPOD", #Female	38.27	59	African American	5.9	T2DM	nPOD
+         "nPOD", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+         "nPOD", #Male	37.47	40	African American	9.5	T2DM	nPOD
+         "UPENN", #Male	17.09	55	African American	7	T2DM	UPENN
+         "UPENN", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+         "UPENN", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+         "UPENN", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+         "nPOD", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+         "nPOD", #Male	35.71	22	African American	5.4	T2D control	nPOD
+         "nPOD", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+         "nPOD", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+         "UPENN", #Male	35.62	45	African American	5	T2DM	UPENN
+         "UPENN", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+         "nPOD", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+         "nPOD", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+         "UPENN", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+         "nPOD", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+         "nPOD", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+         "UPENN", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+         "nPOD", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+         "UPENN", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+         "nPOD", #Male	33	42	African American	10.8	T2DM	nPOD
+         "nPOD", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+         "Tulane", #F 25.6 36 W 5.5 ND Tulane
+         "Tulane", #M 27.4 31 White N/A ND Tulane
+         "Tulane", #M 22.7 39 white 5.1 ND Tulane
+         "Tulane", #M 22.6 59 white 5.2 ND Tulane
+         "Tulane", #F 23.5 42 white 5.4 ND Tulane
+         "Tulane", #F 31.6 36 white 5.6 ND Tulane
+         "Tulane", #F 25.6 31 white 5.1 ND Tulane
+         "Tulane", #F 30.8 42 white 5.9 ND Tulane
+         "Tulane", #M 28.0 37 black 5.4 ND Tulane
+         "Tulane", #M 34.3 66 black 5.5 ND Tulane
+         "Tulane", #M 29.8 52 black 5.3 ND Tulane
+         "Tulane", #F 28.0 41 black 5.3 ND Tulane
+         "Tulane", #F 31.8 54 black 5.8 ND Tulane
+         "Tulane", #F 35.9 40 black 5.5 ND Tulane
+         "Tulane")) #F 23.2 52 black 5.5 ND Tulane
+unique(pancreas_rna$tissue_source)
+
+Idents(pancreas_rna) <- "Library"
+unique(pancreas_rna$Library)
+pancreas_rna$diabetes_status <- plyr::mapvalues(
+  x= pancreas_rna$Library,
+  from = c("HPAP-022", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+           "HPAP-026", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+           "HPAP-035", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+           "HPAP-036", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+           "HPAP-037", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+           "HPAP-040", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+           "HPAP-051", #Female	45.49	43	African American	6.7	T2DM	UPENN
+           "HPAP-052", #Male	38.72	27	African American	5.2	T2D control	UPENN
+           "HPAP-053", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+           "HPAP-054", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+           "HPAP-056", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+           "HPAP-057", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+           "HPAP-058", #Female	29.26	34	African American	9.4	T2DM	nPOD
+           "HPAP-059", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+           "HPAP-061", #Female	38.27	59	African American	5.9	T2DM	nPOD
+           "HPAP-063", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+           "HPAP-065", #Male	37.47	40	African American	9.5	T2DM	nPOD
+           "HPAP-070", #Male	17.09	55	African American	7	T2DM	UPENN
+           "HPAP-074", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+           "HPAP-075", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+           "HPAP-077", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+           "HPAP-079", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+           "HPAP-080", #Male	35.71	22	African American	5.4	T2D control	nPOD
+           "HPAP-081", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+           "HPAP-082", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+           "HPAP-083", #Male	35.62	45	African American	5	T2DM	UPENN
+           "HPAP-085", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+           "HPAP-088", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+           "HPAP-091", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+           "HPAP-099", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+           "HPAP-100", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+           "HPAP-101", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+           "HPAP-103", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+           "HPAP-105", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+           "HPAP-106", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+           "HPAP-108", #Male	33	42	African American	10.8	T2DM	nPOD
+           "HPAP-109", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+           "HP2022801", #F 25.6 36 W 5.5 ND Tulane
+           "SAMN15877725", #M 27.4 31 White N/A ND Tulane
+           "HP2107001", #M 22.7 39 white 5.1 ND Tulane
+           "HP2107901", #M 22.6 59 white 5.2 ND Tulane
+           "HP2024001", #F 23.5 42 white 5.4 ND Tulane
+           "HP2105501", #F 31.6 36 white 5.6 ND Tulane
+           "HP2108601", #F 25.6 31 white 5.1 ND Tulane
+           "HP2108901", #F 30.8 42 white 5.9 ND Tulane
+           "HP2031401", #M 28.0 37 black 5.4 ND Tulane
+           "HP2110001", #M 34.3 66 black 5.5 ND Tulane
+           "HP2123201", #M 29.8 52 black 5.3 ND Tulane
+           "HP2106201", #F 28.0 41 black 5.3 ND Tulane
+           "HP2121601", #F 31.8 54 black 5.8 ND Tulane
+           "HP2132801", #F 35.9 40 black 5.5 ND Tulane
+           "HP2202101"), #F 23.2 52 black 5.5 ND Tulane
+  to = c("ND", #Female	34.7	39	Caucasian	4.7	T1D control	UPENN
+         "ND", #Male	20.8	24	Caucasian	4.9	T1D control	nPOD
+         "ND", #Male	26.91	35	Caucasian	5.2	T1D control	UPENN
+         "ND", #Female	16	23	Caucasian	5.2	T1D control	nPOD
+         "ND", #Female	21.9	35	Caucasian	5.3	T1D control	UPENN
+         "ND", #Male	23.98	35	Caucasian	5.4	T1D control	UPENN
+         "T2D", #Female	45.49	43	African American	6.7	T2DM	UPENN
+         "ND", #Male	38.72	27	African American	5.2	T2D control	UPENN
+         "ND", #Female	24.2	58	Caucasian	5.6	T2D control	UPENN
+         "ND", #Female	30.85	40	Caucasian	4.8	T2D control	UPENN
+         "ND", #Male	32.89	33	Caucasian	5.6	T1D control	UPENN
+         "T2D", #Female	30.49	50	Caucasian	5.8	T2DM	UPENN
+         "T2D", #Female	29.26	34	African American	9.4	T2DM	nPOD
+         "ND", #Male	37.96	35	Caucasian	5.1	T2D control	UPENN
+         "T2D", #Female	38.27	59	African American	5.9	T2DM	nPOD
+         "ND", #Female	38.41	45	Caucasian	6.3	T2D control	nPOD
+         "T2D", #Male	37.47	40	African American	9.5	T2DM	nPOD
+         "T2D", #Male	17.09	55	African American	7	T2DM	UPENN
+         "ND", #Female	36.88	40	Caucasian	6.3	T2D control	UPENN
+         "ND", #Male	27.52	35	Caucasian	6	T2D control	UPENN
+         "ND", #Male	32.78	47	Caucasian	5.7	T2D control	UPENN
+         "T2D", #Female	28.38	52	Hispanic	6.8	T2DM	nPOD
+         "ND", #Male	35.71	22	African American	5.4	T2D control	nPOD
+         "T2D", #Female	28.91	45	Caucasian	7.9	T2DM	nPOD
+         "ND", #Male	23.96	25	Caucasian	5.6	T1D control	nPOD
+         "T2D", #Male	35.62	45	African American	5	T2DM	UPENN
+         "T2D", #Female	39.78	48	Caucasian	7.3	T2DM	UPENN
+         "T2D", #Male	32.81	37	Caucasian	10.3	T2DM	nPOD
+         "T2D", #Female	35.58	50	Hispanic	6.9	T2DM	nPOD
+         "ND", #Female	24.7	28	Hispanic	5	T1D control	UPENN
+         "T2D", #Male	28.83	41	Caucasian	10.7	T2DM	nPOD
+         "ND", #Female	38.01	55	Hispanic	5	T2D control	nPOD
+         "ND", #Female	36.44	48	Caucasian	6	T2D control	UPENN
+         "ND", #Female	28.1	51	Hispanic	5.2	T2D control	nPOD
+         "T2D", #Male	28.12	55	Caucasian	5.8	T2DM	UPENN
+         "T2D", #Male	33	42	African American	10.8	T2DM	nPOD
+         "T2D", #Female	29.49	59	Hispanic	7.5	T2DM	nPOD
+         "ND", #F 25.6 36 W 5.5 ND Tulane
+         "ND", #M 27.4 31 White N/A ND Tulane
+         "ND", #M 22.7 39 white 5.1 ND Tulane
+         "ND", #M 22.6 59 white 5.2 ND Tulane
+         "ND", #F 23.5 42 white 5.4 ND Tulane
+         "ND", #F 31.6 36 white 5.6 ND Tulane
+         "ND", #F 25.6 31 white 5.1 ND Tulane
+         "ND", #F 30.8 42 white 5.9 ND Tulane
+         "ND", #M 28.0 37 black 5.4 ND Tulane
+         "ND", #M 34.3 66 black 5.5 ND Tulane
+         "ND", #M 29.8 52 black 5.3 ND Tulane
+         "ND", #F 28.0 41 black 5.3 ND Tulane
+         "ND", #F 31.8 54 black 5.8 ND Tulane
+         "ND", #F 35.9 40 black 5.5 ND Tulane
+         "ND")) #F 23.2 52 black 5.5 ND Tulane
+unique(pancreas_rna$diabetes_status)
+
+# Remove Unecessary metadata
+pancreas_rna@meta.data[["sex"]] <- NULL
+pancreas_rna$`Diabetes Status` <- NULL
+pancreas_rna$`Tissue Source` <- NULL
+pancreas_rna$celltype_sex_ancestry_disease <- NULL
+pancreas_rna$celltype_sex_disease <- NULL
+pancreas_rna$celltype_sex_ancestry_disease <- NULL
+pancreas_rna$celltype_sex_ancestry <- NULL
+pancreas_rna$celltype_sex <- NULL
+pancreas_rna$ancestry_sex <- NULL
+
 # #Split data on basis of disease status and calculate integration features on object list
 # DefaultAssay(pancreas_rna) <- "SCT"
 # integrationfeatures <- SelectIntegrationFeatures(pancreas_combined, nfeatures = 3000, verbose = TRUE)
@@ -952,18 +1421,20 @@ pancreas_rna <- FindVariableFeatures(pancreas_rna, selection.method = "vst", nfe
 pancreas_rna <- ScaleData(pancreas_rna, verbose = FALSE) %>% 
   RunPCA(pc.genes = pancreas_rna@assays$RNA@var.features, npcs = 20, verbose = FALSE)
 
-# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
-Idents(pancreas_rna) <- "ancestry"
-pancreas_rna$ancestry_sex <- paste(Idents(pancreas_rna), pancreas_rna$Sex, sep = "_")
-table(pancreas_rna@meta.data[["ancestry_sex"]])
+# # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+# Idents(pancreas_rna) <- "ancestry"
+# pancreas_rna$ancestry_sex <- paste(Idents(pancreas_rna), pancreas_rna$Sex, sep = "_")
+# table(pancreas_rna@meta.data[["ancestry_sex"]])
 
 #Run Harmony batch correction with library and tissue source covariates
 Idents(pancreas_rna) <- "Library"
+unique(pancreas_rna$Library)
+unique(pancreas_rna$tissue_source)
 pancreas_rna <- RunHarmony(pancreas_rna, 
                            assay.use = "RNA",
                            reduction = "pca",
                            dims.use = 1:20,
-                           group.by.vars = c('Library','Tissue Source', 'Chemistry'),
+                           group.by.vars = c("Library", "Chemistry", "tissue_source"),
                            kmeans_init_nstart=20, kmeans_init_iter_max=100,
                            plot_convergence = TRUE)
 
@@ -976,12 +1447,12 @@ table(pancreas_rna@meta.data[["Chemistry"]])
 
 # Run UMAP
 pancreas_rna <- RunUMAP(pancreas_rna, reduction = "harmony", dims = 1:20, return.model = TRUE)
-DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=FALSE)
+DimPlot(pancreas_rna, reduction = 'umap', label = FALSE, pt.size = 0.01, raster=TRUE)
 
 # Clustering
 pancreas_rna <- pancreas_rna %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
-  FindClusters(algorithm=4,resolution = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 4, 4.6, 5, 6, 7, 8, 9, 10), method = 'igraph') #25 res
+  FindClusters(algorithm=4,resolution = c(6), method = 'igraph') #25 res
 
 # Save file
 qsave(pancreas_rna, file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\RDS files\current\3_seuratobj\pancreas_rna.qs)")
@@ -1000,17 +1471,17 @@ pancreas_rna <- qread(file = r"(C:\Users\QadirMirzaMuhammadFa\Box\Lab 2301\1. R_
 #clustree(pancreas_rna, prefix = "RNA_snn_res.")
 
 # View clustering
-DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
+DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=TRUE)
 FeaturePlot(object = pancreas_rna,
-            features = c("MKI67"
+            features = c("TPSAB1"
             ),
             pt.size = 0.01,
             cols = c("darkgrey", "red"),
             min.cutoff = 0,
-            max.cutoff = 1000,
+            max.cutoff = 10000,
             slot = 'counts',
             order = TRUE,
-            raster=FALSE)
+            raster=TRUE)
 
 # Subclustering
 Idents(pancreas_rna) <- "RNA_snn_res.6"
@@ -1018,70 +1489,55 @@ subset_clust <- subset(pancreas_rna, idents = c("1", "2", "3", "4", "5", "6", "7
                                                 "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
                                                 "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", 
                                                 "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", 
-                                                "41", "42", "43", "44", #"45", 
-                                                "46", "47", "48", "49", "50", 
+                                                "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", 
                                                 #"51", 
-                                                "52", "53", "54", "55", "56", "57", "58", "59", "60",
-                                                "61", "62", "63", "64", #"65", 
-                                                "66", #"67", 
-                                                "68", "69", "70", 
-                                                "71", "72", "73", "74", #"75", 
-                                                "76", #"77", 
-                                                "78", "79", #"80", 
-                                                "81", "82", "83", "84", #"85", 
-                                                "86", "87", #"88", 
-                                                "89", "90" 
-                                                ))
+                                                "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", 
+                                                #"62", #"63", 
+                                                "64", "65", "66", "67", #"68", 
+                                                "69", "70", "71", #"72", 
+                                                "73", "74", "75", "76", #"77", 
+                                                "78", "79", "80", "81", "82", "83", #"84", 
+                                                #"85", 
+                                                "86"))
 
 # Checking cluster loss
-DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
-DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
+DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=TRUE)
+DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=TRUE)
 
-# As cells were subsetted re-run batch correction and cluster assignmnet
-subset_clust <- RunHarmony(subset_clust, 
-                           assay.use = "RNA",
-                           reduction = "pca",
-                           dims.use = 1:20,
-                           group.by.vars = c('Library','Tissue Source', 'Chemistry'),
-                           kmeans_init_nstart=20, kmeans_init_iter_max=100,
-                           plot_convergence = TRUE)
+# # As cells were subsetted re-run batch correction and cluster assignmnet
+# subset_clust <- RunHarmony(subset_clust, 
+#                            assay.use = "RNA",
+#                            reduction = "pca",
+#                            dims.use = 1:20,
+#                            group.by.vars = c("Library", "Chemistry", "tissue_source"),
+#                            kmeans_init_nstart=20, kmeans_init_iter_max=100,
+#                            plot_convergence = TRUE)
+# 
+# 
+# # UMAP 
+# subset_clust <- RunUMAP(subset_clust, reduction = "harmony", dims = 1:20, return.model = TRUE)
+# 
+# #Neighbours + Clustering
+# subset_clust <- subset_clust %>% 
+#   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
+#   FindClusters(algorithm=4,resolution = c(6), method = 'igraph')
+# 
+# DefaultAssay(subset_clust) <- "RNA"
+# DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
+# FeaturePlot(object = subset_clust,
+#             features = c("HSPB1", "DNAJB6", "HSPH1", "GADD45B"
+#             ),
+#             pt.size = 0.01,
+#             cols = c("darkgrey", "red"),
+#             min.cutoff = 100,
+#             max.cutoff = 500,
+#             slot = 'counts',
+#             order = TRUE,
+#             raster=TRUE)
 
-
-# UMAP 
-subset_clust <- RunUMAP(subset_clust, reduction = "harmony", dims = 1:20, return.model = TRUE)
-
-#Neighbours + Clustering
-subset_clust <- subset_clust %>% 
-  FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
-  FindClusters(algorithm=4,resolution = c(0.5, 6), method = 'igraph')
-
-DefaultAssay(subset_clust) <- "RNA"
 DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
 FeaturePlot(object = subset_clust,
-            features = c("HSPB1", "DNAJB6", "HSPH1", "GADD45B"
-            ),
-            pt.size = 0.01,
-            cols = c("darkgrey", "red"),
-            min.cutoff = 100,
-            max.cutoff = 500,
-            slot = 'counts',
-            order = TRUE,
-            raster=TRUE)
-
-FeaturePlot(object = subset_clust,
-            features = c("INS"
-            ),
-            pt.size = 0.01,
-            cols = c("darkgrey", "red"),
-            min.cutoff = 0,
-            max.cutoff = 500,
-            slot = 'counts',
-            order = TRUE,
-            raster=TRUE)
-
-DimPlot(pancreas_rna, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
-FeaturePlot(object = pancreas_rna,
-            features = c("TRAC"
+            features = c("PPY"
             ),
             pt.size = 0.01,
             cols = c("darkgrey", "red"),
@@ -1096,92 +1552,91 @@ table(subset_clust@meta.data$RNA_snn_res.6)
 Idents(subset_clust) <- "RNA_snn_res.6"
 subset_clust <- RenameIdents(subset_clust, 
                              "1" = "alpha",
-                             "2" = "alpha",
+                             "2" = "ductal",
                              "3" = "alpha",
-                             "4" = "alpha",
-                             "5" = "alpha",
+                             "4" = "beta+alpha",
+                             "5" = "beta",
                              "6" = "alpha",
-                             "7" = "activated_stellate",
+                             "7" = "beta+alpha",
                              "8" = "alpha",
                              "9" = "acinar",
                              "10" = "alpha",
                              "11" = "beta",
-                             "12" = "beta",
-                             "13" = "ductal",
-                             "14" = "beta",
-                             "15" = "beta",
-                             "16" = "alpha",
+                             "12" = "acinar",
+                             "13" = "alpha",
+                             "14" = "quiescent_stellate",
+                             "15" = "alpha",
+                             "16" = "ductal",
                              "17" = "alpha",
-                             "18" = "acinar",
-                             "19" = "ductal",
+                             "18" = "ductal",
+                             "19" = "beta",
                              "20" = "beta",
-                             "21" = "beta+alpha",
-                             "22" = "activated_stellate",
-                             "23" = "alpha",
+                             "21" = "activated_stellate",
+                             "22" = "acinar",
+                             "23" = "beta",
                              "24" = "acinar",
-                             "25" = "ductal",
-                             "26" = "beta",
-                             "27" = "quiescent_stellate",
-                             "28" = "acinar",
-                             "29" = "endothelial",
+                             "25" = "activated_stellate",
+                             "26" = "acinar",
+                             "27" = "beta",
+                             "28" = "beta",
+                             "29" = "alpha",
                              "30" = "alpha",
-                             "31" = "endothelial",
-                             "32" = "beta+delta",
+                             "31" = "alpha",
+                             "32" = "endothelial",
                              "33" = "alpha",
-                             "34" = "acinar",
-                             "35" = "acinar",
-                             "36" = "ductal",
-                             "37" = "beta+alpha",
-                             "38" = "beta",
-                             "39" = "beta+alpha",
-                             "40" = "alpha",
-                             "41" = "beta",
-                             "42" = "acinar",
+                             "34" = "delta",
+                             "35" = "endothelial",
+                             "36" = "beta",
+                             "37" = "alpha",
+                             "38" = "alpha",
+                             "39" = "beta+delta",
+                             "40" = "beta",
+                             "41" = "acinar",
+                             "42" = "alpha",
                              "43" = "beta",
-                             "44" = "beta",
-                             "45" = "delta",
-                             "46" = "beta",
-                             "47" = "delta",
-                             "48" = "activated_stellate",
-                             "49" = "acinar",
-                             "50" = "alpha",
-                             "51" = "beta",
+                             "44" = "alpha",
+                             "45" = "acinar",
+                             "46" = "gamma",
+                             "47" = "beta+alpha",
+                             "48" = "alpha",
+                             "49" = "beta",
+                             "50" = "activated_stellate",
+                             #"51" = "",
                              "52" = "alpha",
-                             "53" = "gamma",
-                             "54" = "mast",
-                             "55" = "macrophages",
-                             "56" = "beta+alpha",
-                             "57" = "beta",
-                             "58" = "acinar",
-                             "59" = "gamma",
-                             "60" = "quiescent_stellate",
-                             "61" = "acinar",
-                             "62" = "ductal",
-                             "63" = "activated_stellate",
-                             "64" = "acinar",
-                             "65" = "alpha",
+                             "53" = "beta",
+                             "54" = "acinar",
+                             "55" = "acinar",
+                             "56" = "alpha",
+                             "57" = "lymphocytes",
+                             "58" = "macrophages",
+                             "59" = "acinar",
+                             "60" = "beta",
+                             "61" = "ductal",
+                             #"62" = "",
+                             #"63" = "",
+                             "64" = "activated_stellate",
+                             "65" = "ductal",
                              "66" = "endothelial",
-                             "67" = "ductal",
-                             "68" = "ductal",
-                             "69" = "acinar",
-                             "70" = "cycling_endo",
-                             "71" = "acinar",
-                             "72" = "endothelial",
-                             "73" = "acinar",
+                             "67" = "delta",
+                             #"68" = "",
+                             "69" = "alpha",
+                             "70" = "acinar",
+                             "71" = "ductal",
+                             #"72" = "",
+                             "73" = "cycling_endo",
                              "74" = "acinar",
                              "75" = "endothelial",
-                             "76" = "acinar",
-                             "77" = "beta",
-                             "78" = "alpha",
-                             "79" = "alpha",
-                             "80" = "alpha",
-                             "81" = "schwann",
-                             "82" = "activated_stellate",
-                             "83" = "beta+alpha",
-                             "84" = "beta+alpha",
-                             "85" = "ductal",
-                             "86" = "acinar",
-                             "87" = "ductal"
+                             "76" = "beta+alpha",
+                             #"77" = "",
+                             "78" = "acinar",
+                             "79" = "acinar",
+                             "80" = "endothelial",
+                             "81" = "macrophages",
+                             "82" = "acinar",
+                             "83" = "schwann",
+                             #"84" = "",
+                             #"85" = "",
+                             "86" = "acinar"
                              )
 
 # Check renaming
@@ -1206,21 +1661,21 @@ DimPlot(subset_clust, reduction = "umap", label = TRUE)
 
 # Subsetting Lymphocytes from Mast cells
 # First subset all cells, they are called "Mast" in the primary object
-mast <- subset(subset_clust, idents = "mast")
-table(mast@active.ident)
-mast <- mast %>% 
+lymphocytes <- subset(subset_clust, idents = "lymphocytes")
+table(lymphocytes@active.ident)
+lymphocytes <- lymphocytes %>% 
   FindNeighbors(reduction = 'harmony', dims = 1:20) %>% 
   FindClusters(algorithm=4,resolution = c(0.5), method = 'igraph')
 
 # Run UMAP
-mast <- RunUMAP(mast, reduction = "harmony", dims = 1:20, return.model = TRUE)
-DimPlot(mast, reduction = 'umap', label = FALSE, pt.size = 1, raster=FALSE)
+lymphocytes <- RunUMAP(lymphocytes, reduction = "harmony", dims = 1:20, return.model = TRUE)
+DimPlot(lymphocytes, reduction = 'umap', label = FALSE, pt.size = 1, raster=FALSE)
 # Cluster assignment
-table(mast@meta.data$RNA_snn_res.0.5)
-Idents(mast) <- "RNA_snn_res.0.5"
-DimPlot(mast, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 1, raster=FALSE)
-FeaturePlot(object = mast,
-            features = c("TRAC"
+table(lymphocytes@meta.data$RNA_snn_res.0.5)
+Idents(lymphocytes) <- "RNA_snn_res.0.5"
+DimPlot(lymphocytes, reduction = 'umap', group.by = 'RNA_snn_res.0.5', label = TRUE, pt.size = 1, raster=FALSE)
+FeaturePlot(object = lymphocytes,
+            features = c("TPSAB1"
             ),
             pt.size = 1,
             cols = c("darkgrey", "red"),
@@ -1230,16 +1685,15 @@ FeaturePlot(object = mast,
             order = TRUE,
             raster=FALSE)
 
-table(mast@active.ident)
-mast <- RenameIdents(mast, 
+table(lymphocytes@active.ident)
+lymphocytes <- RenameIdents(lymphocytes, 
                      "1" = "mast",
                      "2" = "lymphocyte",
                      "3" = "mast",
-                     "4" = "lymphocyte",
-                     "5" = "lymphocyte"
+                     "4" = "lymphocyte"
 )
 
-table(mast@active.ident)
+table(lymphocytes@active.ident)
 
 # Generate a new column called celltype_qadir in the metadata copying all Ident info there, this is active idents so check
 table(subset_clust@active.ident)
@@ -1247,7 +1701,7 @@ subset_clust$celltype_qadir <- as.character(Idents(subset_clust)) #as.character 
 table(subset_clust$celltype_qadir)
 
 # Change the information of cells containing sub-cluster information
-subset_clust$celltype_qadir[Cells(mast)] <- paste(Idents(mast))
+subset_clust$celltype_qadir[Cells(lymphocytes)] <- paste(Idents(lymphocytes))
 table(subset_clust$celltype_qadir)
 DimPlot(subset_clust, 
         #split.by = "Tissue Source", 
@@ -1321,15 +1775,15 @@ DimPlot(subset_clust,
 
 
 # Create a metadata slot for celltype_sex, celltype_sex_ancestry and celltype_sex_ancestry_disease
-processed_rna < subset_clust
+processed_rna <- subset_clust
 Idents(processed_rna) <- "celltype_qadir"
 processed_rna$celltype_sex <- paste(Idents(processed_rna), processed_rna$Sex, sep = "_")
 Idents(processed_rna) <- "celltype_sex"
 processed_rna$celltype_sex_ancestry <- paste(Idents(processed_rna), processed_rna$ancestry, sep = "_")
 Idents(processed_rna) <- "celltype_sex_ancestry"
-processed_rna$celltype_sex_ancestry_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
+processed_rna$celltype_sex_ancestry_disease <- paste(Idents(processed_rna), processed_rna$'diabetes_status', sep = "_")
 Idents(processed_rna) <- "celltype_sex"
-processed_rna$celltype_sex_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
+processed_rna$celltype_sex_disease <- paste(Idents(processed_rna), processed_rna$'diabetes_status', sep = "_")
 table(processed_rna$celltype_qadir)
 table(processed_rna$celltype_sex)
 table(processed_rna$celltype_sex_ancestry)
@@ -1349,433 +1803,84 @@ table(processed_rna$celltype_sex_disease)
 # after performing QC on the dataset we discover that some sex strata are incorrect.
 # Correcting metadata, for Deseq2 analysis
 # some individuals had incorrect metadata
-adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\old_data\processed_rna.qs)")
-
-Idents(adata) <- "Library"
-unique(adata$Library)
-adata$Sex <- plyr::mapvalues(
-  x= adata$Library,
-  from = c("HPAP-022",  #F  
-           "HPAP-026",  #M  
-           "HPAP-035",  #M   
-           "HPAP-036",  #F   
-           "HPAP-037",  #F   
-           "HPAP-040",  #M   
-           "HPAP-044",  #F  
-           "HPAP-051",  #F   
-           "HPAP-052",  #M   
-           "HPAP-053",  #F   
-           "HPAP-054",  #F   
-           "HPAP-056",  #M   
-           "HPAP-057",  #F   
-           "HPAP-058",  #F  
-           "HPAP-059",  #M   
-           "HPAP-061",  #F   
-           "HPAP-063",  #F   
-           "HPAP-065",  #M   
-           "HPAP-070",  #M   
-           "HPAP-074",  #F   
-           "HPAP-075",  #M  
-           "HPAP-077",  #M   
-           "HPAP-079",  #F   
-           "HPAP-080",  #M   
-           "HPAP-081",  #F   
-           "HPAP-082",  #M   
-           "HPAP-083",  #M   
-           "HPAP-085",  #F  
-           "HPAP-088",  #M   
-           "HPAP-090",  #F   
-           "HPAP-091",  #F   
-           "HPAP-099",  #F   
-           "HPAP-100",  #M   
-           "HPAP-101",  #F   
-           "HPAP-103",  #F  
-           "HPAP-105",  #F   
-           "HPAP-106",  #M   
-           "HPAP-108",  #M   
-           "HPAP-109",  #F   
-           "HP2022801", #F   
-           "SAMN15877725", #M 
-           "HP2107001", #M  
-           "HP2107901", #M   
-           "HP2024001", #F   
-           "HP2105501", #F   
-           "HP2108601", #F   
-           "HP2108901", #F   
-           "HP2031401", #M   
-           "HP2110001", #M  
-           "HP2123201", #M  
-           "HP2106201", #F   
-           "HP2121601", #F   
-           "HP2132801", #F   
-           "HP2202101"), #F
-  to = c("F",  
-         "M",  
-         "M",   
-         "F",   
-         "F",   
-         "M",   
-         "F",  
-         "F",   
-         "M",   
-         "F",   
-         "F",   
-         "M",   
-         "F",   
-         "F",  
-         "M",   
-         "F",   
-         "F",   
-         "M",   
-         "M",   
-         "F",   
-         "M",  
-         "M",   
-         "F",   
-         "M",   
-         "F",   
-         "M",   
-         "M",   
-         "F",  
-         "M",   
-         "F",   
-         "F",   
-         "F",   
-         "M",   
-         "F",   
-         "F",  
-         "F",   
-         "M",   
-         "M",   
-         "F",   
-         "F",   
-         "M", 
-         "M",  
-         "M",   
-         "F",   
-         "F",   
-         "F",   
-         "F",   
-         "M",   
-         "M",  
-         "M",  
-         "F",   
-         "F",   
-         "F",   
-         "F"))
-
-Idents(adata) <- "Library"
-unique(adata$Library)
-adata$age <- plyr::mapvalues(
-  x= adata$Library,
-  from = c("HPAP-022",  #39  
-           "HPAP-026",  #24  
-           "HPAP-035",  #35   
-           "HPAP-036",  #23   
-           "HPAP-037",  #35   
-           "HPAP-040",  #35   
-           "HPAP-044",  #3  
-           "HPAP-051",  #43  
-           "HPAP-052",  #27  
-           "HPAP-053",  #58   
-           "HPAP-054",  #40  
-           "HPAP-056",  #33  
-           "HPAP-057",  #50  
-           "HPAP-058",  #34 
-           "HPAP-059",  #35  
-           "HPAP-061",  #59  
-           "HPAP-063",  #45  
-           "HPAP-065",  #40  
-           "HPAP-070",  #55  
-           "HPAP-074",  #40  
-           "HPAP-075",  #35 
-           "HPAP-077",  #47
-           "HPAP-079",  #52  
-           "HPAP-080",  #22  
-           "HPAP-081",  #45  
-           "HPAP-082",  #25  
-           "HPAP-083",  #45 
-           "HPAP-085",  #48 
-           "HPAP-088",  #37  
-           "HPAP-090",  #59  
-           "HPAP-091",  #50  
-           "HPAP-099",  #28  
-           "HPAP-100",  #41  
-           "HPAP-101",  #55  
-           "HPAP-103",  #48 
-           "HPAP-105",  #51  
-           "HPAP-106",  #55  
-           "HPAP-108",  #42  
-           "HPAP-109",  #59  
-           "HP2022801", #36  
-           "SAMN15877725", #31 
-           "HP2107001", #39  
-           "HP2107901", #59  
-           "HP2024001", #42   
-           "HP2105501", #36   
-           "HP2108601", #31  
-           "HP2108901", #42  
-           "HP2031401", #37  
-           "HP2110001", #66 
-           "HP2123201", #52  
-           "HP2106201", #41   
-           "HP2121601", #54  
-           "HP2132801", #40  
-           "HP2202101"), #52
-  to = c("39",  
-         "24",  
-         "35",   
-         "23",   
-         "35",   
-         "35",   
-         "3",  
-         "43",  
-         "27",  
-         "58",   
-         "40",  
-         "33",  
-         "50",  
-         "34", 
-         "35",  
-         "59",  
-         "45",  
-         "40",  
-         "55",  
-         "40",  
-         "35", 
-         "47",
-         "52",  
-         "22",  
-         "45",  
-         "25",  
-         "45", 
-         "48", 
-         "37",  
-         "59",  
-         "50",  
-         "28",  
-         "41",  
-         "55",  
-         "48", 
-         "51",  
-         "55",  
-         "42",  
-         "59",  
-         "36",  
-         "31", 
-         "39",  
-         "59",  
-         "42",   
-         "36",   
-         "31",  
-         "42",  
-         "37",  
-         "66", 
-         "52",  
-         "41",   
-         "54",  
-         "40",  
-         "52"))
-
-unique(adata$age)
-
-Idents(adata) <- "Library"
-unique(adata$Library)
-adata$bmi <- plyr::mapvalues(
-  x= adata$Library,
-  from = c("HPAP-022",  #34.7  
-           "HPAP-026",  #20.8 
-           "HPAP-035",  #26.91   
-           "HPAP-036",  #16   
-           "HPAP-037",  #21.9   
-           "HPAP-040",  #23.98   
-           "HPAP-044",  #12  
-           "HPAP-051",  #45.49  
-           "HPAP-052",  #38.72  
-           "HPAP-053",  #24.2   
-           "HPAP-054",  #30.85  
-           "HPAP-056",  #32.89  
-           "HPAP-057",  #30.49  
-           "HPAP-058",  #29.26 
-           "HPAP-059",  #37.96  
-           "HPAP-061",  #38.27  
-           "HPAP-063",  #38.41  
-           "HPAP-065",  #37.47  
-           "HPAP-070",  #17.09  
-           "HPAP-074",  #36.88  
-           "HPAP-075",  #27.52 
-           "HPAP-077",  #32.78
-           "HPAP-079",  #20.45  
-           "HPAP-080",  #35.71  
-           "HPAP-081",  #28.91  
-           "HPAP-082",  #23.96  
-           "HPAP-083",  #35.62 
-           "HPAP-085",  #39.78 
-           "HPAP-088",  #32.81  
-           "HPAP-090",  #32.23  
-           "HPAP-091",  #35.58  
-           "HPAP-099",  #24.7  
-           "HPAP-100",  #28.83  
-           "HPAP-101",  #38.01  
-           "HPAP-103",  #36.44 
-           "HPAP-105",  #28.1  
-           "HPAP-106",  #28.12  
-           "HPAP-108",  #33  
-           "HPAP-109",  #29.49  
-           "HP2022801", #25.6  
-           "SAMN15877725", #27.4 
-           "HP2107001", #22.7  
-           "HP2107901", #22.6  
-           "HP2024001", #23.5   
-           "HP2105501", #31.6   
-           "HP2108601", #25.6  
-           "HP2108901", #30.8  
-           "HP2031401", #28.0  
-           "HP2110001", #34.3 
-           "HP2123201", #29.8  
-           "HP2106201", #28.0   
-           "HP2121601", #31.8  
-           "HP2132801", #35.9  
-           "HP2202101"), #23.2
-  to = c("34.7",  
-         "20.8", 
-         "26.91",   
-         "16",   
-         "21.9",   
-         "23.98",   
-         "12",  
-         "45.49",  
-         "38.72",  
-         "24.2",   
-         "30.85",  
-         "32.89",  
-         "30.49",  
-         "29.26", 
-         "37.96",  
-         "38.27",  
-         "38.41",  
-         "37.47",  
-         "17.09",  
-         "36.88",  
-         "27.52", 
-         "32.78",
-         "20.45",  
-         "35.71",  
-         "28.91",  
-         "23.96",  
-         "35.62", 
-         "39.78", 
-         "32.81",  
-         "32.23",  
-         "35.58",  
-         "24.7",  
-         "28.83",  
-         "38.01",  
-         "36.44", 
-         "28.1",  
-         "28.12",  
-         "33",  
-         "29.49",  
-         "25.6",  
-         "27.4", 
-         "22.7",  
-         "22.6",  
-         "23.5",   
-         "31.6",   
-         "25.6",  
-         "30.8",  
-         "28.0",  
-         "34.3", 
-         "29.8",  
-         "28.0",   
-         "31.8",  
-         "35.9",  
-         "23.2"))
-unique(adata$bmi)
-
-# Remove Unecessary metadata
-adata$celltype_sex_disease <- NULL
-adata$celltype_sex_ancestry_disease <- NULL
-adata$celltype_sex_ancestry <- NULL
-adata$celltype_sex <- NULL
-adata$ancestry_sex <- NULL
-
-# Subset data
-Idents(adata) <- "Library"
-adata <- subset(adata, idents = c("HPAP-022", "HPAP-026", "HPAP-035", "HPAP-036", "HPAP-037", "HPAP-040",   
-                                  #"HPAP-044", 
-                                  "HPAP-051", "HPAP-052", "HPAP-053", "HPAP-054", "HPAP-056",   
-                                  "HPAP-057", "HPAP-058", "HPAP-059", "HPAP-061", "HPAP-063", "HPAP-065",   
-                                  "HPAP-070", "HPAP-074", "HPAP-075", "HPAP-077", "HPAP-079", "HPAP-080",    
-                                  "HPAP-081", "HPAP-082", "HPAP-083", "HPAP-085", "HPAP-088", #"HPAP-090",   
-                                  "HPAP-091", "HPAP-099", "HPAP-100", "HPAP-101", "HPAP-103", "HPAP-105",   
-                                  "HPAP-106", "HPAP-108", "HPAP-109", "HP2022801", "SAMN15877725", "HP2107001",  
-                                  "HP2107901", "HP2024001", "HP2105501", "HP2108601", "HP2108901", "HP2031401",    
-                                  "HP2110001", "HP2123201", "HP2106201", "HP2121601", "HP2132801", "HP2202101"))
-
-# As cells were subsetted re-run batch correction and cluster assignmnet
-subset_clust <- RunHarmony(adata, 
-                           assay.use = "RNA",
-                           reduction = "pca",
-                           dims.use = 1:20,
-                           group.by.vars = c('Library','Tissue Source', 'Chemistry'),
-                           kmeans_init_nstart=20, kmeans_init_iter_max=100,
-                           plot_convergence = TRUE)
-
-# UMAP 
-subset_clust <- RunUMAP(subset_clust, reduction = "harmony", dims = 1:20, return.model = TRUE)
-
-# Celltype annotations should remain consistent
-DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
-DimPlot(subset_clust, reduction = 'umap', group.by = 'celltype_qadir', label = TRUE, pt.size = 0.01, raster=FALSE)
-
-# Change the information of cells containing sub-cluster information
-DimPlot(subset_clust, 
-        #split.by = "Diabetes Status", 
-        group.by = "celltype_qadir", 
-        label = TRUE, 
-        ncol = 1, 
-        raster = FALSE,
-        pt.size = 0.5,
-        cols = c("dodgerblue3",      #beta
-                 "turquoise2",       #beta+alpha
-                 "lightseagreen",    #alpha
-                 "darkseagreen2",    #cycling_endo
-                 "khaki2",           #epsilon 
-                 "springgreen4",     #gamma
-                 "chartreuse3",      #delta
-                 "burlywood3",       #beta+delta
-                 "darkorange",       #ductal
-                 "salmon3",          #acinar
-                 "orangered",        #activated_setallate
-                 "salmon",           #quiescent_stellate
-                 "red",              #endothelial
-                 "magenta3",         #macrophages
-                 "orchid1",          #lymphocytes
-                 "red4",             #mast
-                 "grey30"            #schwann
-        )
-)
-
-
-# Create a metadata slot for celltype_sex, celltype_sex_ancestry and celltype_sex_ancestry_disease
-processed_rna <- subset_clust
-Idents(processed_rna) <- "celltype_qadir"
-processed_rna$celltype_sex <- paste(Idents(processed_rna), processed_rna$Sex, sep = "_")
-Idents(processed_rna) <- "celltype_sex"
-processed_rna$celltype_sex_ancestry <- paste(Idents(processed_rna), processed_rna$ancestry, sep = "_")
-Idents(processed_rna) <- "celltype_sex_ancestry"
-processed_rna$celltype_sex_ancestry_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
-Idents(processed_rna) <- "celltype_sex"
-processed_rna$celltype_sex_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
-table(processed_rna$celltype_qadir)
-table(processed_rna$celltype_sex)
-table(processed_rna$celltype_sex_ancestry)
-table(processed_rna$celltype_sex_ancestry_disease)
-table(processed_rna$celltype_sex_disease)
-
-# Save file
-qsave(processed_rna, r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+# adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\old_data\processed_rna.qs)")
+# 
+# # Subset data
+# Idents(adata) <- "Library"
+# adata <- subset(adata, idents = c("HPAP-022", "HPAP-026", "HPAP-035", "HPAP-036", "HPAP-037", "HPAP-040",   
+#                                   #"HPAP-044", 
+#                                   "HPAP-051", "HPAP-052", "HPAP-053", "HPAP-054", "HPAP-056",   
+#                                   "HPAP-057", "HPAP-058", "HPAP-059", "HPAP-061", "HPAP-063", "HPAP-065",   
+#                                   "HPAP-070", "HPAP-074", "HPAP-075", "HPAP-077", "HPAP-079", "HPAP-080",    
+#                                   "HPAP-081", "HPAP-082", "HPAP-083", "HPAP-085", "HPAP-088", #"HPAP-090",   
+#                                   "HPAP-091", "HPAP-099", "HPAP-100", "HPAP-101", "HPAP-103", "HPAP-105",   
+#                                   "HPAP-106", "HPAP-108", "HPAP-109", "HP2022801", "SAMN15877725", "HP2107001",  
+#                                   "HP2107901", "HP2024001", "HP2105501", "HP2108601", "HP2108901", "HP2031401",    
+#                                   "HP2110001", "HP2123201", "HP2106201", "HP2121601", "HP2132801", "HP2202101"))
+# 
+# # As cells were subsetted re-run batch correction and cluster assignmnet
+# subset_clust <- RunHarmony(adata, 
+#                            assay.use = "RNA",
+#                            reduction = "pca",
+#                            dims.use = 1:20,
+#                            group.by.vars = c('Library','Tissue Source', 'Chemistry'),
+#                            kmeans_init_nstart=20, kmeans_init_iter_max=100,
+#                            plot_convergence = TRUE)
+# 
+# # UMAP 
+# subset_clust <- RunUMAP(subset_clust, reduction = "harmony", dims = 1:20, return.model = TRUE)
+# 
+# # Celltype annotations should remain consistent
+# DimPlot(subset_clust, reduction = 'umap', group.by = 'RNA_snn_res.6', label = TRUE, pt.size = 0.01, raster=FALSE)
+# DimPlot(subset_clust, reduction = 'umap', group.by = 'celltype_qadir', label = TRUE, pt.size = 0.01, raster=FALSE)
+# 
+# # Change the information of cells containing sub-cluster information
+# DimPlot(subset_clust, 
+#         #split.by = "Diabetes Status", 
+#         group.by = "celltype_qadir", 
+#         label = TRUE, 
+#         ncol = 1, 
+#         raster = FALSE,
+#         pt.size = 0.5,
+#         cols = c("dodgerblue3",      #beta
+#                  "turquoise2",       #beta+alpha
+#                  "lightseagreen",    #alpha
+#                  "darkseagreen2",    #cycling_endo
+#                  "khaki2",           #epsilon 
+#                  "springgreen4",     #gamma
+#                  "chartreuse3",      #delta
+#                  "burlywood3",       #beta+delta
+#                  "darkorange",       #ductal
+#                  "salmon3",          #acinar
+#                  "orangered",        #activated_setallate
+#                  "salmon",           #quiescent_stellate
+#                  "red",              #endothelial
+#                  "magenta3",         #macrophages
+#                  "orchid1",          #lymphocytes
+#                  "red4",             #mast
+#                  "grey30"            #schwann
+#         )
+# )
+# 
+# 
+# # Create a metadata slot for celltype_sex, celltype_sex_ancestry and celltype_sex_ancestry_disease
+# processed_rna <- subset_clust
+# Idents(processed_rna) <- "celltype_qadir"
+# processed_rna$celltype_sex <- paste(Idents(processed_rna), processed_rna$Sex, sep = "_")
+# Idents(processed_rna) <- "celltype_sex"
+# processed_rna$celltype_sex_ancestry <- paste(Idents(processed_rna), processed_rna$ancestry, sep = "_")
+# Idents(processed_rna) <- "celltype_sex_ancestry"
+# processed_rna$celltype_sex_ancestry_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
+# Idents(processed_rna) <- "celltype_sex"
+# processed_rna$celltype_sex_disease <- paste(Idents(processed_rna), processed_rna$'Diabetes Status', sep = "_")
+# table(processed_rna$celltype_qadir)
+# table(processed_rna$celltype_sex)
+# table(processed_rna$celltype_sex_ancestry)
+# table(processed_rna$celltype_sex_ancestry_disease)
+# table(processed_rna$celltype_sex_disease)
+# 
+# # Save file
+# qsave(processed_rna, r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
 
 ############################ STAGE ############################
 ############################   6   ############################
@@ -1928,7 +2033,7 @@ for (FILE in files){
 
 ###Step 3: DESeq
 #Create a metadata table
-meta <- adata@meta.data[,c('Library', 'Sex', 'Tissue Source', 'Chemistry', 'ancestry', 'Diabetes Status')]
+meta <- adata@meta.data[,c('Library', 'Sex', 'tissue_source', 'Chemistry', 'ancestry', 'diabetes_status')]
 colnames(meta) <- c('Library', 'Sex', 'Tissue_Source', 'Chemistry', 'ancestry', 'Diabetes_Status')
 rownames(meta) <- NULL
 meta <- meta[!duplicated(meta),]
@@ -1972,19 +2077,29 @@ for (FILE in files) {
     }
     counts <- raw_counts[which(rownames(raw_counts) %in% genes_to_keep),] 
     
-    if (length(unique(meta2$Chemistry)) > 1) {
+    if (length(which(meta2$Chemistry == '10Xv2')) > 1 &
+        length(which(meta2$Tissue_Source == 'UPENN')) > 1 & #Alldata 
+        length(which(meta2$Tissue_Source == 'nPOD')) > 1 &
+        length(which(meta2$Tissue_Source == 'Tulane')) > 1) {
       my_design <- as.formula ('~Chemistry + Tissue_Source + sex_ancestry_diabetes') # alldata
       dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
       dds <- estimateSizeFactors(dds)
       dds <- estimateDispersions(dds)
       dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
-    } else {
+    } else if (length(which(meta2$Tissue_Source == 'UPENN')) > 1 & #Alldata 
+               length(which(meta2$Tissue_Source == 'nPOD')) > 1 &
+               length(which(meta2$Tissue_Source == 'Tulane')) > 1) {
       my_design <- as.formula ('~Tissue_Source + sex_ancestry_diabetes') # alldata
       dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
       dds <- estimateSizeFactors(dds)
       dds <- estimateDispersions(dds)
       dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
-    }
+    } else {
+      my_design <- as.formula ('~sex_ancestry_diabetes') # alldata
+      dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+      dds <- estimateSizeFactors(dds)
+      dds <- estimateDispersions(dds)
+      dds <- nbinomWaldTest(dds, maxit = 500)}
     
     # No need for conditional formatting here
     # Specifying test combinations
