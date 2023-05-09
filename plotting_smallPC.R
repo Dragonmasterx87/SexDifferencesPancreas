@@ -302,7 +302,7 @@ DimPlot(processed_rna, #switch here to plot
 table(processed_rna$disease_ancestry_lib_sex_source)
 dittoBarPlot(processed_rna, "celltype_qadir", 
              retain.factor.levels = TRUE,
-             #scale = "count",
+             scale = "count",
              color.panel = c("dodgerblue3",      #beta
                              "turquoise2",       #beta+alpha
                              "lightseagreen",    #alpha
@@ -463,9 +463,9 @@ dittoHeatmap(
                            ancestry = c("white" = "deepskyblue3",
                                         "black" = "black",
                                         "hispanic" = "darkorange"),
-                           source = c("nPod" = "dodgerblue",
+                           source = c("nPOD" = "dodgerblue",
                                       "Tulane" = "springgreen4",         
-                                      "UPenn" = "red4")),
+                                      "UPENN" = "red4")),
   # # data.out = FALSE,
   # highlight.features = NULL,
   # highlight.genes = NULL,
@@ -478,7 +478,7 @@ dittoHeatmap(
   # drop_levels = FALSE,
   # breaks = NA,
   # complex = FALSE
-  gaps_col = c(454),
+  gaps_col = c(460),
   use_raster = TRUE,
   raster_quality = 5
 )
@@ -697,14 +697,14 @@ ggplot(data = merged.df,
 #Gene Ontology plotting
 # Load data
 # Alldata
-M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
-M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
-M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
 
-F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
-F_white_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
-M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
-F_black_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\alpha.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 
 
 # Extract gene lists UP
@@ -749,7 +749,7 @@ ck <- compareCluster(geneCluster = gene.list,
 ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
 head(ck) 
 cluster_summary <- data.frame(ck)
-write.csv(cluster_summary, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\clustersummary_alpha.csv)")
+write.csv(cluster_summary, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\clustersummary_gamma.csv)")
 #ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
 # Beta
 dotplot(ck, showCategory = c("positive regulation of endopeptidase activity", "protein acetylation", #f>m
@@ -776,6 +776,11 @@ dotplot(ck, showCategory = c("histone lysine demethylation", "protein dealkylati
                              "error-prone translesion synthesis", "neurotrophin signaling pathway", "regulation of fibroblast growth factor receptor signaling pathway", #fhvsfw
                              "positive regulation of NF-kappaB transcription factor activity", "toll-like receptor signaling pathway" #fwvsfh
 ), font.size=14)
+
+#Delta
+dotplot(ck, #showCategory = c(),
+        showCategory = 5,
+        font.size=10) + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + scale_y_discrete(labels=function(x) str_wrap(x, width=100))
 
 # Plotting venn diagrams
 #Beta cells ND
@@ -1118,7 +1123,7 @@ ggplot() +
   geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
                 data = venn_region(data),
                 size = 3) +
-  scale_fill_gradient(low = "white", high = "lightseagreen") + # change color based on celltype
+  scale_fill_gradient(low = "white", high = "grey30") + # change color based on celltype
   scale_color_manual(values = c("bmvsbf" = "black",
                                 "mvsf" ="black", 
                                 "wmvswf" = 'black'),
@@ -1188,7 +1193,7 @@ ggplot() +
   geom_sf_label(aes(label = paste0(count, "(", scales::percent(count/sum(count), accuracy = 2), ")")), 
                 data = venn_region(data),
                 size = 3) +
-  scale_fill_gradient(low = "white", high = "lightseagreen") + # change color based on celltype
+  scale_fill_gradient(low = "white", high = "grey30") + # change color based on celltype
   scale_color_manual(values = c("beta.bmvsbf" = "black",
                                 "beta.mvsf" ="black", 
                                 "beta.wmvswf" = 'black'),
