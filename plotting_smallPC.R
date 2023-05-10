@@ -696,52 +696,260 @@ ggplot(data = merged.df,
 
 #Gene Ontology plotting
 # Load data
-# Alldata
-M_ND.vs.F_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
-M_black_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
-M_white_ND.vs.F_white_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
-
-F_white_ND.vs.F_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
-F_white_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
-M_white_ND.vs.M_black_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
-F_black_ND.vs.F_hispanic_ND <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
-
-
+# delta
+M_ND.vs.F_ND_delta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_delta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_delta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_delta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_delta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_delta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_delta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\delta.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 # Extract gene lists UP
-mvsf <- rownames(dplyr::filter(M_ND.vs.F_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
-mbvsfb <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
-mwvsfw <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
-
-fwvsfb <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
-fwvsfh <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
-mwvsmb <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
-fbvsfh <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange > 0.000000000014))
-
+mvsf_delta <- rownames(dplyr::filter(M_ND.vs.F_ND_delta, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_delta <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_delta, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_delta <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_delta, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_delta <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_delta, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_delta <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_delta, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_delta <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_delta, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_delta <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_delta, padj < 0.1 & log2FoldChange > 0.000000000014))
 # Extract gene lists DOWN
-fvsm <- rownames(dplyr::filter(M_ND.vs.F_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
-fbvsmb <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
-fwvsmw <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
+fvsm_delta <- rownames(dplyr::filter(M_ND.vs.F_ND_delta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_delta <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_delta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_delta <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_delta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_delta <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_delta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_delta <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_delta, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_delta <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_delta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_delta <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_delta, padj < 0.1 & log2FoldChange < -0.000000000014))
 
-fbvsfw <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
-fhvsfw <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
-mbvsmw <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
-fhvsfb <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND, padj < 0.1 & log2FoldChange < -0.000000000014))
 
+# Gamma
+M_ND.vs.F_ND_gamma <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_gamma <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_gamma <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_gamma <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_gamma <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_gamma <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_gamma <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\gamma.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_gamma <- rownames(dplyr::filter(M_ND.vs.F_ND_gamma, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_gamma <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_gamma, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_gamma <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_gamma, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_gamma <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_gamma, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_gamma <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_gamma, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_gamma <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_gamma, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_gamma <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_gamma, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_gamma <- rownames(dplyr::filter(M_ND.vs.F_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_gamma <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_gamma <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_gamma <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_gamma <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_gamma <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_gamma <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
 
-# Make list
-gene.list <- list("fvsm" = fvsm, "fbvsmb" = fbvsmb, "fwvsmw" = fwvsmw,
-                  "mvsf" = mvsf, "mbvsfb" = mbvsfb, "mwvsfw" = mwvsfw, 
-                  "fwvsfb" = fwvsfb, "fbvsfw" = fbvsfw, "fbvsfh" = fbvsfh, "fhvsfb" = fhvsfb, "fhvsfw" = fhvsfw, "fwvsfh" = fwvsfh,
-                  "mwvsmb" = mwvsmb, "mbvsmw" = mbvsmw)
+# Epsilon
+M_ND.vs.F_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+#F_white_ND.vs.F_hispanic_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+#F_black_ND.vs.F_hispanic_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_epsilon <- rownames(dplyr::filter(M_ND.vs.F_ND_epsilon, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_epsilon <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_epsilon, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_epsilon <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_epsilon, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_epsilon <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_epsilon, padj < 0.1 & log2FoldChange > 0.000000000014))
+#fwvsfh_epsilon <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_epsilon, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_epsilon <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_epsilon, padj < 0.1 & log2FoldChange > 0.000000000014))
+#fbvsfh_epsilon <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_epsilon, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_epsilon <- rownames(dplyr::filter(M_ND.vs.F_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_epsilon <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_epsilon <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_epsilon <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
+#fhvsfw_epsilon <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_epsilon <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
+#fhvsfb_epsilon <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
 
-all_genes <- rownames(M_ND.vs.F_ND)
+# beta+alpha
+M_ND.vs.F_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_betaalpha <- rownames(dplyr::filter(M_ND.vs.F_ND_betaalpha, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_betaalpha <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_betaalpha, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_betaalpha <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_betaalpha, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_betaalpha <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_betaalpha, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_betaalpha <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_betaalpha, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_betaalpha <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_betaalpha, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_betaalpha <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_betaalpha, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_betaalpha <- rownames(dplyr::filter(M_ND.vs.F_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_betaalpha <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_betaalpha <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_betaalpha <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_betaalpha <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_betaalpha <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_betaalpha <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+# beta+delta
+M_ND.vs.F_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_betadelta <- rownames(dplyr::filter(M_ND.vs.F_ND_betadelta, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_betadelta <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_betadelta, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_betadelta <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_betadelta, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_betadelta <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_betadelta, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_betadelta <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_betadelta, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_betadelta <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_betadelta, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_betadelta <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_betadelta, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_betadelta <- rownames(dplyr::filter(M_ND.vs.F_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_betadelta <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_betadelta <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_betadelta <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_betadelta <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_betadelta <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_betadelta <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+# cyc_endo
+M_ND.vs.F_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+#M_white_ND.vs.M_black_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+#F_black_ND.vs.F_hispanic_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_cycling_endo <- rownames(dplyr::filter(M_ND.vs.F_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_cycling_endo <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+#mwvsmb_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+#fbvsfh_cycling_endo <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_cycling_endo <- rownames(dplyr::filter(M_ND.vs.F_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_cycling_endo <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+#mbvsmw_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+#fhvsfb_cycling_endo <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+# acinar
+M_ND.vs.F_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_acinar <- rownames(dplyr::filter(M_ND.vs.F_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_acinar <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_acinar <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_acinar <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_acinar<- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_acinar <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_acinar <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_acinar <- rownames(dplyr::filter(M_ND.vs.F_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_acinar <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_acinar <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_acinar <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_acinar <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_acinar <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_acinar <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+# ductal
+M_ND.vs.F_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_ductal <- rownames(dplyr::filter(M_ND.vs.F_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_ductal <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_ductal <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_ductal <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_ductal<- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_ductal <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_ductal <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_ductal <- rownames(dplyr::filter(M_ND.vs.F_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_ductal <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_ductal <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_ductal <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_ductal <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_ductal <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_ductal <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+# activated_stellate
+M_ND.vs.F_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_activated_stellate <- rownames(dplyr::filter(M_ND.vs.F_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_activated_stellate <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_activated_stellate <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_activated_stellate <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_activated_stellate<- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_activated_stellate <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_activated_stellate <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_activated_stellate <- rownames(dplyr::filter(M_ND.vs.F_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_activated_stellate <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_activated_stellate <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_activated_stellate <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_activated_stellate <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_activated_stellate <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_activated_stellate <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+# Make list    
+gene.list <- list("fvsm_delta" = fvsm_delta,     "fvsm_gamma" = fvsm_gamma,     "fvsm_epsilon" = fvsm_epsilon,     "fvsm_betaalpha" = fvsm_betaalpha,     "fvsm_betadelta" = fvsm_betaalpha,     "fvsm_cycling_endo" = fvsm_cycling_endo,     "fvsm_acinar" = fvsm_acinar,     "fvsm_ductal" = fvsm_ductal,     "fvsm_ductal" = fvsm_activated_stellate,
+                  "fbvsmb_delta" = fbvsmb_delta, "fbvsmb_gamma" = fbvsmb_gamma, "fbvsmb_epsilon" = fbvsmb_epsilon, "fbvsmb_betaalpha" = fbvsmb_betaalpha, "fbvsmb_betadelta" = fbvsmb_betadelta, "fbvsmb_cycling_endo" = fbvsmb_cycling_endo, "fbvsmb_acinar" = fbvsmb_acinar, "fbvsmb_ductal" = fbvsmb_ductal, "fbvsmb_ductal" = fbvsmb_activated_stellate,
+                  "fwvsmw_delta" = fwvsmw_delta, "fwvsmw_gamma" = fwvsmw_gamma, "fwvsmw_epsilon" = fwvsmw_epsilon, "fwvsmw_betaalpha" = fwvsmw_betaalpha, "fwvsmw_betadelta" = fwvsmw_betadelta, "fwvsmw_cycling_endo" = fwvsmw_cycling_endo, "fwvsmw_acinar" = fwvsmw_acinar, "fwvsmw_ductal" = fwvsmw_ductal, "fwvsmw_ductal" = fwvsmw_activated_stellate,
+                  
+                  "mvsf_delta" = mvsf_delta,     "mvsf_gamma" = mvsf_gamma,     "mvsf_epsilon" = mvsf_epsilon,     "mvsf_betaalpha" = mvsf_betaalpha,     "mvsf_betadelta" = mvsf_betadelta,     "mvsf_cycling_endo" = mvsf_cycling_endo,     "mvsf_acinar" = mvsf_acinar,     "mvsf_ductal" = mvsf_ductal,     "mvsf_ductal" = mvsf_activated_stellate,
+                  "mbvsfb_delta" = mbvsfb_delta, "mbvsfb_gamma" = mbvsfb_gamma, "mbvsfb_epsilon" = mbvsfb_epsilon, "mbvsfb_betaalpha" = mbvsfb_betaalpha, "mbvsfb_betadelta" = mbvsfb_betadelta, "mbvsfb_cycling_endo" = mbvsfb_cycling_endo, "mbvsfb_acinar" = mbvsfb_acinar, "mbvsfb_ductal" = mbvsfb_ductal, "mbvsfb_ductal" = mbvsfb_activated_stellate,
+                  "mwvsfw_delta" = mwvsfw_delta, "mwvsfw_gamma" = mwvsfw_gamma, "mwvsfw_epsilon" = mwvsfw_epsilon, "mwvsfw_betaalpha" = mwvsfw_betaalpha, "mwvsfw_betadelta" = mwvsfw_betadelta, "mwvsfw_cycling_endo" = mwvsfw_cycling_endo, "mwvsfw_acinar" = mwvsfw_acinar, "mwvsfw_ductal" = mwvsfw_ductal, "mwvsfw_ductal" = mwvsfw_activated_stellate,
+                  
+                  "fwvsfb_delta" = fwvsfb_delta, "fwvsfb_gamma" = fwvsfb_gamma, "fwvsfb_epsilon" = fwvsfb_epsilon, "fwvsfb_betaalpha" = fwvsfb_betaalpha, "fwvsfb_betadelta" = fwvsfb_betadelta, "fwvsfb_cycling_endo" = fwvsfb_cycling_endo, "fwvsfb_acinar" = fwvsfb_acinar, "fwvsfb_ductal" = fwvsfb_ductal, "fwvsfb_ductal" = fwvsfb_activated_stellate,
+                  "fbvsfw_delta" = fbvsfw_delta, "fbvsfw_gamma" = fbvsfw_gamma, "fbvsfw_epsilon" = fbvsfw_epsilon, "fbvsfw_betaalpha" = fbvsfw_betaalpha, "fbvsfw_betadelta" = fbvsfw_betadelta, "fbvsfw_cycling_endo" = fbvsfw_cycling_endo, "fbvsfw_acinar" = fbvsfw_acinar, "fbvsfw_ductal" = fbvsfw_ductal, "fbvsfw_ductal" = fbvsfw_activated_stellate,
+                  "fbvsfh_delta" = fbvsfh_delta, "fbvsfh_gamma" = fbvsfh_gamma,                                    "fbvsfh_betaalpha" = fbvsfh_betaalpha, "fbvsfh_betadelta" = fbvsfh_betadelta,                                              "fbvsfh_acinar" = fbvsfh_acinar, "fbvsfh_ductal" = fbvsfh_ductal, "fbvsfh_ductal" = fbvsfh_activated_stellate,
+                  "fhvsfb_delta" = fhvsfb_delta, "fhvsfb_gamma" = fhvsfb_gamma,                                    "fhvsfb_betaalpha" = fhvsfb_betaalpha, "fhvsfb_betadelta" = fhvsfb_betadelta,                                              "fhvsfb_acinar" = fhvsfb_acinar, "fhvsfb_ductal" = fhvsfb_ductal, "fhvsfb_ductal" = fhvsfb_activated_stellate, 
+                  "fhvsfw_delta" = fhvsfw_delta, "fhvsfw_gamma" = fhvsfw_gamma,                                    "fhvsfw_betaalpha" = fhvsfw_betaalpha, "fhvsfw_betadelta" = fhvsfw_betadelta, "fhvsfw_cycling_endo" = fhvsfw_cycling_endo, "fhvsfw_acinar" = fhvsfw_acinar, "fhvsfw_ductal" = fhvsfw_ductal, "fhvsfw_ductal" = fhvsfw_activated_stellate,
+                  "fwvsfh_delta" = fwvsfh_delta, "fwvsfh_gamma" = fwvsfh_gamma,                                    "fwvsfh_betaalpha" = fwvsfh_betaalpha, "fwvsfh_betadelta" = fwvsfh_betadelta, "fwvsfh_cycling_endo" = fwvsfh_cycling_endo, "fwvsfh_acinar" = fwvsfh_acinar, "fwvsfh_ductal" = fwvsfh_ductal, "fwvsfh_ductal" = fwvsfh_activated_stellate,
+                  
+                  "mwvsmb_delta" = mwvsmb_delta, "mwvsmb_gamma" = mwvsmb_gamma, "mwvsmb_epsilon" = mwvsmb_epsilon, "mwvsmb_betaalpha" = mwvsmb_betaalpha, "mwvsmb_betadelta" = mwvsmb_betadelta,                                              "mwvsmb_acinar" = mwvsmb_acinar, "mwvsmb_ductal" = mwvsmb_ductal, "mwvsmb_ductal" = mwvsmb_activated_stellate,
+                  "mbvsmw_delta" = mbvsmw_delta, "mbvsmw_gamma" = mbvsmw_gamma, "mbvsmw_epsilon" = mbvsmw_epsilon, "mbvsmw_betaalpha" = mbvsmw_betaalpha, "mbvsmw_betadelta" = mbvsmw_betadelta,                                              "mbvsmw_acinar" = mbvsmw_acinar, "mbvsmw_ductal" = mbvsmw_ductal, "mbvsmw_ductal" = mbvsmw_activated_stellate
+                  )
+
+all_genes <- rownames(M_ND.vs.F_ND_delta)
 # Compare
 ck <- compareCluster(geneCluster = gene.list, 
                      fun = enrichGO, 
-                     universe = all_genes, 
+                     #universe = all_genes, 
                      keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
                      OrgDb = org.Hs.eg.db, 
-                     ont = c("ALL"), 
+                     ont = "BP", 
                      pAdjustMethod = "BH", 
                      pvalueCutoff = 1, 
                      qvalueCutoff = 0.1, #if not set default is at 0.05
@@ -778,8 +986,8 @@ dotplot(ck, showCategory = c("histone lysine demethylation", "protein dealkylati
 ), font.size=14)
 
 #Delta
-dotplot(ck, #showCategory = c(),
-        showCategory = 5,
+ck <- simplify(ck, cutoff = 0.6, measure = "Wang")
+dotplot(ck, showCategory = 5,
         font.size=10) + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + scale_y_discrete(labels=function(x) str_wrap(x, width=100))
 
 # Plotting venn diagrams
