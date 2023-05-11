@@ -74,6 +74,8 @@ install.packages('metap')
 install.packages('magick')
 install.packages("corrplot")
 install.packages("RColorBrewer")
+install.packages("sunburstR")
+install_github("didacs/ggsunburst")
 
 
 # Run the following code once you have Seurat installed
@@ -135,6 +137,8 @@ suppressWarnings(
     library(corrplot)
     library(DESeq2)
     library(RColorBrewer)
+    library(sunburstR)
+    library(d3r)
   }
 )
 
@@ -186,7 +190,7 @@ processed_rna$disease_ancestry_lib_sex <- paste(Idents(processed_rna), processed
 table(processed_rna$disease_ancestry_lib_sex)
 
 Idents(processed_rna) <- "diabetes_status"
-processed_rna$disease_ancestry_lib_sex_source <- paste(Idents(processed_rna), processed_rna$'ancestry', processed_rna$'Library', processed_rna$'Sex', processed_rna$'Tissue Source', sep = "_")
+processed_rna$disease_ancestry_lib_sex_source <- paste(Idents(processed_rna), processed_rna$'ancestry', processed_rna$'Library', processed_rna$'Sex', processed_rna$'tissue_source', sep = "_")
 table(processed_rna$disease_ancestry_lib_sex_source)
 
 Idents(processed_rna) <- "diabetes_status"
@@ -270,6 +274,22 @@ p4 <- QC_Plots_Complexity(seurat_object = processed_rna, pt.size = 0,
                                          "springgreen4"))
 
 wrap_plots(p1, p2, p3, p4, ncol = 2)
+
+#Sunburst plot
+meta <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\meta.csv)")
+tree <- d3_nest(meta, value_cols = "size")
+sb1 <- sunburst(tree)
+
+pdf(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\plot.pdf)",   # The directory you want to save the file in
+    width = 4, # The width of the plot in inches
+    height = 4)
+
+sunburst(
+  tree,
+  legend = FALSE,
+  width = "100%",
+  height = 400
+)
 
 
 DimPlot(processed_rna, #switch here to plot
@@ -374,6 +394,18 @@ DimPlot(processed_rna,
                  "red4"
         )
 )
+
+# Plot genes
+FeaturePlot(processed_rna, 
+            features = c("INS", "GCG", "SST", "GHRL", "PPY", "MKI67",
+                         "CFTR", "PNLIP", "SFRP2", "RGS5", "PECAM1", "CD7",
+                         "FCER1G", "TPSB2", "CDH19"), 
+            cols = c("lightgrey", "red4"),
+            order = FALSE,
+            ncol = 5,
+            pt.size = 2,
+            raster = TRUE,
+            raster.dpi = c(1024, 1024))
 
 # Heatmap
 # Make average seurat object
@@ -747,6 +779,7 @@ fhvsfw_gamma <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_gamma, padj <
 mbvsmw_gamma <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
 fhvsfb_gamma <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_gamma, padj < 0.1 & log2FoldChange < -0.000000000014))
 
+
 # Epsilon
 M_ND.vs.F_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
 M_black_ND.vs.F_black_ND_epsilon <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\epsilon.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
@@ -771,6 +804,7 @@ fbvsfw_epsilon <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_epsilon, padj 
 #fhvsfw_epsilon <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
 mbvsmw_epsilon <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
 #fhvsfb_epsilon <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_epsilon, padj < 0.1 & log2FoldChange < -0.000000000014))
+
 
 # beta+alpha
 M_ND.vs.F_ND_betaalpha <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+alpha.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
@@ -797,6 +831,7 @@ fhvsfw_betaalpha <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_betaalpha
 mbvsmw_betaalpha <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
 fhvsfb_betaalpha <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_betaalpha, padj < 0.1 & log2FoldChange < -0.000000000014))
 
+
 # beta+delta
 M_ND.vs.F_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
 M_black_ND.vs.F_black_ND_betadelta <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\beta+delta.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
@@ -822,30 +857,32 @@ fhvsfw_betadelta <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_betadelta
 mbvsmw_betadelta <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
 fhvsfb_betadelta <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_betadelta, padj < 0.1 & log2FoldChange < -0.000000000014))
 
+
 # cyc_endo
 M_ND.vs.F_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
 M_black_ND.vs.F_black_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 M_white_ND.vs.F_white_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_black_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_hispanic_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
-#M_white_ND.vs.M_black_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
-#F_black_ND.vs.F_hispanic_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_cycling_endo <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\cycling_endo.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 # Extract gene lists UP
 mvsf_cycling_endo <- rownames(dplyr::filter(M_ND.vs.F_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
 mbvsfb_cycling_endo <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
 mwvsfw_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
 fwvsfb_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
 fwvsfh_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
-#mwvsmb_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
-#fbvsfh_cycling_endo <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_cycling_endo <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange > 0.000000000014))
 # Extract gene lists DOWN
 fvsm_cycling_endo <- rownames(dplyr::filter(M_ND.vs.F_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
 fbvsmb_cycling_endo <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
 fwvsmw_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
 fbvsfw_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
 fhvsfw_cycling_endo <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
-#mbvsmw_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
-#fhvsfb_cycling_endo <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_cycling_endo <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_cycling_endo <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_cycling_endo, padj < 0.1 & log2FoldChange < -0.000000000014))
+
 
 # acinar
 M_ND.vs.F_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
@@ -853,8 +890,8 @@ M_black_ND.vs.F_black_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1.
 M_white_ND.vs.F_white_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_black_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_hispanic_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
-M_white_ND.vs.M_black_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
-F_black_ND.vs.F_hispanic_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_acinar <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\acinar.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 # Extract gene lists UP
 mvsf_acinar <- rownames(dplyr::filter(M_ND.vs.F_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
 mbvsfb_acinar <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_acinar, padj < 0.1 & log2FoldChange > 0.000000000014))
@@ -872,14 +909,15 @@ fhvsfw_acinar <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_acinar, padj
 mbvsmw_acinar <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
 fhvsfb_acinar <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_acinar, padj < 0.1 & log2FoldChange < -0.000000000014))
 
+
 # ductal
 M_ND.vs.F_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
 M_black_ND.vs.F_black_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 M_white_ND.vs.F_white_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_black_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_hispanic_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
-M_white_ND.vs.M_black_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
-F_black_ND.vs.F_hispanic_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_ductal <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\ductal.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 # Extract gene lists UP
 mvsf_ductal <- rownames(dplyr::filter(M_ND.vs.F_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
 mbvsfb_ductal <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_ductal, padj < 0.1 & log2FoldChange > 0.000000000014))
@@ -897,14 +935,15 @@ fhvsfw_ductal <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_ductal, padj
 mbvsmw_ductal <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
 fhvsfb_ductal <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_ductal, padj < 0.1 & log2FoldChange < -0.000000000014))
 
+
 # activated_stellate
 M_ND.vs.F_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
 M_black_ND.vs.F_black_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 M_white_ND.vs.F_white_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_black_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
 F_white_ND.vs.F_hispanic_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
-M_white_ND.vs.M_black_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
-F_black_ND.vs.F_hispanic_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_activated_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\activated_stellate.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
 # Extract gene lists UP
 mvsf_activated_stellate <- rownames(dplyr::filter(M_ND.vs.F_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
 mbvsfb_activated_stellate <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_activated_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
@@ -922,42 +961,216 @@ fhvsfw_activated_stellate <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_
 mbvsmw_activated_stellate <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
 fhvsfb_activated_stellate <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_activated_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
 
+
+# quiescent_stellate
+M_ND.vs.F_ND_quiescent_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_quiescent_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_quiescent_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_quiescent_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_quiescent_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_quiescent_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_quiescent_stellate <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\quiescent_stellate.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_quiescent_stellate <- rownames(dplyr::filter(M_ND.vs.F_ND_quiescent_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_quiescent_stellate <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_quiescent_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_quiescent_stellate <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_quiescent_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_quiescent_stellate <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_quiescent_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_quiescent_stellate<- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_quiescent_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_quiescent_stellate <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_quiescent_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_quiescent_stellate <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_quiescent_stellate, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_quiescent_stellate <- rownames(dplyr::filter(M_ND.vs.F_ND_quiescent_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_quiescent_stellate <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_quiescent_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_quiescent_stellate <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_quiescent_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_quiescent_stellate <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_quiescent_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_quiescent_stellate <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_quiescent_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_quiescent_stellate <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_quiescent_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_quiescent_stellate <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_quiescent_stellate, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+
+#endothelial
+M_ND.vs.F_ND_endothelial <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_endothelial <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_endothelial <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_endothelial <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_endothelial <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_endothelial <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_endothelial <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\endothelial.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_endothelial <- rownames(dplyr::filter(M_ND.vs.F_ND_endothelial, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_endothelial <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_endothelial, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_endothelial <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_endothelial, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_endothelial <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_endothelial, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_endothelial<- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_endothelial, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_endothelial <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_endothelial, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_endothelial <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_endothelial, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_endothelial <- rownames(dplyr::filter(M_ND.vs.F_ND_endothelial, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_endothelial <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_endothelial, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_endothelial <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_endothelial, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_endothelial <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_endothelial, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_endothelial <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_endothelial, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_endothelial <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_endothelial, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_endothelial <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_endothelial, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+
+#lymphocyte
+M_ND.vs.F_ND_lymphocyte <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_lymphocyte <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_lymphocyte <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_lymphocyte <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_lymphocyte <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_lymphocyte <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_lymphocyte <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\lymphocyte.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_lymphocyte <- rownames(dplyr::filter(M_ND.vs.F_ND_lymphocyte, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_lymphocyte <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_lymphocyte, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_lymphocyte <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_lymphocyte, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_lymphocyte <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_lymphocyte, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_lymphocyte<- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_lymphocyte, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_lymphocyte <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_lymphocyte, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_lymphocyte <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_lymphocyte, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_lymphocyte <- rownames(dplyr::filter(M_ND.vs.F_ND_lymphocyte, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_lymphocyte <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_lymphocyte, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_lymphocyte <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_lymphocyte, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_lymphocyte <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_lymphocyte, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_lymphocyte <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_lymphocyte, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_lymphocyte <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_lymphocyte, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_lymphocyte <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_lymphocyte, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+
+#macrophages
+M_ND.vs.F_ND_macrophages <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_macrophages <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_macrophages <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_macrophages <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_macrophages <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_macrophages <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_macrophages <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\macrophages.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_macrophages <- rownames(dplyr::filter(M_ND.vs.F_ND_macrophages, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_macrophages <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_macrophages, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_macrophages <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_macrophages, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_macrophages <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_macrophages, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_macrophages <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_macrophages, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_macrophages <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_macrophages, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_macrophages <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_macrophages, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_macrophages <- rownames(dplyr::filter(M_ND.vs.F_ND_macrophages, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_macrophages <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_macrophages, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_macrophages <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_macrophages, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_macrophages <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_macrophages, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_macrophages <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_macrophages, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_macrophages <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_macrophages, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_macrophages <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_macrophages, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+
+#mast
+M_ND.vs.F_ND_mast <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_mast <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_mast <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_mast <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_hispanic_ND_mast <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_mast <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+F_black_ND.vs.F_hispanic_ND_mast <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\mast.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_mast <- rownames(dplyr::filter(M_ND.vs.F_ND_mast, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_mast <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_mast, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_mast <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_mast, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_mast <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_mast, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfh_mast <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_mast, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_mast <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_mast, padj < 0.1 & log2FoldChange > 0.000000000014))
+fbvsfh_mast <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_mast, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_mast <- rownames(dplyr::filter(M_ND.vs.F_ND_mast, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_mast <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_mast, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_mast <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_mast, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_mast <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_mast, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfw_mast <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_mast, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_mast <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_mast, padj < 0.1 & log2FoldChange < -0.000000000014))
+fhvsfb_mast <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_mast, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+
+#schwann
+M_ND.vs.F_ND_schwann <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_ND.vs.F_ND.tsv)", sep = '\t', row.names = 1)
+M_black_ND.vs.F_black_ND_schwann <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_black_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.F_white_ND_schwann <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_white_ND.vs.F_white_ND.tsv)", sep = '\t', row.names = 1)
+F_white_ND.vs.F_black_ND_schwann <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.F_white_ND.vs.F_black_ND.tsv)", sep = '\t', row.names = 1)
+#F_white_ND.vs.F_hispanic_ND_schwann <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.F_white_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+M_white_ND.vs.M_black_ND_schwann <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.M_white_ND.vs.M_black_ND.tsv)", sep = '\t', row.names = 1)
+#F_black_ND.vs.F_hispanic_ND_schwann <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\DETesting\DE_testing\alldata\schwann.deseq.WaldTest.F_black_ND.vs.F_hispanic_ND.tsv)", sep = '\t', row.names = 1)
+# Extract gene lists UP
+mvsf_schwann <- rownames(dplyr::filter(M_ND.vs.F_ND_schwann, padj < 0.1 & log2FoldChange > 0.000000000014))
+mbvsfb_schwann <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_schwann, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsfw_schwann <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_schwann, padj < 0.1 & log2FoldChange > 0.000000000014))
+fwvsfb_schwann <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_schwann, padj < 0.1 & log2FoldChange > 0.000000000014))
+#fwvsfh_schwann <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_schwann, padj < 0.1 & log2FoldChange > 0.000000000014))
+mwvsmb_schwann <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_schwann, padj < 0.1 & log2FoldChange > 0.000000000014))
+#fbvsfh_schwann <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_schwann, padj < 0.1 & log2FoldChange > 0.000000000014))
+# Extract gene lists DOWN
+fvsm_schwann <- rownames(dplyr::filter(M_ND.vs.F_ND_schwann, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsmb_schwann <- rownames(dplyr::filter(M_black_ND.vs.F_black_ND_schwann, padj < 0.1 & log2FoldChange < -0.000000000014))
+fwvsmw_schwann <- rownames(dplyr::filter(M_white_ND.vs.F_white_ND_schwann, padj < 0.1 & log2FoldChange < -0.000000000014))
+fbvsfw_schwann <- rownames(dplyr::filter(F_white_ND.vs.F_black_ND_schwann, padj < 0.1 & log2FoldChange < -0.000000000014))
+#fhvsfw_schwann <- rownames(dplyr::filter(F_white_ND.vs.F_hispanic_ND_schwann, padj < 0.1 & log2FoldChange < -0.000000000014))
+mbvsmw_schwann <- rownames(dplyr::filter(M_white_ND.vs.M_black_ND_schwann, padj < 0.1 & log2FoldChange < -0.000000000014))
+#fhvsfb_schwann <- rownames(dplyr::filter(F_black_ND.vs.F_hispanic_ND_schwann, padj < 0.1 & log2FoldChange < -0.000000000014))
+
+
 # Make list    
-gene.list <- list("fvsm_delta" = fvsm_delta,     "fvsm_gamma" = fvsm_gamma,     "fvsm_epsilon" = fvsm_epsilon,     "fvsm_betaalpha" = fvsm_betaalpha,     "fvsm_betadelta" = fvsm_betaalpha,     "fvsm_cycling_endo" = fvsm_cycling_endo,     "fvsm_acinar" = fvsm_acinar,     "fvsm_ductal" = fvsm_ductal,     "fvsm_ductal" = fvsm_activated_stellate,
-                  "fbvsmb_delta" = fbvsmb_delta, "fbvsmb_gamma" = fbvsmb_gamma, "fbvsmb_epsilon" = fbvsmb_epsilon, "fbvsmb_betaalpha" = fbvsmb_betaalpha, "fbvsmb_betadelta" = fbvsmb_betadelta, "fbvsmb_cycling_endo" = fbvsmb_cycling_endo, "fbvsmb_acinar" = fbvsmb_acinar, "fbvsmb_ductal" = fbvsmb_ductal, "fbvsmb_ductal" = fbvsmb_activated_stellate,
-                  "fwvsmw_delta" = fwvsmw_delta, "fwvsmw_gamma" = fwvsmw_gamma, "fwvsmw_epsilon" = fwvsmw_epsilon, "fwvsmw_betaalpha" = fwvsmw_betaalpha, "fwvsmw_betadelta" = fwvsmw_betadelta, "fwvsmw_cycling_endo" = fwvsmw_cycling_endo, "fwvsmw_acinar" = fwvsmw_acinar, "fwvsmw_ductal" = fwvsmw_ductal, "fwvsmw_ductal" = fwvsmw_activated_stellate,
+gene.list.sex <- list("fvsm_delta" = fvsm_delta,     "fvsm_gamma" = fvsm_gamma,     "fvsm_epsilon" = fvsm_epsilon,     "fvsm_betaalpha" = fvsm_betaalpha,     "fvsm_betadelta" = fvsm_betadelta,     "fvsm_cycling_endo" = fvsm_cycling_endo,     "fvsm_acinar" = fvsm_acinar,     "fvsm_ductal" = fvsm_ductal,     "fvsm_activated_stellate" = fvsm_activated_stellate,     "fvsm_quiescent_stellate" = fvsm_quiescent_stellate,     "fvsm_endothelial" = fvsm_endothelial,      "fvsm_lymphocyte" = fvsm_lymphocyte,      "fvsm_macrophages" = fvsm_macrophages,      "fvsm_mast" = fvsm_mast,     "fvsm_schwann" = fvsm_schwann,                                                                                                                                                                          
+                      "fbvsmb_delta" = fbvsmb_delta, "fbvsmb_gamma" = fbvsmb_gamma, "fbvsmb_epsilon" = fbvsmb_epsilon, "fbvsmb_betaalpha" = fbvsmb_betaalpha, "fbvsmb_betadelta" = fbvsmb_betadelta, "fbvsmb_cycling_endo" = fbvsmb_cycling_endo, "fbvsmb_acinar" = fbvsmb_acinar, "fbvsmb_ductal" = fbvsmb_ductal, "fbvsmb_activated_stellate" = fbvsmb_activated_stellate, "fbvsmb_quiescent_stellate" = fbvsmb_quiescent_stellate, "fbvsmb_endothelial" = fbvsmb_endothelial,  "fbvsmb_lymphocyte" = fbvsmb_lymphocyte,  "fbvsmb_macrophages" = fbvsmb_macrophages,  "fbvsmb_mast" = fbvsmb_mast, "fbvsmb_schwann" = fbvsmb_schwann,
+                      "fwvsmw_delta" = fwvsmw_delta, "fwvsmw_gamma" = fwvsmw_gamma, "fwvsmw_epsilon" = fwvsmw_epsilon, "fwvsmw_betaalpha" = fwvsmw_betaalpha, "fwvsmw_betadelta" = fwvsmw_betadelta, "fwvsmw_cycling_endo" = fwvsmw_cycling_endo, "fwvsmw_acinar" = fwvsmw_acinar, "fwvsmw_ductal" = fwvsmw_ductal, "fwvsmw_activated_stellate" = fwvsmw_activated_stellate, "fwvsmw_quiescent_stellate" = fwvsmw_quiescent_stellate, "fwvsmw_endothelial" = fwvsmw_endothelial,  "fwvsmw_lymphocyte" = fwvsmw_lymphocyte,  "fwvsmw_macrophages" = fwvsmw_macrophages,  "fwvsmw_mast" = fwvsmw_mast, "fwvsmw_schwann" = fwvsmw_schwann,
                   
-                  "mvsf_delta" = mvsf_delta,     "mvsf_gamma" = mvsf_gamma,     "mvsf_epsilon" = mvsf_epsilon,     "mvsf_betaalpha" = mvsf_betaalpha,     "mvsf_betadelta" = mvsf_betadelta,     "mvsf_cycling_endo" = mvsf_cycling_endo,     "mvsf_acinar" = mvsf_acinar,     "mvsf_ductal" = mvsf_ductal,     "mvsf_ductal" = mvsf_activated_stellate,
-                  "mbvsfb_delta" = mbvsfb_delta, "mbvsfb_gamma" = mbvsfb_gamma, "mbvsfb_epsilon" = mbvsfb_epsilon, "mbvsfb_betaalpha" = mbvsfb_betaalpha, "mbvsfb_betadelta" = mbvsfb_betadelta, "mbvsfb_cycling_endo" = mbvsfb_cycling_endo, "mbvsfb_acinar" = mbvsfb_acinar, "mbvsfb_ductal" = mbvsfb_ductal, "mbvsfb_ductal" = mbvsfb_activated_stellate,
-                  "mwvsfw_delta" = mwvsfw_delta, "mwvsfw_gamma" = mwvsfw_gamma, "mwvsfw_epsilon" = mwvsfw_epsilon, "mwvsfw_betaalpha" = mwvsfw_betaalpha, "mwvsfw_betadelta" = mwvsfw_betadelta, "mwvsfw_cycling_endo" = mwvsfw_cycling_endo, "mwvsfw_acinar" = mwvsfw_acinar, "mwvsfw_ductal" = mwvsfw_ductal, "mwvsfw_ductal" = mwvsfw_activated_stellate,
+                      "mvsf_delta" = mvsf_delta,     "mvsf_gamma" = mvsf_gamma,     "mvsf_epsilon" = mvsf_epsilon,     "mvsf_betaalpha" = mvsf_betaalpha,     "mvsf_betadelta" = mvsf_betadelta,     "mvsf_cycling_endo" = mvsf_cycling_endo,     "mvsf_acinar" = mvsf_acinar,     "mvsf_ductal" = mvsf_ductal,     "mvsf_activated_stellate" = mvsf_activated_stellate,     "mvsf_quiescent_stellate" = mvsf_quiescent_stellate,     "mvsf_endothelial" = mvsf_endothelial,      "mvsf_lymphocyte" = mvsf_lymphocyte,      "mvsf_macrophages" = mvsf_macrophages,      "mvsf_mast" = mvsf_mast,     "mvsf_schwann" = mvsf_schwann,
+                      "mbvsfb_delta" = mbvsfb_delta, "mbvsfb_gamma" = mbvsfb_gamma, "mbvsfb_epsilon" = mbvsfb_epsilon, "mbvsfb_betaalpha" = mbvsfb_betaalpha, "mbvsfb_betadelta" = mbvsfb_betadelta, "mbvsfb_cycling_endo" = mbvsfb_cycling_endo, "mbvsfb_acinar" = mbvsfb_acinar, "mbvsfb_ductal" = mbvsfb_ductal, "mbvsfb_activated_stellate" = mbvsfb_activated_stellate, "mbvsfb_quiescent_stellate" = mbvsfb_quiescent_stellate, "mbvsfb_endothelial" = mbvsfb_endothelial,  "mbvsfb_lymphocyte" = mbvsfb_lymphocyte,  "mbvsfb_macrophages" = mbvsfb_macrophages,  "mbvsfb_mast" = mbvsfb_mast, "mbvsfb_schwann" = mbvsfb_schwann,
+                      "mwvsfw_delta" = mwvsfw_delta, "mwvsfw_gamma" = mwvsfw_gamma, "mwvsfw_epsilon" = mwvsfw_epsilon, "mwvsfw_betaalpha" = mwvsfw_betaalpha, "mwvsfw_betadelta" = mwvsfw_betadelta, "mwvsfw_cycling_endo" = mwvsfw_cycling_endo, "mwvsfw_acinar" = mwvsfw_acinar, "mwvsfw_ductal" = mwvsfw_ductal, "mwvsfw_activated_stellate" = mwvsfw_activated_stellate, "mwvsfw_quiescent_stellate" = mwvsfw_quiescent_stellate, "mwvsfw_endothelial" = mwvsfw_endothelial,  "mwvsfw_lymphocyte" = mwvsfw_lymphocyte,  "mwvsfw_macrophages" = mwvsfw_macrophages,  "mwvsfw_mast" = mwvsfw_mast, "mwvsfw_schwann" = mwvsfw_schwann
+)
+
+gene.list.anc <- list("fwvsfb_delta" = fwvsfb_delta, "fwvsfb_gamma" = fwvsfb_gamma, "fwvsfb_epsilon" = fwvsfb_epsilon, "fwvsfb_betaalpha" = fwvsfb_betaalpha, "fwvsfb_betadelta" = fwvsfb_betadelta, "fwvsfb_cycling_endo" = fwvsfb_cycling_endo, "fwvsfb_acinar" = fwvsfb_acinar, "fwvsfb_ductal" = fwvsfb_ductal, "fwvsfb_activated_stellate" = fwvsfb_activated_stellate, "fwvsfb_quiescent_stellate" = fwvsfb_quiescent_stellate, "fwvsfb_endothelial" = fwvsfb_endothelial,  "fwvsfb_lymphocyte" = fwvsfb_lymphocyte,  "fwvsfb_macrophages" = fwvsfb_macrophages,  "fwvsfb_mast" = fwvsfb_mast, "fwvsfb_schwann" = fwvsfb_schwann,
+                      "fbvsfw_delta" = fbvsfw_delta, "fbvsfw_gamma" = fbvsfw_gamma, "fbvsfw_epsilon" = fbvsfw_epsilon, "fbvsfw_betaalpha" = fbvsfw_betaalpha, "fbvsfw_betadelta" = fbvsfw_betadelta, "fbvsfw_cycling_endo" = fbvsfw_cycling_endo, "fbvsfw_acinar" = fbvsfw_acinar, "fbvsfw_ductal" = fbvsfw_ductal, "fbvsfw_activated_stellate" = fbvsfw_activated_stellate, "fbvsfw_quiescent_stellate" = fbvsfw_quiescent_stellate, "fbvsfw_endothelial" = fbvsfw_endothelial,  "fbvsfw_lymphocyte" = fbvsfw_lymphocyte,  "fbvsfw_macrophages" = fbvsfw_macrophages,  "fbvsfw_mast" = fbvsfw_mast, "fbvsfw_schwann" = fbvsfw_schwann,
+                      "fbvsfh_delta" = fbvsfh_delta, "fbvsfh_gamma" = fbvsfh_gamma,                                    "fbvsfh_betaalpha" = fbvsfh_betaalpha, "fbvsfh_betadelta" = fbvsfh_betadelta, "fbvsfh_cycling_endo" = fbvsfh_cycling_endo, "fbvsfh_acinar" = fbvsfh_acinar, "fbvsfh_ductal" = fbvsfh_ductal, "fbvsfh_activated_stellate" = fbvsfh_activated_stellate, "fbvsfh_quiescent_stellate" = fbvsfh_quiescent_stellate, "fbvsfh_endothelial" = fbvsfh_endothelial,  "fbvsfh_lymphocyte" = fbvsfh_lymphocyte,  "fbvsfh_macrophages" = fbvsfh_macrophages,  "fbvsfh_mast" = fbvsfh_mast,
+                      "fhvsfb_delta" = fhvsfb_delta, "fhvsfb_gamma" = fhvsfb_gamma,                                    "fhvsfb_betaalpha" = fhvsfb_betaalpha, "fhvsfb_betadelta" = fhvsfb_betadelta, "fhvsfb_cycling_endo" = fhvsfb_cycling_endo, "fhvsfb_acinar" = fhvsfb_acinar, "fhvsfb_ductal" = fhvsfb_ductal, "fhvsfb_activated_stellate" = fhvsfb_activated_stellate, "fhvsfb_quiescent_stellate" = fhvsfb_quiescent_stellate, "fhvsfb_endothelial" = fhvsfb_endothelial,  "fhvsfb_lymphocyte" = fhvsfb_lymphocyte,  "fhvsfb_macrophages" = fhvsfb_macrophages,  "fhvsfb_mast" = fhvsfb_mast,
+                      "fhvsfw_delta" = fhvsfw_delta, "fhvsfw_gamma" = fhvsfw_gamma,                                    "fhvsfw_betaalpha" = fhvsfw_betaalpha, "fhvsfw_betadelta" = fhvsfw_betadelta, "fhvsfw_cycling_endo" = fhvsfw_cycling_endo, "fhvsfw_acinar" = fhvsfw_acinar, "fhvsfw_ductal" = fhvsfw_ductal, "fhvsfw_activated_stellate" = fhvsfw_activated_stellate, "fhvsfw_quiescent_stellate" = fhvsfw_quiescent_stellate, "fhvsfw_endothelial" = fhvsfw_endothelial,  "fhvsfw_lymphocyte" = fhvsfw_lymphocyte,  "fhvsfw_macrophages" = fhvsfw_macrophages,  "fhvsfw_mast" = fhvsfw_mast,
+                      "fwvsfh_delta" = fwvsfh_delta, "fwvsfh_gamma" = fwvsfh_gamma,                                    "fwvsfh_betaalpha" = fwvsfh_betaalpha, "fwvsfh_betadelta" = fwvsfh_betadelta, "fwvsfh_cycling_endo" = fwvsfh_cycling_endo, "fwvsfh_acinar" = fwvsfh_acinar, "fwvsfh_ductal" = fwvsfh_ductal, "fwvsfh_activated_stellate" = fwvsfh_activated_stellate, "fwvsfh_quiescent_stellate" = fwvsfh_quiescent_stellate, "fwvsfh_endothelial" = fwvsfh_endothelial,  "fwvsfh_lymphocyte" = fwvsfh_lymphocyte,  "fwvsfh_macrophages" = fwvsfh_macrophages,  "fwvsfh_mast" = fwvsfh_mast,
                   
-                  "fwvsfb_delta" = fwvsfb_delta, "fwvsfb_gamma" = fwvsfb_gamma, "fwvsfb_epsilon" = fwvsfb_epsilon, "fwvsfb_betaalpha" = fwvsfb_betaalpha, "fwvsfb_betadelta" = fwvsfb_betadelta, "fwvsfb_cycling_endo" = fwvsfb_cycling_endo, "fwvsfb_acinar" = fwvsfb_acinar, "fwvsfb_ductal" = fwvsfb_ductal, "fwvsfb_ductal" = fwvsfb_activated_stellate,
-                  "fbvsfw_delta" = fbvsfw_delta, "fbvsfw_gamma" = fbvsfw_gamma, "fbvsfw_epsilon" = fbvsfw_epsilon, "fbvsfw_betaalpha" = fbvsfw_betaalpha, "fbvsfw_betadelta" = fbvsfw_betadelta, "fbvsfw_cycling_endo" = fbvsfw_cycling_endo, "fbvsfw_acinar" = fbvsfw_acinar, "fbvsfw_ductal" = fbvsfw_ductal, "fbvsfw_ductal" = fbvsfw_activated_stellate,
-                  "fbvsfh_delta" = fbvsfh_delta, "fbvsfh_gamma" = fbvsfh_gamma,                                    "fbvsfh_betaalpha" = fbvsfh_betaalpha, "fbvsfh_betadelta" = fbvsfh_betadelta,                                              "fbvsfh_acinar" = fbvsfh_acinar, "fbvsfh_ductal" = fbvsfh_ductal, "fbvsfh_ductal" = fbvsfh_activated_stellate,
-                  "fhvsfb_delta" = fhvsfb_delta, "fhvsfb_gamma" = fhvsfb_gamma,                                    "fhvsfb_betaalpha" = fhvsfb_betaalpha, "fhvsfb_betadelta" = fhvsfb_betadelta,                                              "fhvsfb_acinar" = fhvsfb_acinar, "fhvsfb_ductal" = fhvsfb_ductal, "fhvsfb_ductal" = fhvsfb_activated_stellate, 
-                  "fhvsfw_delta" = fhvsfw_delta, "fhvsfw_gamma" = fhvsfw_gamma,                                    "fhvsfw_betaalpha" = fhvsfw_betaalpha, "fhvsfw_betadelta" = fhvsfw_betadelta, "fhvsfw_cycling_endo" = fhvsfw_cycling_endo, "fhvsfw_acinar" = fhvsfw_acinar, "fhvsfw_ductal" = fhvsfw_ductal, "fhvsfw_ductal" = fhvsfw_activated_stellate,
-                  "fwvsfh_delta" = fwvsfh_delta, "fwvsfh_gamma" = fwvsfh_gamma,                                    "fwvsfh_betaalpha" = fwvsfh_betaalpha, "fwvsfh_betadelta" = fwvsfh_betadelta, "fwvsfh_cycling_endo" = fwvsfh_cycling_endo, "fwvsfh_acinar" = fwvsfh_acinar, "fwvsfh_ductal" = fwvsfh_ductal, "fwvsfh_ductal" = fwvsfh_activated_stellate,
-                  
-                  "mwvsmb_delta" = mwvsmb_delta, "mwvsmb_gamma" = mwvsmb_gamma, "mwvsmb_epsilon" = mwvsmb_epsilon, "mwvsmb_betaalpha" = mwvsmb_betaalpha, "mwvsmb_betadelta" = mwvsmb_betadelta,                                              "mwvsmb_acinar" = mwvsmb_acinar, "mwvsmb_ductal" = mwvsmb_ductal, "mwvsmb_ductal" = mwvsmb_activated_stellate,
-                  "mbvsmw_delta" = mbvsmw_delta, "mbvsmw_gamma" = mbvsmw_gamma, "mbvsmw_epsilon" = mbvsmw_epsilon, "mbvsmw_betaalpha" = mbvsmw_betaalpha, "mbvsmw_betadelta" = mbvsmw_betadelta,                                              "mbvsmw_acinar" = mbvsmw_acinar, "mbvsmw_ductal" = mbvsmw_ductal, "mbvsmw_ductal" = mbvsmw_activated_stellate
+                      "mwvsmb_delta" = mwvsmb_delta, "mwvsmb_gamma" = mwvsmb_gamma, "mwvsmb_epsilon" = mwvsmb_epsilon, "mwvsmb_betaalpha" = mwvsmb_betaalpha, "mwvsmb_betadelta" = mwvsmb_betadelta, "mwvsmb_cycling_endo" = mwvsmb_cycling_endo, "mwvsmb_acinar" = mwvsmb_acinar, "mwvsmb_ductal" = mwvsmb_ductal, "mwvsmb_activated_stellate" = mwvsmb_activated_stellate, "mwvsmb_quiescent_stellate" = mwvsmb_quiescent_stellate, "mwvsmb_endothelial" = mwvsmb_endothelial,  "mwvsmb_lymphocyte" = mwvsmb_lymphocyte,  "mwvsmb_macrophages" = mwvsmb_macrophages,  "mwvsmb_mast" = mwvsmb_mast, "mwvsmb_schwann" = mwvsmb_schwann,
+                      "mbvsmw_delta" = mbvsmw_delta, "mbvsmw_gamma" = mbvsmw_gamma, "mbvsmw_epsilon" = mbvsmw_epsilon, "mbvsmw_betaalpha" = mbvsmw_betaalpha, "mbvsmw_betadelta" = mbvsmw_betadelta, "mbvsmw_cycling_endo" = mbvsmw_cycling_endo, "mbvsmw_acinar" = mbvsmw_acinar, "mbvsmw_ductal" = mbvsmw_ductal, "mbvsmw_activated_stellate" = mbvsmw_activated_stellate, "mbvsmw_quiescent_stellate" = mbvsmw_quiescent_stellate, "mbvsmw_endothelial" = mbvsmw_endothelial,  "mbvsmw_lymphocyte" = mbvsmw_lymphocyte,  "mbvsmw_macrophages" = mbvsmw_macrophages,  "mbvsmw_mast" = mbvsmw_mast, "mbvsmw_schwann" = mbvsmw_schwann
                   )
 
-all_genes <- rownames(M_ND.vs.F_ND_delta)
-# Compare
-ck <- compareCluster(geneCluster = gene.list, 
-                     fun = enrichGO, 
-                     #universe = all_genes, 
-                     keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
-                     OrgDb = org.Hs.eg.db, 
-                     ont = "BP", 
-                     pAdjustMethod = "BH", 
-                     pvalueCutoff = 1, 
-                     qvalueCutoff = 0.1, #if not set default is at 0.05
-                     readable = TRUE)
-ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
-head(ck) 
-cluster_summary <- data.frame(ck)
-write.csv(cluster_summary, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\clustersummary_gamma.csv)")
+#all_genes <- rownames(M_ND.vs.F_ND_delta)
+# Compare sex
+ck.sex <- compareCluster(geneCluster = gene.list.sex, 
+                         fun = enrichGO, 
+                         #universe = all_genes, 
+                         keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                         OrgDb = org.Hs.eg.db, 
+                         ont = "BP", 
+                         pAdjustMethod = "BH", 
+                         pvalueCutoff = 1, 
+                         qvalueCutoff = 0.1, #if not set default is at 0.05
+                         readable = TRUE)
+ck.sex <- setReadable(ck.sex, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+head(ck.sex) 
+cluster_summary_sex <- data.frame(ck.sex)
+write.csv(cluster_summary_sex, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\clustersummary_all_sex.csv)")
+
+# Compare ancestry::anc
+ck.anc <- compareCluster(geneCluster = gene.list.anc, 
+                         fun = enrichGO, 
+                         #universe = all_genes, 
+                         keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                         OrgDb = org.Hs.eg.db, 
+                         ont = "BP", 
+                         pAdjustMethod = "BH", 
+                         pvalueCutoff = 1, 
+                         qvalueCutoff = 0.1, #if not set default is at 0.05
+                         readable = TRUE)
+ck.anc <- setReadable(ck.anc, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+head(ck.anc) 
+cluster_summary_anc <- data.frame(ck.anc)
+write.csv(cluster_summary_anc, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\scRNA\ORA\alldata\clustersummary_all_anc.csv)")
 #ck.sub <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
 # Beta
 dotplot(ck, showCategory = c("positive regulation of endopeptidase activity", "protein acetylation", #f>m
@@ -985,10 +1198,38 @@ dotplot(ck, showCategory = c("histone lysine demethylation", "protein dealkylati
                              "positive regulation of NF-kappaB transcription factor activity", "toll-like receptor signaling pathway" #fwvsfh
 ), font.size=14)
 
-#Delta
-ck <- simplify(ck, cutoff = 0.6, measure = "Wang")
-dotplot(ck, showCategory = 5,
-        font.size=10) + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + scale_y_discrete(labels=function(x) str_wrap(x, width=100))
+#all sex
+ck.sex <- simplify(ck.sex, cutoff = 0.6, measure = "Wang")
+dotplot(ck.sex, showCategory = c("positive regulation of translation", "positive regulation of cellular amide metabolic process", "primary miRNA processing", "toll-like receptor 7 signaling pathway",
+                                 "dosage compensation by inactivation of X chromosome", "positive regulation of neurotransmitter secretion", "bicarbonate transport", "gluconeogenesis", "response to electrical stimulus",
+                                 "response to peptide hormone", "regulation of translation in response to endoplasmic reticulum stress", "lipid catabolic process", "calcium-mediated signaling using intracellular calcium source",
+                                 "positive regulation of T cell migration", "translational initiation", "positive regulation of ERK1 and ERK2 cascade", "extracellular matrix disassembly", "insulin metabolic process",
+                                 "regulation of insulin secretion", "iron ion transport", "alcohol metabolic process", "pancreatic juice secretion", "leukotriene metabolic process", "antigen processing and presentation of exogenous peptide antigen via MHC class II",
+                                 "mesenchymal stem cell differentiation", "negative regulation of oxidative stress-induced neuron death", "humoral immune response", "positive regulation of protein tyrosine kinase activity",
+                                 "positive regulation of ERAD pathway", "endoplasmic reticulum calcium ion homeostasis", "positive regulation of response to endoplasmic reticulum stress", 
+                                 "retinoid metabolic process", "carbohydrate catabolic process", "endothelial cell morphogenesis", "vascular associated smooth muscle cell development", "histone demethylation", "protein dealkylation", "cellular response to BMP stimulus", "regulation of interleukin-6-mediated signaling pathway",
+                                 "response to transforming growth factor beta", "negative regulation of mast cell activation involved in immune response", "protein O-linked glycosylation via serine", "cellular response to fibroblast growth factor stimulus"
+), font.size=10) + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + scale_y_discrete(labels=function(x) str_wrap(x, width=100)) + scale_size_area(max_size = 5)
+
+#all anc
+ck.anc <- simplify(ck.anc, cutoff = 0.6, measure = "Wang")
+dotplot(ck.anc, showCategory = c("positive regulation of receptor-mediated endocytosis", "iron ion transport", "insulin metabolic process", "regulation of peptide transport", "replicative senescence",
+                                 "negative regulation of cell adhesion mediated by integrin", "neuropeptide signaling pathway", "protein secretion", "fibroblast growth factor receptor signaling pathway", "macromolecule glycosylation",
+                                 "positive regulation of ERAD pathway", "endoplasmic reticulum calcium ion homeostasis", "positive regulation of response to endoplasmic reticulum stress", "leukotriene metabolic process",
+                                 "maintenance of gastrointestinal epithelium", "negative regulation of endopeptidase activity", "transforming growth factor beta production", "cellular response to amino acid stimulus", 
+                                 "regulation of peptidase activity", "developmental growth involved in morphogenesis", "response to chemokine", "negative regulation of natural killer cell mediated cytotoxicity",
+                                 "negative regulation of cell killing", "mesenchymal stem cell differentiation", "Wnt signaling pathway involved in midbrain dopaminergic neuron differentiation", "positive regulation of DNA-binding transcription factor activity",
+                                 "lipid catabolic process", "regulation of NMDA receptor activity", "regulation of AMPA receptor activity", "cellular response to interleukin-1", "cellular response to interferon-gamma",
+                                 "positive regulation of triglyceride lipase activity", "retinol metabolic process", "positive regulation of protein kinase A signaling", "negative regulation of voltage-gated calcium channel activity",
+                                 "negative regulation of mitochondrion organization", "myelination", "positive regulation of response to oxidative stress", "negative regulation of protein polyubiquitination", "regulation of interleukin-6-mediated signaling pathway",
+                                 "positive regulation of tumor necrosis factor-mediated signaling pathway", "regulation of protein K63-linked ubiquitination", "positive regulation of NF-kappaB transcription factor activity", "attachment of spindle microtubules to kinetochore", 
+                                 "non-motile cilium assembly", "lipid transport", "positive regulation of protein kinase activity", "positive regulation of cytokine production", "negative regulation of intracellular estrogen receptor signaling pathway",
+                                 "calcium ion transmembrane transport", "glycolipid catabolic process", "response to hepatocyte growth factor", "glycosaminoglycan biosynthetic process", "response to histamine", "cellular response to copper ion", "extracellular matrix organization",
+                                 "response to hypoxia", "positive regulation of epidermal growth factor-activated receptor activity", "branch elongation of an epithelium", "pancreatic juice secretion", "cellular calcium ion homeostasis", "interleukin-5 production", 
+                                 "interleukin-13 production", "response to fibroblast growth factor", "natural killer cell chemotaxis", "T cell migration", "TRAIL-activated apoptotic signaling pathway", "hormone catabolic process", "iron coordination entity transport",
+                                 "digestion", "organ or tissue specific immune response"
+),
+font.size=10) + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + scale_y_discrete(labels=function(x) str_wrap(x, width=100)) + scale_size_area(max_size = 5)
 
 # Plotting venn diagrams
 #Beta cells ND
@@ -1815,6 +2056,7 @@ beta.alpha.delta <- list(
     alpha_genes=as.character(alpha_genes)
     )
 
+
 # Compare
 ck.bad <- compareCluster(geneCluster = beta.alpha.delta, 
                      fun = enrichGO, 
@@ -1828,9 +2070,9 @@ ck.bad <- compareCluster(geneCluster = beta.alpha.delta,
                      readable = TRUE)
 ck.bad <- setReadable(ck.bad, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
 cnetplot(ck.bad,
-         showCategory = c("synapse organization", "gamma-aminobutyric acid signaling pathway", "hormone secretion",
-                          "peptide transport", "cilium assembly", "peptide hormone secretion", "calcium-ion regulated exocytosis", "epithelial cilium movement involved in extracellular fluid movement",
-                          "cellular response to glucose starvation", "neurotransmitter secretion", "amide transport", "Golgi to endosome transport", "potassium channel complex"),
+         showCategory = c("gamma-aminobutyric acid signaling pathway", "hormone secretion",
+                          "peptide transport", "peptide hormone secretion", "calcium-ion regulated exocytosis",
+                          "neurotransmitter secretion", "Golgi to endosome transport", "potassium channel complex"),
          foldChange = NULL,
          layout = "kk",
          colorEdge = TRUE,
@@ -1841,6 +2083,50 @@ cnetplot(ck.bad,
          node_label_size = NULL,
          cex_label_category = 1,
          cex_label_gene = 1) + scale_fill_manual(values = c("chartreuse3", "dodgerblue3", "lightseagreen"))
+
+options(ggrepel.max.overlaps = Inf)
+cnetplot(ck,
+         showCategory = c("synapse organization", "gamma-aminobutyric acid signaling pathway",
+                          "insulin secretion", "cilium assembly", "peptide hormone secretion", 
+                          "cellular response to glucose starvation", "neurotransmitter secretion", "amide transport",
+                          "neuropeptide signaling pathway", "protein secretion", "glucagon secretion",
+                          "glucocorticoid secretion", "growth hormone secretion", "positive regulation of feeding behavior",
+                          "nuclear division", "mitotic cell cycle phase transition", "organelle fission",
+                          "epithelial cell proliferation", "digestive tract development", "water homeostasis", "organic anion transport", "SMAD protein signal transduction",
+                          "digestion", "morphogenesis of a branching structure", "primary alcohol metabolic process",
+                          "extracellular matrix organization", "collagen fibril organization",
+                          "muscle contraction", "muscle cell differentiation", "regulation of systemic arterial blood pressure by hormone",
+                          "regulation of angiogenesis", "blood vessel endothelial cell migration",
+                          "T cell activation", "lymphocyte mediated immunity", "T cell selection",
+                          "myeloid leukocyte activation", "antigen processing and presentation", "cell chemotaxis",
+                          "immune response-regulating cell surface receptor signaling pathway", "mast cell activation", "activation of immune response",
+                          "central nervous system myelination", "ensheathment of neurons", "axon development"),
+         foldChange = NULL,
+         layout = "kk",
+         colorEdge = TRUE,
+         circular = FALSE,
+         node_label = "category",
+         cex_category = 10,
+         cex_gene = 0.5,
+         node_label_size = NULL,
+         cex_label_category = 1,
+         cex_label_gene = 1) + scale_fill_manual(values = c("chartreuse3", #"delta" = 
+                                                            "dodgerblue3", #"beta" = ,
+                                                            "turquoise2", #"beta+alpha" =
+                                                            "lightseagreen", #"alpha"= 
+                                                            "springgreen4", #"gamma" =
+                                                            "khaki2", #"epsilon" = 
+                                                            "darkseagreen2", #"cycling-endo" = 
+                                                            "darkorange2", #"ductal" =
+                                                            "salmon3", #"acinar" = 
+                                                            "orange", #"activated-stellate" = 
+                                                            "salmon", #"quiescent-stellate" = 
+                                                            "red", #"endothelial" = 
+                                                            "orchid1", #"lymphocyte" = 
+                                                            "magenta3", #"macrophages" = 
+                                                            "red4", #"mast" = 
+                                                            "grey30"#"schwann" = 
+                                                            ))
 
 eg <- bitr(as.character(alpha_genes), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
 edox <- enrichDGN(as.character(eg$ENTREZID), readable = TRUE)
