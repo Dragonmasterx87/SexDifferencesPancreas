@@ -275,6 +275,13 @@ p4 <- QC_Plots_Complexity(seurat_object = processed_rna, pt.size = 0,
 
 wrap_plots(p1, p2, p3, p4, ncol = 2)
 
+#QC all scCustomise
+raw_metrics <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Raw Data\metrics_meta_all.csv)", header = TRUE, sep = ',')
+raw_metrics$ploting_var <- paste(raw_metrics$origin, raw_metrics$disease, raw_metrics$sex, sep = "_")
+
+# Plot
+Seq_QC_Plot_Basic_Combined(metrics_dataframe = raw_metrics, plot_by = "ploting_var") + theme(axis.text.x = element_text(angle = 90, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black"))
+
 #Sunburst plot
 meta <- read.csv(file = r"(C:\Users\mqadir\Box\!FAHD\4. Sex and Race Based Study Project\meta.csv)")
 tree <- d3_nest(meta, value_cols = "size")
