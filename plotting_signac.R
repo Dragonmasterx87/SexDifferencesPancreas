@@ -38,6 +38,7 @@ BiocManager::install(c("EnhancedVolcano", "DoubletFinder", "glmGamPoi",
                        "TFBSTools", "motifmatchr", "GreenleafLab/chromVAR",
                        "EnrichmentBrowser"),
                      dependencies = T, force = TRUE)
+BiocManager::install("BiocParallel")
 
 # install Seurat from Github (automatically updates sctransform)
 setRepositories(ind=1:3) # needed to automatically install Bioconductor dependencies
@@ -59,6 +60,7 @@ install.packages("scCustomize")
 install.packages("archive")
 install.packages("R.utils")
 install.packages("qs")
+install.packages("ggseqlogo")
 
 BiocManager::install(c("Gviz", "GenomicRanges", "rtracklayer"))
 devtools::install_github("cole-trapnell-lab/cicero-release", ref = "monocle3")
@@ -122,6 +124,8 @@ suppressWarnings({
   library(chromVAR)
   library(SeuratWrappers)
   library(cicero)
+  library(BiocParallel)
+  library(ggseqlogo)
   # Set global environment parameter par-proc
   # options(future.globals.maxSize = 8000 * 1024^2)
   set.seed(1234)
@@ -505,7 +509,7 @@ activatedstellate_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding 
 macrophage_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\macrophage_peaks.csv)", sep = ",", row.names = 1)
 lymphocyte_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\lymphocyte_peaks.csv)", sep = ",", row.names = 1)
 endothelial_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\endothelial_peaks.csv)", sep = ",", row.names = 1)
-
+{
 beta_peaks$p_val_adj[beta_peaks$p_val_adj == 0] <- 2e-302
 beta_peaks <- dplyr::filter(beta_peaks, p_val_adj < 1e-5) 
 open_beta_peaks <- rownames(beta_peaks[beta_peaks$avg_log2FC > 1, ])
@@ -572,7 +576,22 @@ cgenes_qstel <- dplyr::filter(cgenes_qstel, distance < 100000)
 cgenes_astel <- dplyr::filter(cgenes_astel, distance < 100000) 
 cgenes_macro <- dplyr::filter(cgenes_macro, distance < 100000) 
 cgenes_lympho <- dplyr::filter(cgenes_lympho, distance < 100000) 
-cgenes_endo <- dplyr::filter(cgenes_endo, distance < 100000) 
+cgenes_endo <- dplyr::filter(cgenes_endo, distance < 100000)
+}
+
+allregions <- c(
+  as.character(cgenes_beta$query_region),
+  as.character(cgenes_delta$query_region),
+  as.character(cgenes_alpha$query_region),
+  as.character(cgenes_gamma$query_region),
+  as.character(cgenes_ductal$query_region),
+  as.character(cgenes_acinar$query_region),
+  as.character(cgenes_astel$query_region),
+  as.character(cgenes_qstel$query_region),
+  as.character(cgenes_endo$query_region),
+  as.character(cgenes_lympho$query_region),
+  as.character(cgenes_macro$query_region)
+)
 
 cgenes_beta <- distinct(cgenes_beta, gene_name, .keep_all = TRUE)
 cgenes_alpha <- distinct(cgenes_alpha, gene_name, .keep_all = TRUE)
@@ -599,20 +618,6 @@ allgenes <- c(
   as.character(cgenes_endo$gene_name),
   as.character(cgenes_lympho$gene_name),
   as.character(cgenes_macro$gene_name)
-  )
-
-allregions <- c(
-  as.character(cgenes_beta$query_region),
-  as.character(cgenes_delta$query_region),
-  as.character(cgenes_alpha$query_region),
-  as.character(cgenes_gamma$query_region),
-  as.character(cgenes_ductal$query_region),
-  as.character(cgenes_acinar$query_region),
-  as.character(cgenes_astel$query_region),
-  as.character(cgenes_qstel$query_region),
-  as.character(cgenes_endo$query_region),
-  as.character(cgenes_lympho$query_region),
-  as.character(cgenes_macro$query_region)
   )
 
 allregions
@@ -672,7 +677,7 @@ regions.to.plot <- uniqueregions
 label_genes <- c("INS", "GCG", "SST") #uniquegenes
 
 
-
+write.csv(regions.to.plot, R"(C:\Users\mqadir\Desktop\regions.csv)")
 DefaultAssay(combined_processed_atac) <- "ATAC"
 pdf(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\figure.pdf)",
     width = 8,
@@ -742,9 +747,9 @@ dittoHeatmap(
   #column_split = combined_processed_rna$celltype,
   #border_color = "black",
   gaps_col = c(15, 30, 45, 60, 75, 90, 105, 120, 135, 150),
-  gaps_row = c(1819, 3205, 5170, 5405, 10850, 14650, 21250, 23500, 25750, 26200)
+  #gaps_row = c(1819, 3205, 5170, 5405, 10850, 14650, 21250, 23500, 25750, 26200)
+  gaps_row = c(2804, 4584, 7464, 7799, 17833, 23493, 36665, 39029, 41669, 42089)
 ) 
-
 dev.off()
 dev.off()
 
@@ -758,7 +763,663 @@ dev.off()
 )
 )
 
-c(1819, 3205, 5170, 5405, 10850, 14650, 21250, 23500, 25750, 26200)
+
+# GO plot This uses allgenes that was derived from above
+# Compare
+
+# create gene list
+# Sort out top 1000 accessible sites
+cgenes_beta <- cgenes_beta %>% slice_max(cgenes_beta, n = 1000)
+cgenes_delta <- cgenes_delta %>% slice_max(cgenes_delta, n = 1000)
+cgenes_alpha <- cgenes_alpha %>% slice_max(cgenes_alpha, n = 1000)
+cgenes_gamma <- cgenes_gamma %>% slice_max(cgenes_gamma, n = 1000)
+cgenes_ductal <- cgenes_ductal %>% slice_max(cgenes_ductal, n = 1000)
+cgenes_acinar <- cgenes_acinar %>% slice_max(cgenes_acinar, n = 1000)
+cgenes_astel <- cgenes_astel %>% slice_max(cgenes_astel, n = 1000)
+cgenes_qstel <- cgenes_qstel %>% slice_max(cgenes_qstel, n = 1000)
+cgenes_endo <- cgenes_endo %>% slice_max(cgenes_endo, n = 1000)
+cgenes_lympho <- cgenes_lympho %>% slice_max(cgenes_lympho, n = 1000)
+cgenes_macro <- cgenes_macro %>% slice_max(cgenes_macro, n = 1000)
+
+# For accessibility remmeber to run the code again generating the _bete files and subset 100kb window peaks
+cgenes_beta <- as.character(cgenes_beta$gene_name)
+cgenes_delta <- as.character(cgenes_delta$gene_name)
+cgenes_alpha <- as.character(cgenes_alpha$gene_name)
+cgenes_gamma <- as.character(cgenes_gamma$gene_name)
+cgenes_ductal <- as.character(cgenes_ductal$gene_name)
+cgenes_acinar <- as.character(cgenes_acinar$gene_name)
+cgenes_astel <- as.character(cgenes_astel$gene_name)
+cgenes_qstel <- as.character(cgenes_qstel$gene_name)
+cgenes_endo <- as.character(cgenes_endo$gene_name)
+cgenes_lympho <- as.character(cgenes_lympho$gene_name)
+cgenes_macro <- as.character(cgenes_macro$gene_name)
+
+
+gene.list <- list("beta" = cgenes_beta, "alpha" = cgenes_alpha, "delta" = cgenes_delta, "gamma" = cgenes_gamma, 
+                  "acinar" = cgenes_acinar, "ductal" = cgenes_ductal, "qstel" = cgenes_qstel, "astel" = cgenes_astel,
+                  "macro" = cgenes_macro, "lympho" = cgenes_lympho, "endo" = cgenes_endo)
+
+ck <- compareCluster(geneCluster = gene.list, # list of genes
+                     fun = enrichGO, 
+                     #universe = rownames(processed_rna@assays[["RNA"]]@counts), 
+                     keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                     OrgDb = org.Hs.eg.db, 
+                     ont = c("ALL"), 
+                     pAdjustMethod = "BH", 
+                     pvalueCutoff = 1, 
+                     qvalueCutoff = 0.1, #if not set default is at 0.05
+                     readable = TRUE)
+ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+head(ck) 
+cluster_summary <- data.frame(ck)
+ck <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
+dotplot(ck, showCategory = 3)
+dotplot(ck, showCategory = 1)
+ck.save <- ck@compareClusterResult
+write.csv(ck.save, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\ORA\allsex.save.csv)")
+
+dotplot(ck, showCategory = c("insulin secretion", "calcium ion homeostasis", "protein localization to plasma membrane", "glucose homeostasis",
+                             "regulation of G protein-coupled receptor signaling pathway", "pancreas development", "hormone metabolic process",
+                             "glutamate receptor signaling pathway", "synaptic transmission, GABAergic", "peptide secretion",
+                             "hormone transport",
+                             "developmental growth involved in morphogenesis", "sodium ion transport", "regulation of actin filament-based process",
+                             "regulation of Wnt signaling pathway", "integrin-mediated signaling pathway",
+                             "muscle contraction", "establishment of endothelial barrier", "cellular response to fibroblast growth factor stimulus", "extracellular matrix organization",
+                             "activation of immune response", "response to interferon-gamma", "cytokine-mediated signaling pathway", "leukocyte chemotaxis", "leukocyte degranulation", "interleukin-1 beta production", "phagocytosis",
+                             "alpha-beta T cell activation",
+                             "endothelial cell development", "cellular response to angiotensin"), 
+        font.size=14) + coord_flip() + scale_x_discrete(limits=rev) + scale_y_discrete(limits=rev) + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+cnetplot(ck)
+
+beta.alpha.delta <- list(
+  delta_genes=as.character(delta_genes),
+  beta_genes=as.character(beta_genes),
+  alpha_genes=as.character(alpha_genes)
+)
+
+
+# Compare
+ck.bad <- compareCluster(geneCluster = beta.alpha.delta, 
+                         fun = enrichGO, 
+                         universe = rownames(processed_rna@assays[["RNA"]]@counts), 
+                         keyType = "SYMBOL", #keytypes(org.Hs.eg.db)
+                         OrgDb = org.Hs.eg.db, 
+                         ont = c("ALL"), 
+                         pAdjustMethod = "BH", 
+                         pvalueCutoff = 1, 
+                         qvalueCutoff = 0.1, #if not set default is at 0.05
+                         readable = TRUE)
+ck.bad <- setReadable(ck.bad, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+cnetplot(ck.bad,
+         showCategory = c("gamma-aminobutyric acid signaling pathway", "hormone secretion",
+                          "peptide transport", "peptide hormone secretion", "calcium-ion regulated exocytosis",
+                          "neurotransmitter secretion", "Golgi to endosome transport", "potassium channel complex"),
+         foldChange = NULL,
+         layout = "kk",
+         colorEdge = TRUE,
+         circular = FALSE,
+         node_label = "category",
+         cex_category = 2,
+         cex_gene = 0.5,
+         node_label_size = NULL,
+         cex_label_category = 1,
+         cex_label_gene = 1) + scale_fill_manual(values = c("chartreuse3", "dodgerblue3", "lightseagreen"))
+
+options(ggrepel.max.overlaps = Inf)
+cnetplot(ck,
+         showCategory = c("synapse organization", "gamma-aminobutyric acid signaling pathway",
+                          "insulin secretion", "cilium assembly", "peptide hormone secretion", 
+                          "cellular response to glucose starvation", "neurotransmitter secretion", "amide transport",
+                          "neuropeptide signaling pathway", "protein secretion", "glucagon secretion",
+                          "glucocorticoid secretion", "growth hormone secretion", "positive regulation of feeding behavior",
+                          "nuclear division", "mitotic cell cycle phase transition", "organelle fission",
+                          "epithelial cell proliferation", "digestive tract development", "water homeostasis", "organic anion transport", "SMAD protein signal transduction",
+                          "digestion", "morphogenesis of a branching structure", "primary alcohol metabolic process",
+                          "extracellular matrix organization", "collagen fibril organization",
+                          "muscle contraction", "muscle cell differentiation", "regulation of systemic arterial blood pressure by hormone",
+                          "regulation of angiogenesis", "blood vessel endothelial cell migration",
+                          "T cell activation", "lymphocyte mediated immunity", "T cell selection",
+                          "myeloid leukocyte activation", "antigen processing and presentation", "cell chemotaxis",
+                          "immune response-regulating cell surface receptor signaling pathway", "mast cell activation", "activation of immune response",
+                          "central nervous system myelination", "ensheathment of neurons", "axon development"),
+         foldChange = NULL,
+         layout = "kk",
+         colorEdge = TRUE,
+         circular = FALSE,
+         node_label = "category",
+         cex_category = 10,
+         cex_gene = 0.5,
+         node_label_size = NULL,
+         cex_label_category = 1,
+         cex_label_gene = 1) + scale_fill_manual(values = c("chartreuse3", #"delta" = 
+                                                            "dodgerblue3", #"beta" = ,
+                                                            "turquoise2", #"beta+alpha" =
+                                                            "lightseagreen", #"alpha"= 
+                                                            "springgreen4", #"gamma" =
+                                                            "khaki2", #"epsilon" = 
+                                                            "darkseagreen2", #"cycling-endo" = 
+                                                            "darkorange2", #"ductal" =
+                                                            "salmon3", #"acinar" = 
+                                                            "orange", #"activated-stellate" = 
+                                                            "salmon", #"quiescent-stellate" = 
+                                                            "red", #"endothelial" = 
+                                                            "orchid1", #"lymphocyte" = 
+                                                            "magenta3", #"macrophages" = 
+                                                            "red4", #"mast" = 
+                                                            "grey30"#"schwann" = 
+         ))
+
+eg <- bitr(as.character(alpha_genes), fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
+edox <- enrichDGN(as.character(eg$ENTREZID), readable = TRUE)
+edox <- setReadable(edox, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+edox <- pairwise_termsim(edox)
+emapplot(ck)
+treeplot(edox)
+mutate(edox, qscore = -log(p.adjust, base=10)) %>% 
+  barplot(x="qscore")
+
+
+
+# Motif analysis an plotting
+# For accessibility remmeber to run the code again generating the _bete files and subset 100kb window peaks
+allregions <- c(
+  as.character(cgenes_beta$query_region),
+  as.character(cgenes_delta$query_region),
+  as.character(cgenes_alpha$query_region),
+  as.character(cgenes_gamma$query_region),
+  as.character(cgenes_ductal$query_region),
+  as.character(cgenes_acinar$query_region),
+  as.character(cgenes_astel$query_region),
+  as.character(cgenes_qstel$query_region),
+  as.character(cgenes_endo$query_region),
+  as.character(cgenes_lympho$query_region),
+  as.character(cgenes_macro$query_region)
+)
+
+uniqueregions <- unique(allregions)
+
+peaks_beta <- as.character(cgenes_beta$query_region)
+peaks_delta <- as.character(cgenes_delta$query_region)
+peaks_alpha <- as.character(cgenes_alpha$query_region)
+peaks_gamma <- as.character(cgenes_gamma$query_region)
+peaks_ductal <- as.character(cgenes_ductal$query_region)
+peaks_acinar <- as.character(cgenes_acinar$query_region)
+peaks_astel <- as.character(cgenes_astel$query_region)
+peaks_qstel <- as.character(cgenes_qstel$query_region)
+peaks_endo <- as.character(cgenes_endo$query_region)
+peaks_lympho <- as.character(cgenes_lympho$query_region)
+peaks_macro <- as.character(cgenes_macro$query_region)
+
+# Motif analysis
+Idents(hm.integrated.dfree) <- "celltype"
+open.peaks <- AccessiblePeaks(hm.integrated.dfree, idents = unique(as.character(hm.integrated.dfree$celltype)))
+
+# match the overall GC content in the peak set
+meta.feature <- GetAssayData(hm.integrated.dfree, assay = "ATAC", slot = "meta.features")
+peaks.matched <- MatchRegionStats(
+  meta.feature = meta.feature[open.peaks, ],
+  query.feature = meta.feature[uniqueregions, ],
+  n = 50000
+)
+
+# Motif tests
+# This is not super accurate its better to run motif analysis using chromvar
+{
+enriched.motifs.beta <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_beta)
+enriched.motifs.delta <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_delta)
+enriched.motifs.alpha <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_alpha)
+enriched.motifs.gamma <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_gamma)
+enriched.motifs.ductal <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_ductal)
+enriched.motifs.acinar <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_acinar)
+enriched.motifs.astel <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_astel)
+enriched.motifs.qstel <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_qstel)
+enriched.motifs.endo <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_endo)
+enriched.motifs.lympho <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_lympho)
+enriched.motifs.macro <- FindMotifs(object = hm.integrated.dfree, background=peaks.matched, features = peaks_macro)
+
+write.csv(enriched.motifs.beta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.beta.csv)")
+write.csv(enriched.motifs.delta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.delta.csv)")
+write.csv(enriched.motifs.alpha, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.alpha.csv)")
+write.csv(enriched.motifs.gamma, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.gamma.csv)")
+write.csv(enriched.motifs.ductal, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.ductal.csv)")
+write.csv(enriched.motifs.acinar, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.acinar.csv)")
+
+write.csv(enriched.motifs.astel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.astel.csv)")
+write.csv(enriched.motifs.qstel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.qstel.csv)")
+write.csv(enriched.motifs.endo, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.endo.csv)")
+write.csv(enriched.motifs.lympho, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.lympho.csv)")
+write.csv(enriched.motifs.macro, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\motifs\allsex\enriched.motifs.macro.csv)")
+}
+
+
+
+# EMERGENCY TESTING
+# Differential motif testing USE CHROMVAR
+hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
+
+cell.type <- 'endothelial'
+
+peaks_data <- read.table(sprintf('C:/Users/mqadir/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/snATAC/DE_accessible_sites/DA_peaks/sexancestry/%s.deseq.WaldTest.male.vs.female.tsv', cell.type))
+
+
+
+
+# Add Motif scores to pseduo bulk and make a heat map
+# Heatmap
+# Pseudobulk
+DefaultAssay(hm.integrated.dfree) <- "chromvar"
+Idents(hm.integrated.dfree) <- "celltype_sex_ancestry_lib"
+combined_processed_atac <- AverageExpression(hm.integrated.dfree, 
+                                             assays = c("chromvar", "ATAC", "RNA"), 
+                                             features = NULL, return.seurat = TRUE,  
+                                             group.by = "celltype_sex_ancestry_lib",
+                                             slot = "data", verbose = FALSE)
+
+combined_processed_atac$celltype_sex_ancestry_lib <- Cells(combined_processed_atac) #6892 Seurat
+
+{
+  Idents(combined_processed_atac) <- 'celltype_sex_ancestry_lib'
+  combined_processed_atac$celltype <- combined_processed_atac@meta.data[["orig.ident"]]
+  metadat <- combined_processed_atac@meta.data
+  metadat <- metadat %>% 
+    mutate(celltype_sex_ancestry_lib = str_replace(celltype_sex_ancestry_lib, "activated_stellate", "activated-stellate"))
+  metadat <- metadat %>% 
+    mutate(celltype_sex_ancestry_lib = str_replace(celltype_sex_ancestry_lib, "quiescent_stellate", "quiescent-stellate"))
+  metadat$sex <- metadat[c('sex')] <- str_split_i(metadat$celltype_sex_ancestry_lib, "_", -3)
+  metadat$ancestry <- metadat[c('ancestry')] <- str_split_i(metadat$celltype_sex_ancestry_lib, '_', -2)
+  metadat$lib <- metadat[c('lib')] <- str_split_i(metadat$celltype_sex_ancestry_lib, '_', -1)
+  combined_processed_atac@meta.data = metadat
+}
+
+
+table(combined_processed_atac@meta.data[["celltype"]])
+table(combined_processed_atac@meta.data[["sex"]])
+
+# cluster re-assignment occurs, which re-assigns clustering in my_levels
+my_levels <- c("beta", "delta", "alpha", "gamma",
+               "ductal", "acinar",
+               "activated", "quiescent", "endothelial",
+               "lymphocyte", "macrophage")
+
+# Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+combined_processed_atac$celltype <- factor(x = combined_processed_atac$celltype, levels = my_levels)
+table(combined_processed_atac$celltype)
+Idents(combined_processed_atac) <- "celltype"
+
+
+# Plot heatmap
+motifs.to.plot <- rownames(hm.integrated.dfree@assays[["chromvar"]])
+
+DefaultAssay(hm.integrated.dfree) <- "chromvar"
+Idents(hm.integrated.dfree) <- "celltype"
+
+enriched.motifs.alpha <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'alpha',
+  ident.2 = c('beta', "delta", "gamma", "activated_stellate", "quiescent_stellate", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+  min.pct = 0.2,
+  logfc.threshold = 0
+)
+
+enriched.motifs.beta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.beta.csv)")
+enriched.motifs.delta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.delta.csv)")
+enriched.motifs.alpha <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.alpha.csv)")
+enriched.motifs.gamma <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.gamma.csv)")
+enriched.motifs.ductal <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.ductal.csv)")
+enriched.motifs.acinar <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.acinar.csv)")
+enriched.motifs.astel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.astel.csv)")
+enriched.motifs.qstel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.qstel.csv)")
+enriched.motifs.endo <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.endo.csv)")
+enriched.motifs.lympho <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.lympho.csv)")
+enriched.motifs.macro <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.macro.csv)")
+
+combined_processed_atac <- FindVariableFeatures(combined_processed_atac, selection.method = "vst", nfeatures = 500)
+
+DefaultAssay(combined_processed_atac) <- "ATAC"
+pdf(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\figure.pdf)",
+    width = 10,
+    height = 9)
+genes.to.plot <- combined_processed_atac@assays[["chromvar"]]@var.features #complete geneset
+label_genes <- c("MA0132.2", #PDX1
+                 "MA0148.4",  #FOXA1
+                 "MA0874.1",  #Arx
+                 "MA1608.1", #ISL1
+                 "MA0674.1", #NKX6-1
+                 "MA1645.1", #NKX2-2
+                 "MA0117.2", #MAFB
+                 "MA0077.1", #SOX9
+                 "MA0068.2", #PAX4
+                 "MA1618.1", #PTF1A
+                 "MA0114.4", #HNF4A
+                 "MA0046.2", #HNF1A
+                 "MA0084.1", #SRY
+                 "MA0007.3", #Ar
+                 "MA0098.3", #ETS1
+                 "MA1484.1" #ETS2
+                 )
+dittoHeatmap(
+  object = combined_processed_atac,#(subset(combined_processed_rna, idents = c("alpha"))),
+  genes = genes.to.plot, #this is a compete gene set
+  # metas = NULL,
+  # cells.use = NULL,
+  annot.by = c("celltype", "sex", "ancestry"),
+  order.by = c("celltype", "sex"),
+  # main = NA,
+  # cell.names.meta = NULL,
+  # assay = .default_assay(object),
+  # slot = .default_slot(object),
+  # swap.rownames = NULL,
+  heatmap.colors = colorRampPalette(c("dodgerblue", "white", "red3"))(50),
+  # scaled.to.max = FALSE,
+  # heatmap.colors.max.scaled = colorRampPalette(c("white", "red"))(25),
+  # annot.colors = c(dittoColors(), dittoColors(1)[seq_len(7)]),
+  # annotation_col = NULL,
+  annotation_colors = list(celltype = c("acinar" = "salmon3",
+                                        "activated" = "orange",
+                                        "alpha"= "lightseagreen",
+                                        "beta" = "dodgerblue3",
+                                        "delta" = "chartreuse3",
+                                        "ductal" = "darkorange2",
+                                        "endothelial" = "red",
+                                        "gamma" = "springgreen4",
+                                        "lymphocyte" = "orchid1",
+                                        "macrophage" = "magenta3",
+                                        "quiescent" = "salmon"),
+                           sex = c("female" = "red4",
+                                   "male" = "deepskyblue3"),
+                           ancestry = c("white" = "deepskyblue3",
+                                        "black" = "black")),
+  # # data.out = FALSE,
+ #highlight.features = c("MA0132.2", #PDX1
+  #                      "MA0148.4",  #FOXA1
+   #                     "MA0874.1",  #Arx
+    #                     "MA0674.1" #NKX6-1
+                         #gamma
+                         #ductal
+                         #acinar
+                         #activated
+                         #quiescent
+                         #endo
+                         #lymphocyte
+   #                      ), #macrophages
+  #right_annotations = rowAnnotation(foo = anno_mark(at = c(1), labels = c("HHEX"))),
+  # show_colnames = isBulk(object),
+  show_rownames = FALSE,
+  # scale = "row",
+  cluster_row = TRUE,
+  # cluster_cols = FALSE,
+  # border_color = NA,
+  # legend_breaks = NA,
+  # drop_levels = FALSE,
+  breaks=seq(-2, 2, length.out=50),
+  complex = TRUE,
+  #column_km = 1,
+  use_raster = TRUE,
+  raster_quality = 5,
+  #column_split = combined_processed_rna$celltype,
+  #border_color = "black",
+  #gaps_col = c(15, 30, 45, 60, 75, 90, 105, 120, 135, 150),
+  #gaps_row = c(1819, 3205, 5170, 5405, 10850, 14650, 21250, 23500, 25750, 26200)
+  #gaps_row = c(2804, 4584, 7464, 7799, 17833, 23493, 36665, 39029, 41669, 42089)
+) + rowAnnotation(mark = anno_mark(at = match(label_genes, 
+                                              rownames(combined_processed_atac[genes.to.plot,])), 
+                                   labels = label_genes, 
+                                   which = "row",
+                                   labels_gp = list(cex=0.3),
+                                   #link_width = unit(4, "mm"), link_height = unit(4, "mm"),
+                                   padding = 0.1))
+dev.off()
+dev.off()
+
+
+# Plot motifs
+
+# look at the activity of Mef2c
+DefaultAssay(hm.integrated.dfree) <- "chromvar"
+FeaturePlot(
+  object = hm.integrated.dfree,
+  features = "MA0077.1",
+  min.cutoff = 0,
+  max.cutoff = 1,
+  cols = c("lightgrey", "red4"),
+  #order = TRUE,
+  raster = TRUE,
+  pt.size = 1,
+  raster.dpi = c(1024, 1024)
+)
+
+FeaturePlot(
+  object = processed_rna,
+  features = "SOX9",
+  min.cutoff = 0,
+  max.cutoff = 1,
+  cols = c("lightgrey", "red4"),
+  #order = TRUE,
+  raster = TRUE,
+  pt.size = 1,
+  raster.dpi = c(1024, 1024)
+)
+
+MotifPlot(
+  object = hm.integrated.dfree,
+  motifs = "MA1608.1",
+  assay = 'ATAC'
+)
+
+
+
+
+# Stop
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+system.time({
+  ###Step 1: Make Pseudobulk Matrices
+  #Read in final Seurat object
+  adata <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
+  Idents(adata) <- adata@meta.data$celltype
+  samples <- unique(adata@meta.data$sample)
+  
+  #Pull out list of all cell types
+  unique_cell_types <- unique(adata$celltype)
+  DefaultAssay(adata) <- 'ATAC'
+  
+  #Get counts data
+  da.counts <- GetAssayData(adata,slot='counts')
+  
+  dim(da.counts)
+  head(da.counts)
+  adata_matrices <- adata
+  
+  ##Pull out barcodes
+  sample_bcs <- list()
+  for (sample in samples){
+    sample_bcs[[sample]] <- row.names(adata[[]][adata[[]]$sample == sample,])
+  }
+  
+  lengths(sample_bcs)
+  head(sample_bcs[[1]])
+  
+  #Looping through cell types by making ^ into a function
+  get_per_sample_da_SUMS <- function(cell.type, mtx.fp){
+    print(paste(cell.type))
+    
+    #pull out rows of da.counts where BC Ident matches cell.type
+    bcs <- names(Idents(adata_matrices)[Idents(adata_matrices) == cell.type])
+    counts <- da.counts[,colnames(da.counts) %in% bcs]
+    print(dim(counts))
+    
+    #initialize the matrix of sample da
+    counts.df <- as.data.frame(rep(0,length(row.names(da.counts))))
+    row.names(counts.df) <- row.names(da.counts)
+    colnames(counts.df) <- c('temp')
+    
+    #go through samples and calculate sum of da values
+    for (sample in samples){
+      sample_cols <- colnames(counts) %in% sample_bcs[[sample]]
+      counts.cut <- counts[,sample_cols]
+      
+      #if only one bc, this becomes a vector which is an issue
+      if (typeof(counts.cut) == 'double'){
+        mean.counts <- counts.cut
+        #if there are NO bcs, this will return NA (just return 0 for everything)
+      } else if(length(colnames(counts.cut)) == 0){
+        mean.counts <- rep(0,length(row.names(counts)))
+      } else {
+        mean.counts <- rowSums(counts.cut)
+      }
+      counts.df <- cbind(counts.df,as.data.frame(mean.counts))
+    }
+    fin.counts.df <- counts.df[,-c(1)]
+    colnames(fin.counts.df) <- samples
+    head(fin.counts.df)
+    
+    #export df
+    mtx.fp <- sprintf('E:/2.SexbasedStudyCurrent/test_env/pseudobulk/cells/%s_sample_da_total_counts.txt',cell.type) # change to save dir
+    write.table(fin.counts.df,mtx.fp,sep='\t',quote=FALSE)
+  }
+  
+  #Run function to make matrices
+  unique_cell_types <- unique(adata$celltype)
+  for (cell.type in unique_cell_types){
+    fp = sprintf('E:/2.SexbasedStudyCurrent/test_env/pseudobulk/cells/%s_pseudobulk.txt',cell.type) # change to save dir as above
+    get_per_sample_da_SUMS(cell.type, fp)
+  }
+  
+  
+  ###Step 3: DESeq
+  #Pseudobulk matrices directory
+  dir = 'E:/2.SexbasedStudyCurrent/test_env/pseudobulk/cells/'
+  files = list.files(dir, pattern =".txt")
+  cells = gsub("_sample_da_total_counts.txt","", files)
+  
+  #Create outdir for results
+  outdir <- 'E:/2.SexbasedStudyCurrent/test_env/DEtesting/cells/' #changes based on analysis
+  
+  #Create a metadata table
+  meta <- adata@meta.data[,c('sample', 'sex', 'ancestry')]
+  colnames(meta) <- c('sample', 'sex', 'ancestry')
+  rownames(meta) <- NULL
+  meta <- meta[!duplicated(meta),]
+  meta$sex_ancestry <- paste(meta$sex, meta$ancestry, sep = '_')
+  
+  # list of pseudobulk files
+  files <- list.files('E:/2.SexbasedStudyCurrent/test_env/pseudobulk/cells/', pattern='da')
+  
+  ##Create matrices for results
+  sumres <- matrix(nrow=length(cells), ncol = 3)
+  rownames(sumres) <- cells
+  
+  # testing for sex_ancestry_diabetes
+  for (FILE in files) {
+    cell <- gsub('_sample_da_total_counts.txt', '', FILE)
+    raw_counts <- read.table(paste0(dir, FILE), row.names=1)
+    sample_names <- unique(adata@meta.data$sample)
+    sample_names <- gsub('-','.', sample_names)
+    raw_counts <- raw_counts[,(colSums(raw_counts != 0) > 0)]
+    raw_counts <- raw_counts[,which(colnames(raw_counts) %in% sample_names)]
+    meta$Library2 <- gsub('-', '.', meta$sample)
+    meta2 <- meta[which(meta$Library2 %in% colnames(raw_counts)),]
+    
+    if ('male' %in% meta2$sex && 'female' %in% meta2$sex){
+      print(cell)
+      print('Data for 2 sex present, however not all data may be present will check this at a later step')
+      
+      accessibilities_to_keep <- c()
+      for (i in 1:nrow(raw_counts)) {
+        if (sum(raw_counts[i, ] >= 5) >= 2) {
+          accessibilities_to_keep <- c(accessibilities_to_keep, rownames(raw_counts[i, ]))
+        }
+      }
+      counts <- raw_counts[which(rownames(raw_counts) %in% accessibilities_to_keep),] 
+      
+      if ((length(which(meta2$sex == 'male')) > 1) | (length(which(meta2$sex == 'female')) > 1)) { #fix
+        my_design <- as.formula ('~sex_ancestry') # alldata
+        dds <- DESeqDataSetFromMatrix(counts, colData = meta2, design = my_design) #colData is where design columns are found
+        dds <- estimateSizeFactors(dds)
+        dds <- estimateDispersions(dds)
+        dds <- nbinomWaldTest(dds, maxit = 500) # https://support.bioconductor.org/p/65091/
+      }
+      
+      # No need for conditional formatting here
+      # Specifying test combinations
+      tests1 <- c('male_white', 'female_white', 'male_white', 'male_black')
+      tests2 <- c('male_black', 'female_black', 'female_white', 'female_black')
+      
+      print('Preparing to run DESeq2')
+      
+      for (x in 1:length(tests1)){
+        # No need for conditional formatting here
+        t1 <- tests1[[x]]
+        t2 <- tests2[[x]]
+        test <- c('sex_ancestry', tests1[[x]],tests2[[x]]) # This should not change when you test subsetted data
+        numoft1 <- length(which(meta2$sex_ancestry==t1))
+        numoft2 <- length(which(meta2$sex_ancestry==t2))
+        
+        if (numoft1 < 3 | numoft2 < 3) {
+          message(paste("!!WARNING!!"))
+          message(paste(t1, "INSUFFICIENT N", sep= " "))
+          message(paste('####'))
+          message(paste('####'))
+        } else if (numoft1 > 2 & numoft2 > 2) {
+          #sprintf("%s and %s are present in the dataset", t1, t2)
+          #sprintf("Find data here: %s", outdir)
+          res <- results(dds, contrast=c(test), cooksCutoff=FALSE, independentFiltering=FALSE) #cooksCutoff = FALSE see here: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#outlier
+          res <- as.data.frame(res)
+          res <- res[order(res$pvalue),]
+          outfile <- paste0(cell, '.deseq.WaldTest.', tests1[[x]],'.vs.',tests2[[x]],'.tsv')
+          write.table(res,paste0(outdir, outfile) , sep='\t', quote=F)
+          #print(paste(t1, 'and', t2, 'are present in dataset metadata', sep = " "))
+          print(sprintf('%s and %s are present in the dataset metadata', t1, t2)) #just because I wanted to understand using sprintf
+          print(paste("Data copied here:", outdir, sep = " "))
+          print(paste('####'))
+          print(paste('####'))
+        }
+        
+      }
+    }
+  }
+
+
+
 
 
 
