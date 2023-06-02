@@ -445,9 +445,14 @@ ggplot(predictions, aes(x=factor(Var1, level=c("delta", "beta", "alpha", "gamma"
 
 # Plotting Chromin accessibility
 DefaultAssay(hm.integrated.dfree) <- "ATAC"
-p1 <-  CoveragePlot(hm.integrated.dfree, region = c("INS"), 
-                          window = 100,
-                          ymax = 200,
+Idents(hm.integrated.dfree) <- "sex"
+male_set <- subset(hm.integrated.dfree, idents = (c("male")))
+female_set <- subset(hm.integrated.dfree, idents = (c("female")))
+Idents(male_set) <- "celltype"
+Idents(female_set) <- "celltype"
+p1 <-  CoveragePlot(female_set, region = c("XIST"), 
+                    window = 100,
+                    #ymax = 200,
              links = FALSE,
              #tile = TRUE,
              extend.upstream = 20000,
@@ -498,6 +503,7 @@ CombineTracks(
 # Plotting heatmap for all significant DA regions
 hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
 
+# All genes
 beta_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\beta_peaks.csv)", sep = ",", row.names = 1)
 alpha_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\alpha_peaks.csv)", sep = ",", row.names = 1)
 delta_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\delta_peaks.csv)", sep = ",", row.names = 1)
@@ -510,73 +516,73 @@ macrophage_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts
 lymphocyte_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\lymphocyte_peaks.csv)", sep = ",", row.names = 1)
 endothelial_peaks <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\allsex\endothelial_peaks.csv)", sep = ",", row.names = 1)
 {
-beta_peaks$p_val_adj[beta_peaks$p_val_adj == 0] <- 2e-302
-beta_peaks <- dplyr::filter(beta_peaks, p_val_adj < 1e-5) 
-open_beta_peaks <- rownames(beta_peaks[beta_peaks$avg_log2FC > 1, ])
-
-alpha_peaks$p_val_adj[alpha_peaks$p_val_adj == 0] <- 2e-302
-alpha_peaks <- dplyr::filter(alpha_peaks, p_val_adj < 1e-5) 
-open_alpha_peaks <- rownames(alpha_peaks[alpha_peaks$avg_log2FC > 1, ])
-
-delta_peaks$p_val_adj[delta_peaks$p_val_adj == 0] <- 2e-302
-delta_peaks <- dplyr::filter(delta_peaks, p_val_adj < 1e-5) 
-open_delta_peaks <- rownames(delta_peaks[delta_peaks$avg_log2FC > 1, ])
-
-gamma_peaks$p_val_adj[gamma_peaks$p_val_adj == 0] <- 2e-302
-gamma_peaks <- dplyr::filter(gamma_peaks, p_val_adj < 1e-5) 
-open_gamma_peaks <- rownames(gamma_peaks[gamma_peaks$avg_log2FC > 1, ])
-
-acinar_peaks$p_val_adj[acinar_peaks$p_val_adj == 0] <- 2e-302
-acinar_peaks <- dplyr::filter(acinar_peaks, p_val_adj < 1e-5) 
-open_acinar_peaks <- rownames(acinar_peaks[acinar_peaks$avg_log2FC > 1, ])
-
-ductal_peaks$p_val_adj[ductal_peaks$p_val_adj == 0] <- 2e-302
-ductal_peaks <- dplyr::filter(ductal_peaks, p_val_adj < 1e-5) 
-open_ductal_peaks <- rownames(ductal_peaks[ductal_peaks$avg_log2FC > 1, ])
-
-quiescentstellate_peaks$p_val_adj[quiescentstellate_peaks$p_val_adj == 0] <- 2e-302
-quiescentstellate_peaks <- dplyr::filter(quiescentstellate_peaks, p_val_adj < 1e-5) 
-open_quiescentstellate_peaks <- rownames(quiescentstellate_peaks[quiescentstellate_peaks$avg_log2FC > 1, ])
-
-activatedstellate_peaks$p_val_adj[activatedstellate_peaks$p_val_adj == 0] <- 2e-302
-activatedstellate_peaks <- dplyr::filter(activatedstellate_peaks, p_val_adj < 1e-5) 
-open_activatedstellate_peaks <- rownames(activatedstellate_peaks[activatedstellate_peaks$avg_log2FC > 1, ])
-
-macrophage_peaks$p_val_adj[macrophage_peaks$p_val_adj == 0] <- 2e-302
-macrophage_peaks <- dplyr::filter(macrophage_peaks, p_val_adj < 1e-5) 
-open_macrophage_peaks <- rownames(macrophage_peaks[macrophage_peaks$avg_log2FC > 1, ])
-
-lymphocyte_peaks$p_val_adj[lymphocyte_peaks$p_val_adj == 0] <- 2e-302
-lymphocyte_peaks <- dplyr::filter(lymphocyte_peaks, p_val_adj < 1e-5) 
-open_lymphocyte_peaks <- rownames(lymphocyte_peaks[lymphocyte_peaks$avg_log2FC > 1, ])
-
-endothelial_peaks$p_val_adj[endothelial_peaks$p_val_adj == 0] <- 2e-302
-endothelial_peaks <- dplyr::filter(endothelial_peaks, p_val_adj < 1e-5) 
-open_endothelial_peaks <- rownames(endothelial_peaks[endothelial_peaks$avg_log2FC > 1, ])
-
-cgenes_beta <- ClosestFeature(hm.integrated.dfree, regions = open_beta_peaks)
-cgenes_alpha <- ClosestFeature(hm.integrated.dfree, regions = open_alpha_peaks)
-cgenes_delta <- ClosestFeature(hm.integrated.dfree, regions = open_delta_peaks)
-cgenes_gamma <- ClosestFeature(hm.integrated.dfree, regions = open_gamma_peaks)
-cgenes_acinar <- ClosestFeature(hm.integrated.dfree, regions = open_acinar_peaks)
-cgenes_ductal <- ClosestFeature(hm.integrated.dfree, regions = open_ductal_peaks)
-cgenes_qstel <- ClosestFeature(hm.integrated.dfree, regions = open_quiescentstellate_peaks)
-cgenes_astel <- ClosestFeature(hm.integrated.dfree, regions = open_activatedstellate_peaks)
-cgenes_macro <- ClosestFeature(hm.integrated.dfree, regions = open_macrophage_peaks)
-cgenes_lympho <- ClosestFeature(hm.integrated.dfree, regions = open_lymphocyte_peaks)
-cgenes_endo <- ClosestFeature(hm.integrated.dfree, regions = open_endothelial_peaks)
-
-cgenes_beta <- dplyr::filter(cgenes_beta, distance < 100000) 
-cgenes_alpha <- dplyr::filter(cgenes_alpha, distance < 100000) 
-cgenes_delta <- dplyr::filter(cgenes_delta, distance < 100000) 
-cgenes_gamma <- dplyr::filter(cgenes_gamma, distance < 100000) 
-cgenes_acinar <- dplyr::filter(cgenes_acinar, distance < 100000) 
-cgenes_ductal <- dplyr::filter(cgenes_ductal, distance < 100000) 
-cgenes_qstel <- dplyr::filter(cgenes_qstel, distance < 100000) 
-cgenes_astel <- dplyr::filter(cgenes_astel, distance < 100000) 
-cgenes_macro <- dplyr::filter(cgenes_macro, distance < 100000) 
-cgenes_lympho <- dplyr::filter(cgenes_lympho, distance < 100000) 
-cgenes_endo <- dplyr::filter(cgenes_endo, distance < 100000)
+  beta_peaks$p_val_adj[beta_peaks$p_val_adj == 0] <- 2e-302
+  beta_peaks <- dplyr::filter(beta_peaks, p_val_adj < 1e-5) 
+  open_beta_peaks <- rownames(beta_peaks[beta_peaks$avg_log2FC > 1, ])
+  
+  alpha_peaks$p_val_adj[alpha_peaks$p_val_adj == 0] <- 2e-302
+  alpha_peaks <- dplyr::filter(alpha_peaks, p_val_adj < 1e-5) 
+  open_alpha_peaks <- rownames(alpha_peaks[alpha_peaks$avg_log2FC > 1, ])
+  
+  delta_peaks$p_val_adj[delta_peaks$p_val_adj == 0] <- 2e-302
+  delta_peaks <- dplyr::filter(delta_peaks, p_val_adj < 1e-5) 
+  open_delta_peaks <- rownames(delta_peaks[delta_peaks$avg_log2FC > 1, ])
+  
+  gamma_peaks$p_val_adj[gamma_peaks$p_val_adj == 0] <- 2e-302
+  gamma_peaks <- dplyr::filter(gamma_peaks, p_val_adj < 1e-5) 
+  open_gamma_peaks <- rownames(gamma_peaks[gamma_peaks$avg_log2FC > 1, ])
+  
+  acinar_peaks$p_val_adj[acinar_peaks$p_val_adj == 0] <- 2e-302
+  acinar_peaks <- dplyr::filter(acinar_peaks, p_val_adj < 1e-5) 
+  open_acinar_peaks <- rownames(acinar_peaks[acinar_peaks$avg_log2FC > 1, ])
+  
+  ductal_peaks$p_val_adj[ductal_peaks$p_val_adj == 0] <- 2e-302
+  ductal_peaks <- dplyr::filter(ductal_peaks, p_val_adj < 1e-5) 
+  open_ductal_peaks <- rownames(ductal_peaks[ductal_peaks$avg_log2FC > 1, ])
+  
+  quiescentstellate_peaks$p_val_adj[quiescentstellate_peaks$p_val_adj == 0] <- 2e-302
+  quiescentstellate_peaks <- dplyr::filter(quiescentstellate_peaks, p_val_adj < 1e-5) 
+  open_quiescentstellate_peaks <- rownames(quiescentstellate_peaks[quiescentstellate_peaks$avg_log2FC > 1, ])
+  
+  activatedstellate_peaks$p_val_adj[activatedstellate_peaks$p_val_adj == 0] <- 2e-302
+  activatedstellate_peaks <- dplyr::filter(activatedstellate_peaks, p_val_adj < 1e-5) 
+  open_activatedstellate_peaks <- rownames(activatedstellate_peaks[activatedstellate_peaks$avg_log2FC > 1, ])
+  
+  macrophage_peaks$p_val_adj[macrophage_peaks$p_val_adj == 0] <- 2e-302
+  macrophage_peaks <- dplyr::filter(macrophage_peaks, p_val_adj < 1e-5) 
+  open_macrophage_peaks <- rownames(macrophage_peaks[macrophage_peaks$avg_log2FC > 1, ])
+  
+  lymphocyte_peaks$p_val_adj[lymphocyte_peaks$p_val_adj == 0] <- 2e-302
+  lymphocyte_peaks <- dplyr::filter(lymphocyte_peaks, p_val_adj < 1e-5) 
+  open_lymphocyte_peaks <- rownames(lymphocyte_peaks[lymphocyte_peaks$avg_log2FC > 1, ])
+  
+  endothelial_peaks$p_val_adj[endothelial_peaks$p_val_adj == 0] <- 2e-302
+  endothelial_peaks <- dplyr::filter(endothelial_peaks, p_val_adj < 1e-5) 
+  open_endothelial_peaks <- rownames(endothelial_peaks[endothelial_peaks$avg_log2FC > 1, ])
+  
+  cgenes_beta <- ClosestFeature(hm.integrated.dfree, regions = open_beta_peaks)
+  cgenes_alpha <- ClosestFeature(hm.integrated.dfree, regions = open_alpha_peaks)
+  cgenes_delta <- ClosestFeature(hm.integrated.dfree, regions = open_delta_peaks)
+  cgenes_gamma <- ClosestFeature(hm.integrated.dfree, regions = open_gamma_peaks)
+  cgenes_acinar <- ClosestFeature(hm.integrated.dfree, regions = open_acinar_peaks)
+  cgenes_ductal <- ClosestFeature(hm.integrated.dfree, regions = open_ductal_peaks)
+  cgenes_qstel <- ClosestFeature(hm.integrated.dfree, regions = open_quiescentstellate_peaks)
+  cgenes_astel <- ClosestFeature(hm.integrated.dfree, regions = open_activatedstellate_peaks)
+  cgenes_macro <- ClosestFeature(hm.integrated.dfree, regions = open_macrophage_peaks)
+  cgenes_lympho <- ClosestFeature(hm.integrated.dfree, regions = open_lymphocyte_peaks)
+  cgenes_endo <- ClosestFeature(hm.integrated.dfree, regions = open_endothelial_peaks)
+  
+  cgenes_beta <- dplyr::filter(cgenes_beta, distance < 100000) 
+  cgenes_alpha <- dplyr::filter(cgenes_alpha, distance < 100000) 
+  cgenes_delta <- dplyr::filter(cgenes_delta, distance < 100000) 
+  cgenes_gamma <- dplyr::filter(cgenes_gamma, distance < 100000) 
+  cgenes_acinar <- dplyr::filter(cgenes_acinar, distance < 100000) 
+  cgenes_ductal <- dplyr::filter(cgenes_ductal, distance < 100000) 
+  cgenes_qstel <- dplyr::filter(cgenes_qstel, distance < 100000) 
+  cgenes_astel <- dplyr::filter(cgenes_astel, distance < 100000) 
+  cgenes_macro <- dplyr::filter(cgenes_macro, distance < 100000) 
+  cgenes_lympho <- dplyr::filter(cgenes_lympho, distance < 100000) 
+  cgenes_endo <- dplyr::filter(cgenes_endo, distance < 100000)
 }
 
 allregions <- c(
@@ -618,7 +624,175 @@ allgenes <- c(
   as.character(cgenes_endo$gene_name),
   as.character(cgenes_lympho$gene_name),
   as.character(cgenes_macro$gene_name)
-  )
+)
+
+# Sex differences
+beta_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\beta.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+alpha_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\alpha.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+delta_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\delta.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+gamma_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\gamma.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+ductal_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\ductal.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+acinar_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\acinar.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+qstel_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\quiescent_stellate.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+astell_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\activated_stellate.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+macro_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\macrophage.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+lympho_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\lymphocyte.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+endo_peaks <- read.table(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_peaks\sexancestry\endothelial.deseq.WaldTest.male.vs.female.tsv)", row.names = 1)
+
+{
+beta_peaks$padj[beta_peaks$padj == 0] <- 2e-302
+beta_peaks <- dplyr::filter(beta_peaks, padj < 1e-5) 
+open_beta_peaks_male <- rownames(beta_peaks[beta_peaks$log2FoldChange > 1 & beta_peaks$padj < 0.1, ])
+open_beta_peaks_female <- rownames(beta_peaks[beta_peaks$log2FoldChange < -1 & beta_peaks$padj < 0.1, ])
+
+alpha_peaks$padj[alpha_peaks$padj == 0] <- 2e-302
+alpha_peaks <- dplyr::filter(alpha_peaks, padj < 1e-5) 
+open_alpha_peaks_male <- rownames(alpha_peaks[alpha_peaks$log2FoldChange > 1 & alpha_peaks$padj < 0.1, ])
+open_alpha_peaks_female <- rownames(alpha_peaks[alpha_peaks$log2FoldChange < -1 & alpha_peaks$padj < 0.1, ])
+
+delta_peaks$padj[delta_peaks$padj == 0] <- 2e-302
+delta_peaks <- dplyr::filter(delta_peaks, padj < 1e-5) 
+open_delta_peaks_male <- rownames(delta_peaks[delta_peaks$log2FoldChange > 1 & delta_peaks$padj < 0.1, ])
+open_delta_peaks_female <- rownames(delta_peaks[delta_peaks$log2FoldChange < -1 & delta_peaks$padj < 0.1, ])
+
+gamma_peaks$padj[gamma_peaks$padj == 0] <- 2e-302
+gamma_peaks <- dplyr::filter(gamma_peaks, padj < 1e-5) 
+open_gamma_peaks_male <- rownames(gamma_peaks[gamma_peaks$log2FoldChange > 1 & gamma_peaks$padj < 0.1, ])
+open_gamma_peaks_female <- rownames(gamma_peaks[gamma_peaks$log2FoldChange < -1 & gamma_peaks$padj < 0.1, ])
+
+ductal_peaks$padj[ductal_peaks$padj == 0] <- 2e-302
+ductal_peaks <- dplyr::filter(ductal_peaks, padj < 1e-5) 
+open_ductal_peaks_male <- rownames(ductal_peaks[ductal_peaks$log2FoldChange > 1 & ductal_peaks$padj < 0.1, ])
+open_ductal_peaks_female <- rownames(ductal_peaks[ductal_peaks$log2FoldChange < -1 & ductal_peaks$padj < 0.1, ])
+
+acinar_peaks$padj[acinar_peaks$padj == 0] <- 2e-302
+acinar_peaks <- dplyr::filter(acinar_peaks, padj < 1e-5) 
+open_acinar_peaks_male <- rownames(acinar_peaks[acinar_peaks$log2FoldChange > 1 & acinar_peaks$padj < 0.1, ])
+open_acinar_peaks_female <- rownames(acinar_peaks[acinar_peaks$log2FoldChange < -1 & acinar_peaks$padj < 0.1, ])
+
+qstel_peaks$padj[qstel_peaks$padj == 0] <- 2e-302
+qstel_peaks <- dplyr::filter(qstel_peaks, padj < 1e-5) 
+open_qstel_peaks_male <- rownames(qstel_peaks[qstel_peaks$log2FoldChange > 1 & qstel_peaks$padj < 0.1, ])
+open_qstel_peaks_female <- rownames(qstel_peaks[qstel_peaks$log2FoldChange < -1 & qstel_peaks$padj < 0.1, ])
+
+astell_peaks$padj[astell_peaks$padj == 0] <- 2e-302
+astell_peaks <- dplyr::filter(astell_peaks, padj < 1e-5) 
+open_astell_peaks_male <- rownames(astell_peaks[astell_peaks$log2FoldChange > 1 & astell_peaks$padj < 0.1, ])
+open_astell_peaks_female <- rownames(astell_peaks[astell_peaks$log2FoldChange < -1 & astell_peaks$padj < 0.1, ])
+
+macro_peaks$padj[macro_peaks$padj == 0] <- 2e-302
+macro_peaks <- dplyr::filter(macro_peaks, padj < 1e-5) 
+open_macro_peaks_male <- rownames(macro_peaks[macro_peaks$log2FoldChange > 1 & macro_peaks$padj < 0.1, ])
+open_macro_peaks_female <- rownames(macro_peaks[macro_peaks$log2FoldChange < -1 & macro_peaks$padj < 0.1, ])
+
+lympho_peaks$padj[lympho_peaks$padj == 0] <- 2e-302
+lympho_peaks <- dplyr::filter(lympho_peaks, padj < 1e-5) 
+open_lympho_peaks_male <- rownames(lympho_peaks[lympho_peaks$log2FoldChange > 1 & lympho_peaks$padj < 0.1, ])
+open_lympho_peaks_female <- rownames(lympho_peaks[lympho_peaks$log2FoldChange < -1 & lympho_peaks$padj < 0.1, ])
+
+endo_peaks$padj[endo_peaks$padj == 0] <- 2e-302
+endo_peaks <- dplyr::filter(endo_peaks, padj < 1e-5) 
+open_endo_peaks_male <- rownames(endo_peaks[endo_peaks$log2FoldChange > 1 & endo_peaks$padj < 0.1, ])
+open_endo_peaks_female <- rownames(endo_peaks[endo_peaks$log2FoldChange < -1 & endo_peaks$padj < 0.1, ])
+
+cgenes_beta_male <- ClosestFeature(hm.integrated.dfree, regions = open_beta_peaks_male)
+cgenes_beta_female <- ClosestFeature(hm.integrated.dfree, regions = open_beta_peaks_female)
+cgenes_alpha_male <- ClosestFeature(hm.integrated.dfree, regions = open_alpha_peaks_male)
+cgenes_alpha_female <- ClosestFeature(hm.integrated.dfree, regions = open_alpha_peaks_female)
+cgenes_delta_male <- ClosestFeature(hm.integrated.dfree, regions = open_delta_peaks_male)
+cgenes_delta_female <- ClosestFeature(hm.integrated.dfree, regions = open_delta_peaks_female)
+cgenes_gamma_male <- ClosestFeature(hm.integrated.dfree, regions = open_gamma_peaks_male)
+cgenes_gamma_female <- ClosestFeature(hm.integrated.dfree, regions = open_gamma_peaks_female)
+cgenes_ductal_male <- ClosestFeature(hm.integrated.dfree, regions = open_ductal_peaks_male)
+cgenes_ductal_female <- ClosestFeature(hm.integrated.dfree, regions = open_ductal_peaks_female)
+cgenes_acinar_male <- ClosestFeature(hm.integrated.dfree, regions = open_acinar_peaks_male)
+cgenes_acinar_female <- ClosestFeature(hm.integrated.dfree, regions = open_acinar_peaks_female)
+cgenes_qstell_male <- ClosestFeature(hm.integrated.dfree, regions = open_qstell_peaks_male)
+cgenes_qstell_female <- ClosestFeature(hm.integrated.dfree, regions = open_qstell_peaks_female)
+cgenes_astell_male <- ClosestFeature(hm.integrated.dfree, regions = open_astell_peaks_male)
+cgenes_astell_female <- ClosestFeature(hm.integrated.dfree, regions = open_astell_peaks_female)
+cgenes_macro_male <- ClosestFeature(hm.integrated.dfree, regions = open_macro_peaks_male)
+cgenes_macro_female <- ClosestFeature(hm.integrated.dfree, regions = open_macro_peaks_female)
+cgenes_lympho_male <- ClosestFeature(hm.integrated.dfree, regions = open_lympho_peaks_male)
+cgenes_lympho_female <- ClosestFeature(hm.integrated.dfree, regions = open_lympho_peaks_female)
+cgenes_endo_male <- ClosestFeature(hm.integrated.dfree, regions = open_endo_peaks_male)
+cgenes_endo_female <- ClosestFeature(hm.integrated.dfree, regions = open_endo_peaks_female)
+
+
+cgenes_beta_male <- dplyr::filter(cgenes_beta_male, distance < 100000) 
+cgenes_beta_female <- dplyr::filter(cgenes_beta_female, distance < 100000) 
+cgenes_alpha_male <- dplyr::filter(cgenes_alpha_male, distance < 100000) 
+cgenes_alpha_female <- dplyr::filter(cgenes_alpha_female, distance < 100000) 
+cgenes_delta_male <- dplyr::filter(cgenes_delta_male, distance < 100000) 
+cgenes_delta_female <- dplyr::filter(cgenes_delta_female, distance < 100000)
+cgenes_gamma_male <- dplyr::filter(cgenes_gamma_male, distance < 100000) 
+cgenes_gamma_female <- dplyr::filter(cgenes_gamma_female, distance < 100000)
+cgenes_ductal_male <- dplyr::filter(cgenes_ductal_male, distance < 100000) 
+cgenes_ductal_female <- dplyr::filter(cgenes_ductal_female, distance < 100000)
+cgenes_acinar_male <- dplyr::filter(cgenes_acinar_male, distance < 100000) 
+cgenes_acinar_female <- dplyr::filter(cgenes_acinar_female, distance < 100000)
+cgenes_qstell_male <- dplyr::filter(cgenes_qstell_male, distance < 100000) 
+cgenes_qstell_female <- dplyr::filter(cgenes_qstell_female, distance < 100000)
+cgenes_astell_male <- dplyr::filter(cgenes_astell_male, distance < 100000) 
+cgenes_astell_female <- dplyr::filter(cgenes_astell_female, distance < 100000)
+cgenes_macro_male <- dplyr::filter(cgenes_macro_male, distance < 100000) 
+cgenes_macro_female <- dplyr::filter(cgenes_macro_female, distance < 100000)
+cgenes_lympho_male <- dplyr::filter(cgenes_lympho_male, distance < 100000) 
+cgenes_lympho_female <- dplyr::filter(cgenes_lympho_female, distance < 100000)
+cgenes_endo_male <- dplyr::filter(cgenes_endo_male, distance < 100000) 
+cgenes_endo_female <- dplyr::filter(cgenes_endo_female, distance < 100000)
+}
+
+allregions <- c(
+  as.character(cgenes_beta_male$query_region),
+  as.character(cgenes_beta_female$query_region),
+  as.character(cgenes_alpha_male$query_region),
+  as.character(cgenes_alpha_female$query_region),
+  as.character(cgenes_delta_male$query_region),
+  as.character(cgenes_delta_female$query_region),
+  as.character(cgenes_gamma_male$query_region),
+  as.character(cgenes_gamma_female$query_region),
+  as.character(cgenes_ductal_male$query_region),
+  as.character(cgenes_ductal_female$query_region),
+  as.character(cgenes_acinar_male$query_region),
+  as.character(cgenes_acinar_female$query_region),
+  as.character(cgenes_endo_male$query_region),
+  as.character(cgenes_endo_female$query_region)
+)
+
+cgenes_beta_male <- distinct(cgenes_beta_male, gene_name, .keep_all = TRUE)
+cgenes_beta_female <- distinct(cgenes_beta_female, gene_name, .keep_all = TRUE)
+cgenes_alpha_male <- distinct(cgenes_alpha_male, gene_name, .keep_all = TRUE)
+cgenes_alpha_female <- distinct(cgenes_alpha_female, gene_name, .keep_all = TRUE)
+cgenes_delta_male <- distinct(cgenes_delta_male, gene_name, .keep_all = TRUE)
+cgenes_delta_female <- distinct(cgenes_delta_female, gene_name, .keep_all = TRUE)
+cgenes_gamma_male <- distinct(cgenes_gamma_male, gene_name, .keep_all = TRUE)
+cgenes_gamma_female <- distinct(cgenes_gamma_female, gene_name, .keep_all = TRUE)
+cgenes_ductal_male <- distinct(cgenes_ductal_male, gene_name, .keep_all = TRUE)
+cgenes_ductal_female <- distinct(cgenes_ductal_female, gene_name, .keep_all = TRUE)
+cgenes_acinar_male <- distinct(cgenes_acinar_male, gene_name, .keep_all = TRUE)
+cgenes_acinar_female <- distinct(cgenes_acinar_female, gene_name, .keep_all = TRUE)
+cgenes_endo_male <- distinct(cgenes_endo_male, gene_name, .keep_all = TRUE)
+cgenes_endo_female <- distinct(cgenes_endo_female, gene_name, .keep_all = TRUE)
+
+
+
+allgenes <- c(
+  as.character(cgenes_beta_male$gene_name),
+  as.character(cgenes_beta_female$gene_name),
+  as.character(cgenes_alpha_male$gene_name),
+  as.character(cgenes_alpha_female$gene_name),
+  as.character(cgenes_delta_male$gene_name),
+  as.character(cgenes_delta_female$gene_name),
+  as.character(cgenes_gamma_male$gene_name),
+  as.character(cgenes_gamma_female$gene_name),
+  as.character(cgenes_ductal_male$gene_name),
+  as.character(cgenes_ductal_female$gene_name),
+  as.character(cgenes_acinar_male$gene_name),
+  as.character(cgenes_acinar_female$gene_name),
+  as.character(cgenes_endo_male$gene_name),
+  as.character(cgenes_endo_female$gene_name)
+)
 
 allregions
 allgenes
@@ -672,23 +846,25 @@ Idents(combined_processed_atac) <- "celltype"
 # Plot heatmap
 genes.to.plot <- uniquegenes
 label_genes <- c("INS", "GCG", "SST") #uniquegenes
+all_genes_inobj <- rownames(combined_processed_rna@assays[["RNA"]])
+genes.to.plot.intr <- intersect(all_genes_inobj, genes.to.plot) # to get genes make a seurat object by combining data over counts
 
 regions.to.plot <- uniqueregions
 label_genes <- c("INS", "GCG", "SST") #uniquegenes
 
 
 write.csv(regions.to.plot, R"(C:\Users\mqadir\Desktop\regions.csv)")
-DefaultAssay(combined_processed_atac) <- "ATAC"
+DefaultAssay(combined_processed_atac) <- "predicted"
 pdf(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\R_imageouts\temp_files\figure.pdf)",
     width = 8,
     height = 6)
 dittoHeatmap(
   object = combined_processed_atac,#(subset(combined_processed_rna, idents = c("alpha"))),
-  genes = regions.to.plot, #this is a compete gene set
+  genes = genes.to.plot.intr, #this is a compete gene set
   # metas = NULL,
   # cells.use = NULL,
   annot.by = c("celltype", "sex", "ancestry"),
-  order.by = c("celltype", "sex"),
+  order.by = c("sex"),
   # main = NA,
   # cell.names.meta = NULL,
   # assay = .default_assay(object),
@@ -732,10 +908,10 @@ dittoHeatmap(
   #                        "SDS", "C1QB", "CD68", "APOE", "VMO1", "MS4A7"), #macrophages
   #right_annotations = rowAnnotation(foo = anno_mark(at = c(1), labels = c("HHEX"))),
   # show_colnames = isBulk(object),
-  show_rownames = FALSE,
+  show_rownames = TRUE,
   # scale = "row",
-  cluster_row = FALSE,
-  # cluster_cols = FALSE,
+  cluster_row = TRUE,
+  cluster_cols = TRUE,
   # border_color = NA,
   # legend_breaks = NA,
   # drop_levels = FALSE,
@@ -746,9 +922,9 @@ dittoHeatmap(
   raster_quality = 5,
   #column_split = combined_processed_rna$celltype,
   #border_color = "black",
-  gaps_col = c(15, 30, 45, 60, 75, 90, 105, 120, 135, 150),
+  #gaps_col = c(15, 30, 45, 60, 75, 90, 105, 120, 135, 150),
   #gaps_row = c(1819, 3205, 5170, 5405, 10850, 14650, 21250, 23500, 25750, 26200)
-  gaps_row = c(2804, 4584, 7464, 7799, 17833, 23493, 36665, 39029, 41669, 42089)
+  #gaps_row = c(2804, 4584, 7464, 7799, 17833, 23493, 36665, 39029, 41669, 42089)
 ) 
 dev.off()
 dev.off()
