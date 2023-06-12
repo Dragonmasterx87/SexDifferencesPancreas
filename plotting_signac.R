@@ -20,6 +20,7 @@ install.packages('clustree')
 install.packages('patchwork')
 install.packages('future')
 install.packages("devtools")
+install.packages("rlang")
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
@@ -62,12 +63,14 @@ install.packages("R.utils")
 install.packages("qs")
 install.packages("ggseqlogo")
 
+#devtools::install_github("stuart-lab/signac", ref = "develop", force = TRUE)
+
 BiocManager::install(c("Gviz", "GenomicRanges", "rtracklayer"))
 devtools::install_github("cole-trapnell-lab/cicero-release", ref = "monocle3")
 remotes::install_github('satijalab/seurat-wrappers')
 
 # Run the following code once you have Seurat installed
-suppressWarnings({
+suppressPackageStartupMessages({
   library(ggplot2)
   library(ggrepel)
   library(leiden)
@@ -153,6 +156,7 @@ packageVersion("cicero")
 
 # Load object
 hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
+combined_atac <- qread(file = r"(E:\2.SexbasedStudyCurrent\QS files\snATACfiles_earlierpartsofworkflow\combined_atac.qs)")
 
 # cluster re-assignment occurs, which re-assigns clustering in my_levels
 my_levels <- c("beta", "delta", "alpha", "gamma", 
@@ -165,6 +169,42 @@ table(hm.integrated.dfree$celltype)
 # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
 hm.integrated.dfree$celltype <- factor(x = hm.integrated.dfree$celltype, levels = my_levels)
 table(unique(hm.integrated.dfree$celltype))
+
+#QC
+frac_reads_in_promoters <- combined_atac@meta.data$FRiP
+quantile(frac_reads_in_promoters)
+metadata <- combined_atac@meta.data
+ggplot(data=metadata, mapping = aes(x=frac_reads_in_promoters)) +  geom_density(alpha = 0.2, fill= 'lightpink', color="pink") + 
+  theme_linedraw() + geom_vline(xintercept=c(0.22,0.2,0.38), colour=c("blue", "red", "purple"),linetype = "longdash")
+
+frac_reads_in_peaks <- combined_atac@meta.data$pct_reads_in_peaks
+quantile(frac_reads_in_peaks)
+ggplot(data=metadata, mapping = aes(x=frac_reads_in_peaks)) +  geom_density(alpha = 0.2, color="green", fill="lightgreen") + 
+  theme_linedraw() + geom_vline(xintercept=c(30), colour=c("red"),linetype = "longdash")
+
+TSS <- combined_atac@meta.data$TSS.enrichment
+quantile(TSS)
+ggplot(data=metadata, mapping = aes(x=TSS)) +  geom_density(alpha = 0.2, color="green", fill="lightgreen") + 
+  theme_linedraw() + geom_vline(xintercept=c(2), colour=c("red"),linetype = "longdash")
+
+
+DensityScatter(hm.integrated.dfree, x = 'nCount_ATAC', y = 'TSS.enrichment', log_x = TRUE, quantiles = TRUE)
+
+Idents(hm.integrated.dfree) <- "sex"
+Idents(combined_atac) <- "sex"
+VlnPlot(
+  object = hm.integrated.dfree,
+  features = c('nCount_ATAC', 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'pct_reads_in_peaks', "FRiP"),
+  pt.size = 0,
+  ncol = 3
+)
+
+VlnPlot(
+  object = combined_atac,
+  features = c('nCount_ATAC', 'TSS.enrichment', 'blacklist_ratio', 'nucleosome_signal', 'pct_reads_in_peaks', "FRiP"),
+  pt.size = 0,
+  ncol = 3
+)
 
 # Dimplot
 unique(hm.integrated.dfree@meta.data[["celltype"]])
@@ -233,6 +273,21 @@ DimPlot(hm.integrated.dfree,
                  "deepskyblue3"
         ))
 
+# Umap of Accessibility
+Idents(hm.integrated.dfree) <- "celltype"
+DefaultAssay(hm.integrated.dfree) <- "predicted"
+
+FeaturePlot(
+  object = hm.integrated.dfree,
+  features = c("CD3D"),
+  cols = c("lightgrey", "red4"),
+  pt.size = 0.1,
+  #max.cutoff = 1.6,
+  ncol = 1,
+  #order = TRUE
+)
+
+#, "GCG", "SST", "PPY", "CFTR", "PRSS1", "ESM1", "SDS", "RGS5", "PDGFRA", "CD7"
 
 # Corelation plot
 # # Pseudobulk
@@ -443,30 +498,35 @@ ggplot(predictions, aes(x=factor(Var1, level=c("delta", "beta", "alpha", "gamma"
                                    size = 12, hjust = 1))
 
 
-# Plotting Chromin accessibility
+# Plotting Chromatin accessibility
+# when copying off the heatmap make sure to adjust dashes
 DefaultAssay(hm.integrated.dfree) <- "ATAC"
+Idents(hm.integrated.dfree) <- "celltype"
 Idents(hm.integrated.dfree) <- "sex"
 male_set <- subset(hm.integrated.dfree, idents = (c("male")))
 female_set <- subset(hm.integrated.dfree, idents = (c("female")))
 Idents(male_set) <- "celltype"
 Idents(female_set) <- "celltype"
-p1 <-  CoveragePlot(female_set, region = c("XIST"), 
+p1 <-  CoveragePlot(male_set, region = c("KDM5D"), 
+                    assay = "ATAC",
                     window = 100,
-                    #ymax = 200,
+                    ymax = 50,
              links = FALSE,
              #tile = TRUE,
              extend.upstream = 20000,
-             extend.downstream = 20000) & scale_fill_manual(values = c("dodgerblue3",      #beta
-                                                                       "chartreuse3",      #delta
-                                                                       "lightseagreen",    #alpha
-                                                                       "springgreen4",     #gamma
-                                                                       "salmon3",          #acinar
-                                                                       "darkorange2",      #ductal
-                                                                       "salmon",           #quiescent_stellate
-                                                                       "orange",           #activated_setallate
-                                                                       "red",              #endothelial
-                                                                       "orchid1",          #lymphocytes
-                                                                       "magenta3"))
+             extend.downstream = 20000
+             ) & scale_fill_manual(values = c("dodgerblue3",      #beta
+                                              "chartreuse3",      #delta
+                                              "lightseagreen",    #alpha
+                                              "springgreen4",     #gamma
+                                              "salmon3",          #acinar
+                                              "darkorange2",      #ductal
+                                              "salmon",           #quiescent_stellate
+                                              "orange",           #activated_setallate
+                                              "red",              #endothelial
+                                              "orchid1",          #lymphocytes
+                                              "magenta3"))
+p1
 p1+p2
 
 link_plot <- LinkPlot(
@@ -860,7 +920,7 @@ pdf(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study
     height = 6)
 dittoHeatmap(
   object = combined_processed_atac,#(subset(combined_processed_rna, idents = c("alpha"))),
-  genes = genes.to.plot.intr, #this is a compete gene set
+  genes = regions.to.plot, #this is a compete gene set
   # metas = NULL,
   # cells.use = NULL,
   annot.by = c("celltype", "sex", "ancestry"),
@@ -911,7 +971,7 @@ dittoHeatmap(
   show_rownames = TRUE,
   # scale = "row",
   cluster_row = TRUE,
-  cluster_cols = TRUE,
+  cluster_cols = FALSE,
   # border_color = NA,
   # legend_breaks = NA,
   # drop_levels = FALSE,
@@ -970,10 +1030,29 @@ cgenes_endo <- as.character(cgenes_endo$gene_name)
 cgenes_lympho <- as.character(cgenes_lympho$gene_name)
 cgenes_macro <- as.character(cgenes_macro$gene_name)
 
+#across sex
+beta_male_ac <- as.character(cgenes_beta_male$gene_name)
+beta_female_ac <- as.character(cgenes_beta_female$gene_name)
+alpha_male_ac <- as.character(cgenes_alpha_male$gene_name)
+alpha_female_ac <- as.character(cgenes_alpha_female$gene_name)
+delta_male_ac <- as.character(cgenes_delta_male$gene_name)
+delta_female_ac <- as.character(cgenes_delta_female$gene_name)
+gamma_male_ac <- as.character(cgenes_gamma_male$gene_name)
+gamma_female_ac <-as.character(cgenes_gamma_female$gene_name)
+ductal_male_ac <- as.character(cgenes_ductal_male$gene_name)
+ductal_female_ac <- as.character(cgenes_ductal_female$gene_name)
+acinar_male_ac <- as.character(cgenes_acinar_male$gene_name)
+acinar_female_ac <- as.character(cgenes_acinar_female$gene_name)
+endo_male_ac <- as.character(cgenes_endo_male$gene_name)
+endo_female_ac <- as.character(cgenes_endo_female$gene_name)
+
 
 gene.list <- list("beta" = cgenes_beta, "alpha" = cgenes_alpha, "delta" = cgenes_delta, "gamma" = cgenes_gamma, 
                   "acinar" = cgenes_acinar, "ductal" = cgenes_ductal, "qstel" = cgenes_qstel, "astel" = cgenes_astel,
                   "macro" = cgenes_macro, "lympho" = cgenes_lympho, "endo" = cgenes_endo)
+
+gene.list <- list("beta_male_ac" = beta_male_ac, "alpha_male_ac" = alpha_male_ac, "delta_male_ac" = delta_male_ac, "gamma_male_ac" = gamma_male_ac, "ductal_male_ac" = ductal_male_ac, "acinar_male_ac" = acinar_male_ac, "endo_male_ac" = endo_male_ac,
+                  "beta_female_ac" = beta_female_ac,  "alpha_female_ac" = alpha_female_ac,  "delta_female_ac" = delta_female_ac,  "gamma_female_ac" = gamma_female_ac, "ductal_female_ac" = ductal_female_ac, "acinar_female_ac" = acinar_female_ac, "endo_female_ac" = endo_female_ac)
 
 ck <- compareCluster(geneCluster = gene.list, # list of genes
                      fun = enrichGO, 
@@ -983,28 +1062,34 @@ ck <- compareCluster(geneCluster = gene.list, # list of genes
                      ont = c("ALL"), 
                      pAdjustMethod = "BH", 
                      pvalueCutoff = 1, 
-                     qvalueCutoff = 0.1, #if not set default is at 0.05
-                     readable = TRUE)
-ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
+                     qvalueCutoff = 1, #if not set default is at 0.05
+                     readable = TRUE) 
 head(ck) 
 cluster_summary <- data.frame(ck)
 ck <- ck[ck@compareClusterResult[["qvalue"]] < 0.1, asis=T]
-dotplot(ck, showCategory = 3)
+dotplot(ck, showCategory = 8) + #coord_flip() + 
+  scale_x_discrete(limits=rev) + scale_y_discrete(limits=rev) + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+ck <- setReadable(ck, OrgDb = org.Hs.eg.db, keyType="SYMBOL")
 dotplot(ck, showCategory = 1)
 ck.save <- ck@compareClusterResult
-write.csv(ck.save, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\ORA\allsex.save.csv)")
+write.csv(ck.save, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\ORA\sex_accessibility.save.csv)")
 
-dotplot(ck, showCategory = c("insulin secretion", "calcium ion homeostasis", "protein localization to plasma membrane", "glucose homeostasis",
-                             "regulation of G protein-coupled receptor signaling pathway", "pancreas development", "hormone metabolic process",
-                             "glutamate receptor signaling pathway", "synaptic transmission, GABAergic", "peptide secretion",
-                             "hormone transport",
-                             "developmental growth involved in morphogenesis", "sodium ion transport", "regulation of actin filament-based process",
-                             "regulation of Wnt signaling pathway", "integrin-mediated signaling pathway",
-                             "muscle contraction", "establishment of endothelial barrier", "cellular response to fibroblast growth factor stimulus", "extracellular matrix organization",
-                             "activation of immune response", "response to interferon-gamma", "cytokine-mediated signaling pathway", "leukocyte chemotaxis", "leukocyte degranulation", "interleukin-1 beta production", "phagocytosis",
-                             "alpha-beta T cell activation",
-                             "endothelial cell development", "cellular response to angiotensin"), 
-        font.size=14) + coord_flip() + scale_x_discrete(limits=rev) + scale_y_discrete(limits=rev) + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+dotplot(ck, 
+        # showCategory = c("insulin secretion", "calcium ion homeostasis", "protein localization to plasma membrane", "glucose homeostasis",
+        #                      "regulation of G protein-coupled receptor signaling pathway", "pancreas development", "hormone metabolic process",
+        #                      "glutamate receptor signaling pathway", "synaptic transmission, GABAergic", "peptide secretion",
+        #                      "hormone transport",
+        #                      "developmental growth involved in morphogenesis", "sodium ion transport", "regulation of actin filament-based process",
+        #                      "regulation of Wnt signaling pathway", "integrin-mediated signaling pathway",
+        #                      "muscle contraction", "establishment of endothelial barrier", "cellular response to fibroblast growth factor stimulus", "extracellular matrix organization",
+        #                      "activation of immune response", "response to interferon-gamma", "cytokine-mediated signaling pathway", "leukocyte chemotaxis", "leukocyte degranulation", "interleukin-1 beta production", "phagocytosis",
+        #                      "alpha-beta T cell activation",
+        #                      "endothelial cell development", "cellular response to angiotensin"), 
+        showCategory = c("histone lysine demethylation", "protein dealkylation", "histone modification", "sequestering of actin monomers", "gonad development", "sex determination", 
+                         "androgen receptor signaling pathway", 
+                         "dosage compensation", "regulation of gene expression, epigenetic", "chromatin remodeling"),
+        font.size=14) + #coord_flip() + 
+  scale_x_discrete(limits=rev) + scale_y_discrete(limits=rev) + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 cnetplot(ck)
 
@@ -1387,7 +1472,19 @@ MotifPlot(
   assay = 'ATAC'
 )
 
+# Finding enriched motifs
+enriched.motifs.xist <- FindMotifs(
+  object = hm.integrated.dfree,
+  features = c("chrX-73849537-73853078")
+)
 
+write.csv(enriched.motifs.xist, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\ORA\Motifs\xist.csv)")
+
+# Plot
+MotifPlot(
+  object = hm.integrated.dfree,
+  motifs = c("GLI3")
+)
 
 
 # Stop
