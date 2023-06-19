@@ -287,62 +287,62 @@ FeaturePlot(
   #order = TRUE
 )
 
-#, "GCG", "SST", "PPY", "CFTR", "PRSS1", "ESM1", "SDS", "RGS5", "PDGFRA", "CD7"
-
-# Corelation plot
-# # Pseudobulk
-# Idents(hm.integrated.dfree) <- "celltype"
-# hm.integrated.dfree$celltype_sex <- paste(hm.integrated.dfree$celltype, hm.integrated.dfree$sex, sep = "_")
-# table(hm.integrated.dfree@meta.data$celltype_sex)
-# Idents(hm.integrated.dfree) <- "celltype_sex"
-# DefaultAssay(hm.integrated.dfree) <- "ATAC"
-# combined_processed_atac <- Seurat:::PseudobulkExpression(object = hm.integrated.dfree, 
-#                                                          pb.method = 'aggregate', 
-#                                                          return.seurat = TRUE,
-#                                                          slot = 'counts')
+# #, "GCG", "SST", "PPY", "CFTR", "PRSS1", "ESM1", "SDS", "RGS5", "PDGFRA", "CD7"
 # 
-# DefaultAssay(combined_processed_atac) <- "ATAC"
-# combined_processed_atac <- RunTFIDF(combined_processed_atac, assay = "ATAC")
+# # Corelation plot
+# # # Pseudobulk
+# # Idents(hm.integrated.dfree) <- "celltype"
+# # hm.integrated.dfree$celltype_sex <- paste(hm.integrated.dfree$celltype, hm.integrated.dfree$sex, sep = "_")
+# # table(hm.integrated.dfree@meta.data$celltype_sex)
+# # Idents(hm.integrated.dfree) <- "celltype_sex"
+# # DefaultAssay(hm.integrated.dfree) <- "ATAC"
+# # combined_processed_atac <- Seurat:::PseudobulkExpression(object = hm.integrated.dfree, 
+# #                                                          pb.method = 'aggregate', 
+# #                                                          return.seurat = TRUE,
+# #                                                          slot = 'counts')
+# # 
+# # DefaultAssay(combined_processed_atac) <- "ATAC"
+# # combined_processed_atac <- RunTFIDF(combined_processed_atac, assay = "ATAC")
+# # 
+# # {
+# #   combined_processed_atac$celltype_sex <- combined_processed_atac@active.ident
+# #   Idents(combined_processed_atac) <- 'celltype_sex'
+# #   combined_processed_atac$celltype <- combined_processed_atac$orig.ident
+# #   metadat <- combined_processed_atac@meta.data
+# #   metadat <- metadat %>% 
+# #     mutate(celltype_sex = str_replace(celltype_sex, "activated", "activated-stellate"))
+# #   metadat <- metadat %>% 
+# #     mutate(celltype_sex = str_replace(celltype_sex, "quiescent", "quiescent-stellate"))
+# #   metadat$sex <- metadat[c('sex')] <- str_split_i(metadat$celltype_sex, "_", -1)
+# #   combined_processed_atac@meta.data = metadat
+# # }
+# # 
+# # table(combined_processed_atac@meta.data[["celltype"]])
+# # table(combined_processed_atac@meta.data[["sex"]])
+# # 
+# # # cluster re-assignment occurs, which re-assigns clustering in my_levels
+# # my_levels <- c("delta", "beta", "alpha", "gamma",
+# #                "ductal", "acinar",
+# #                "activated", "quiescent", "endothelial",
+# #                "lymphocyte", "macrophage") 
+# # 
+# # table(combined_processed_atac$celltype)
+# # 
+# # # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
+# # combined_processed_atac$celltype <- factor(x = combined_processed_atac$celltype, levels = my_levels)
+# # table(combined_processed_atac$celltype)
+# # Idents(combined_processed_atac) <- "celltype"
+# # DefaultAssay(combined_processed_atac) <- "ATAC"
 # 
-# {
-#   combined_processed_atac$celltype_sex <- combined_processed_atac@active.ident
-#   Idents(combined_processed_atac) <- 'celltype_sex'
-#   combined_processed_atac$celltype <- combined_processed_atac$orig.ident
-#   metadat <- combined_processed_atac@meta.data
-#   metadat <- metadat %>% 
-#     mutate(celltype_sex = str_replace(celltype_sex, "activated", "activated-stellate"))
-#   metadat <- metadat %>% 
-#     mutate(celltype_sex = str_replace(celltype_sex, "quiescent", "quiescent-stellate"))
-#   metadat$sex <- metadat[c('sex')] <- str_split_i(metadat$celltype_sex, "_", -1)
-#   combined_processed_atac@meta.data = metadat
-# }
+# # split object by cluster, take counts and aggregate by sum (pseudobulking)
+# processed_rna <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+# hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
 # 
-# table(combined_processed_atac@meta.data[["celltype"]])
-# table(combined_processed_atac@meta.data[["sex"]])
-# 
-# # cluster re-assignment occurs, which re-assigns clustering in my_levels
-# my_levels <- c("delta", "beta", "alpha", "gamma",
-#                "ductal", "acinar",
-#                "activated", "quiescent", "endothelial",
-#                "lymphocyte", "macrophage") 
-# 
-# table(combined_processed_atac$celltype)
-# 
-# # Re-level object@meta.data this just orders the actual metadata slot, so when you pull its already ordered
-# combined_processed_atac$celltype <- factor(x = combined_processed_atac$celltype, levels = my_levels)
-# table(combined_processed_atac$celltype)
-# Idents(combined_processed_atac) <- "celltype"
-# DefaultAssay(combined_processed_atac) <- "ATAC"
-
-# split object by cluster, take counts and aggregate by sum (pseudobulking)
-processed_rna <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
-hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
-
 # # Idents(processed_rna) <- "Sex"
 # # unique(processed_rna$Sex)
 # # processed_rna$sex <- plyr::mapvalues(
 # #   x= processed_rna$Sex,
-# #   from = c("F", 
+# #   from = c("F",
 # #            "M"),
 # #   to = c("female",
 # #          "male"))
@@ -365,7 +365,7 @@ hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated
 # # DefaultAssay(hm.integrated.dfree) <- "RNA"
 # # Idents(hm.integrated.dfree) <- "celltype"
 # # hm.integrated.dfree$celltype_sex <- paste(hm.integrated.dfree$celltype, hm.integrated.dfree$sex, sep = "_")
-# DefaultAssay(hm.integrated.dfree) <- "RNA"
+# DefaultAssay(hm.integrated.dfree) <- "predicted"
 # Idents(hm.integrated.dfree) <- "celltype"
 # #hm.integrated.dfree <- subset(hm.integrated.dfree, features = rownames(processed_rna@assays[["RNA"]]@meta.features))
 # pblist_sig <- lapply(unique(hm.integrated.dfree$celltype), function(x) {
@@ -378,13 +378,14 @@ hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated
 # common_genes <- intersect(intersect(rownames(processed_rna@assays[["RNA"]]@meta.features), rownames(hm.integrated.dfree@assays[["RNA"]]@meta.features)), processed_rna@assays[["RNA"]]@var.features)
 # common_genes <- intersect(rownames(processed_rna@assays[["RNA"]]@meta.features), rownames(hm.integrated.dfree@assays[["RNA"]]@meta.features))
 # common_genes <- c("INS", "GCG", "SST", "PPY")
-# 
+# common_genes <- processed_rna@assays[["RNA"]]@var.features
+# common_genes <- intersect(rownames(hm.integrated.dfree@assays[["RNA"]]@meta.features), processed_rna@assays[["RNA"]]@var.features)
 # 
 # # Convert list of matrices to DFs
 # ##### ATAC ###
 # #####      ###
 # pblist_sig <- lapply(
-#   X = pblist_sig, 
+#   X = pblist_sig,
 #   FUN = function(x){as.data.frame(x)})
 # 
 # # Initialize an empty list
@@ -394,7 +395,7 @@ hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated
 # for (i in 1:length(pblist_sig)) {
 #   # Create subset based on common genes
 #   subset_df <- pblist_sig[[i]][common_genes, ]
-#   
+# 
 #   # Append the subset data frame to the list
 #   subset_dfs[[i]] <- subset_df
 # }
@@ -404,7 +405,7 @@ hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated
 # pblist_sig <- subset_dfs
 # 
 # pblist_sig <- lapply(
-#   X = pblist_sig, 
+#   X = pblist_sig,
 #   FUN = function(x){as.matrix(x)})
 # 
 # 
@@ -412,7 +413,7 @@ hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated
 # #####       ###
 # # Convert list of matrices to DFs
 # pblist_seu <- lapply(
-#   X = pblist_seu, 
+#   X = pblist_seu,
 #   FUN = function(x){as.data.frame(x)})
 # 
 # # Initialize an empty list
@@ -422,7 +423,7 @@ hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated
 # for (i in 1:length(pblist_seu)) {
 #   # Create subset based on common genes
 #   subset_df <- pblist_seu[[i]][common_genes, ]
-#   
+# 
 #   # Append the subset data frame to the list
 #   subset_dfs[[i]] <- subset_df
 # }
@@ -432,40 +433,41 @@ hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated
 # pblist_seu <- subset_dfs
 # 
 # pblist_seu <- lapply(
-#   X = pblist_seu, 
+#   X = pblist_seu,
 #   FUN = function(x){as.matrix(x)})
 # 
 # # create pairwise combinations
 # ids = expand.grid(unique(processed_rna$celltype_qadir), unique(hm.integrated.dfree$celltype))
 # 
-# # iterate over combinations to extract correlations 
+# # iterate over combinations to extract correlations
 # cors = apply(ids, 1, function(x) cor(pblist_seu[[x[1]]], pblist_sig[[x[2]]]))
 # 
 # pblist_sig[[2]]
 # # fold the correlations vector into a matrix
 # cmat = matrix(cors, nrow = length(unique(processed_rna$celltype_qadir)), byrow = TRUE)
 # 
-# # add cluster names. This implies that the names are matching, otherwise you need to add them separately for RNA and ATAC. This in turn depends on the order in which you expanded the grid above. 
-# rownames(cmat) = unique(processed_rna$celltype_qadir) 
+# # add cluster names. This implies that the names are matching, otherwise you need to add them separately for RNA and ATAC. This in turn depends on the order in which you expanded the grid above.
+# rownames(cmat) = unique(processed_rna$celltype_qadir)
 # colnames(cmat) = unique(hm.integrated.dfree$celltype)
 # 
-# # plot however you want 
-# pheatmap(cmat, clustering_distance_rows = "euclidean", cluster_rows = FALSE,cluster_cols = FALSE)
+# # plot however you want
+# pheatmap(cmat, clustering_distance_rows = "euclidean", 
+#          cluster_rows = FALSE,cluster_cols = FALSE)
 # 
 # rna.seurat <- processed_rna[, sample(colnames(processed_rna), size =500, replace=F)]
 # atac.signac <- hm.integrated.dfree[, sample(colnames(hm.integrated.dfree), size =500, replace=F)]
 # qsave(rna.seurat, r"(E:\downsampling_collab\rna.seurat.qs)")
 # qsave(atac.signac, r"(E:\downsampling_collab\atac.signac.qs)")
-# 
-# 
-# 
-# # cluster re-assignment occurs, which re-assigns clustering in my_levels
-# my_levels <- c("beta", "delta", "alpha", "gamma", 
-#                "acinar", "ductal",
-#                "quiescent_stellate", "activated_stellate", "endothelial",
-#                "lymphocyte", "macrophage")
-# 
-# table(hm.integrated.dfree$celltype)
+
+
+
+# cluster re-assignment occurs, which re-assigns clustering in my_levels
+my_levels <- c("beta", "delta", "alpha", "gamma",
+               "acinar", "ductal",
+               "quiescent_stellate", "activated_stellate", "endothelial",
+               "lymphocyte", "macrophage")
+
+table(hm.integrated.dfree$celltype)
 
 
 
@@ -1254,18 +1256,6 @@ write.csv(enriched.motifs.macro, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
 }
 
 
-
-# EMERGENCY TESTING
-# Differential motif testing USE CHROMVAR
-hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
-
-cell.type <- 'endothelial'
-
-peaks_data <- read.table(sprintf('C:/Users/mqadir/Box/Lab 2301/1. R_Coding Scripts/Sex Biology Study/Data Output/snATAC/DE_accessible_sites/DA_peaks/sexancestry/%s.deseq.WaldTest.male.vs.female.tsv', cell.type))
-
-
-
-
 # Add Motif scores to pseduo bulk and make a heat map
 # Heatmap
 # Pseudobulk
@@ -1309,27 +1299,382 @@ table(combined_processed_atac$celltype)
 Idents(combined_processed_atac) <- "celltype"
 
 
-# Plot heatmap
-motifs.to.plot <- rownames(hm.integrated.dfree@assays[["chromvar"]])
+# # DE testing Motifs
+# DefaultAssay(hm.integrated.dfree) <- "chromvar"
+# Idents(hm.integrated.dfree) <- "celltype"
+# 
+# enriched.cvar.motifs.beta <- FindMarkers(
+#   object = hm.integrated.dfree,
+#   ident.1 = 'beta',
+#   ident.2 = c('alpha', "delta", "gamma", "activated_stellate", "quiescent_stellate", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.2,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.alpha <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'alpha',
+#   ident.2 = c('beta', "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.05,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.delta <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'delta',
+#   ident.2 = c('alpha', "beta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.gamma <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'gamma',
+#   ident.2 = c('alpha', "beta", "delta", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.astel <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'activated',
+#   ident.2 = c('alpha', "beta", "delta", "gamma", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.qstel <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'quiescent',
+#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.ductal <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'ductal',
+#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "acinar", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.acinar <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'acinar',
+#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "macrophage", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.macro <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'macrophage',
+#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "lymphocyte", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.lympho <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'lymphocyte',
+#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "endothelial"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.endo <- FindMarkers(
+#   object = combined_processed_atac,
+#   ident.1 = 'endothelial',
+#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte"),
+#   only.pos = TRUE,
+#   mean.fxn = rowMeans,
+#   fc.name = "avg_diff",
+#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
+#   min.pct = 0.1,
+#   logfc.threshold = 0
+# )
+# 
+# enriched.cvar.motifs.beta
+# enriched.cvar.motifs.alpha
+# enriched.cvar.motifs.delta
+# enriched.cvar.motifs.gamma
+# enriched.cvar.motifs.astel
+# enriched.cvar.motifs.qstel
+# enriched.cvar.motifs.ductal
+# enriched.cvar.motifs.acinar
+# enriched.cvar.motifs.macro
+# enriched.cvar.motifs.lympho
+# enriched.cvar.motifs.endo
+# 
+# # Translating Motifs
+# motif_id <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\motif.ID.csv)", row.names = 1)
+# enriched.motifs.beta <- merge(motif_id, enriched.cvar.motifs.beta, by = 'row.names')
+# enriched.motifs.delta <- merge(motif_id, enriched.cvar.motifs.delta, by = 'row.names')
+# enriched.motifs.alpha <- merge(motif_id, enriched.cvar.motifs.alpha, by = 'row.names')
+# enriched.motifs.gamma <- merge(motif_id, enriched.cvar.motifs.gamma, by = 'row.names')
+# enriched.motifs.astel <- merge(motif_id, enriched.cvar.motifs.astel, by = 'row.names')
+# enriched.motifs.qstel <- merge(motif_id, enriched.cvar.motifs.qstel, by = 'row.names')
+# enriched.motifs.ductal <- merge(motif_id, enriched.cvar.motifs.ductal, by = 'row.names')
+# enriched.motifs.acinar <- merge(motif_id, enriched.cvar.motifs.acinar, by = 'row.names')
+# enriched.motifs.macro <- merge(motif_id, enriched.cvar.motifs.macro, by = 'row.names')
+# enriched.motifs.lympho <- merge(motif_id, enriched.cvar.motifs.lympho, by = 'row.names')
+# enriched.motifs.endo <- merge(motif_id, enriched.cvar.motifs.endo, by = 'row.names')
+# 
+# enriched.motifs.beta <- enriched.motifs.beta %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.delta <- enriched.motifs.delta %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.alpha <- enriched.motifs.alpha %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.gamma <- enriched.motifs.gamma %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.astel <- enriched.motifs.astel %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.qstel <- enriched.motifs.qstel %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.ductal <- enriched.motifs.ductal %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.acinar <- enriched.motifs.acinar %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.macro <- enriched.motifs.macro %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.lympho <- enriched.motifs.lympho %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# enriched.motifs.endo <- enriched.motifs.endo %>% remove_rownames %>% column_to_rownames(var="Row.names")
+# 
+# write.csv(enriched.motifs.beta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.beta.csv)")
+# write.csv(enriched.motifs.alpha, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.alpha.csv)")
+# write.csv(enriched.motifs.delta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.delta.csv)")
+# write.csv(enriched.motifs.gamma, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.gamma.csv)")
+# write.csv(enriched.motifs.astel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.activated.stellate.csv)")
+# write.csv(enriched.motifs.qstel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.quiescent.stellate.csv)")
+# write.csv(enriched.motifs.ductal, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.ductal.csv)")
+# write.csv(enriched.motifs.acinar, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.acinar.csv)")
+# write.csv(enriched.motifs.macro, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.macro.csv)")
+# write.csv(enriched.motifs.lympho, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.lympho.csv)")
+# write.csv(enriched.motifs.endo, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.endo.csv)")
 
-DefaultAssay(hm.integrated.dfree) <- "chromvar"
+# Load in motifs From 
+enriched.motifs.beta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.beta.csv)", row.names = 1)
+enriched.motifs.alpha <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.alpha.csv)", row.names = 1)
+enriched.motifs.delta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.delta.csv)", row.names = 1)
+enriched.motifs.gamma <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.gamma.csv)", row.names = 1)
+enriched.motifs.ductal <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.ductal.csv)", row.names = 1)
+enriched.motifs.acinar <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.acinar.csv)", row.names = 1)
+enriched.motifs.astel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.astel.csv)", row.names = 1)
+enriched.motifs.qstel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.qstel.csv)", row.names = 1)
+enriched.motifs.endo <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.endo.csv)", row.names = 1)
+enriched.motifs.lympho <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.lympho.csv)", row.names = 1)
+enriched.motifs.macro <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.macro.csv)", row.names = 1)
+
+# Plotting heatmap from ->
+# Adjust for incalculable pvals
+enriched.motifs.beta$p.adjust[enriched.motifs.beta$p.adjust == 0] <- 2e-307
+enriched.motifs.delta$p.adjust[enriched.motifs.delta$p.adjust == 0] <- 2e-307
+enriched.motifs.alpha$p.adjust[enriched.motifs.alpha$p.adjust == 0] <- 2e-307
+enriched.motifs.gamma$p.adjust[enriched.motifs.gamma$p.adjust == 0] <- 2e-307
+enriched.motifs.astel$p.adjust[enriched.motifs.astel$p.adjust == 0] <- 2e-307
+enriched.motifs.qstel$p.adjust[enriched.motifs.qstel$p.adjust == 0] <- 2e-307
+enriched.motifs.ductal$p.adjust[enriched.motifs.ductal$p.adjust == 0] <- 2e-307
+enriched.motifs.acinar$p.adjust[enriched.motifs.acinar$p.adjust == 0] <- 2e-307
+enriched.motifs.macro$p.adjust[enriched.motifs.macro$p.adjust == 0] <- 2e-307
+enriched.motifs.lympho$p.adjust[enriched.motifs.lympho$p.adjust == 0] <- 2e-307
+enriched.motifs.endo$p.adjust[enriched.motifs.endo$p.adjust == 0] <- 2e-307
+
+enriched.motifs.beta <- dplyr::filter(enriched.motifs.beta, p.adjust < 1e-10) 
+enriched.motifs.delta <- dplyr::filter(enriched.motifs.delta, p.adjust < 1e-10) 
+enriched.motifs.alpha <- dplyr::filter(enriched.motifs.alpha, p.adjust < 1e-10) 
+enriched.motifs.gamma <- dplyr::filter(enriched.motifs.gamma, p.adjust < 1e-10) 
+enriched.motifs.astel <- dplyr::filter(enriched.motifs.astel, p.adjust < 1e-10) 
+enriched.motifs.qstel <- dplyr::filter(enriched.motifs.qstel, p.adjust < 1e-10) 
+enriched.motifs.ductal <- dplyr::filter(enriched.motifs.ductal, p.adjust < 1e-10) 
+enriched.motifs.acinar <- dplyr::filter(enriched.motifs.acinar, p.adjust < 1e-10) 
+enriched.motifs.macro <- dplyr::filter(enriched.motifs.macro, p.adjust < 1e-10) 
+enriched.motifs.lympho <- dplyr::filter(enriched.motifs.lympho, p.adjust < 1e-10)
+enriched.motifs.endo <- dplyr::filter(enriched.motifs.endo, p.adjust < 1e-10)
+
+# Order data #beta_motifs <- as.character(rownames(enriched.motifs.beta[enriched.motifs.beta$p_val_adj < 1e-50,]))
+enriched.motifs.beta <- enriched.motifs.beta[order(enriched.motifs.beta$fold.enrichment),] 
+enriched.motifs.delta <- enriched.motifs.delta[order(enriched.motifs.delta$fold.enrichment),] 
+enriched.motifs.alpha <- enriched.motifs.alpha[order(enriched.motifs.alpha$fold.enrichment),] 
+enriched.motifs.gamma <- enriched.motifs.gamma[order(enriched.motifs.gamma$fold.enrichment),]
+enriched.motifs.astel <- enriched.motifs.astel[order(enriched.motifs.astel$fold.enrichment),] 
+enriched.motifs.qstel <- enriched.motifs.qstel[order(enriched.motifs.qstel$fold.enrichment),]
+enriched.motifs.ductal <- enriched.motifs.ductal[order(enriched.motifs.ductal$fold.enrichment),] 
+enriched.motifs.acinar <- enriched.motifs.acinar[order(enriched.motifs.acinar$fold.enrichment),]
+enriched.motifs.macro <- enriched.motifs.macro[order(enriched.motifs.macro$fold.enrichment),] 
+enriched.motifs.lympho <- enriched.motifs.lympho[order(enriched.motifs.lympho$fold.enrichment),]
+enriched.motifs.endo <- enriched.motifs.endo[order(enriched.motifs.endo$fold.enrichment),]
+
+# -log10adjpval
+enriched.motifs.beta$neglogpval <- -log10(enriched.motifs.beta$p.adjust)
+enriched.motifs.delta$neglogpval <- -log10(enriched.motifs.delta$p.adjust)
+enriched.motifs.alpha$neglogpval <- -log10(enriched.motifs.alpha$p.adjust)
+enriched.motifs.gamma$neglogpval <- -log10(enriched.motifs.gamma$p.adjust)
+enriched.motifs.astel$neglogpval <- -log10(enriched.motifs.astel$p.adjust)
+enriched.motifs.qstel$neglogpval <- -log10(enriched.motifs.qstel$p.adjust)
+enriched.motifs.ductal$neglogpval <- -log10(enriched.motifs.ductal$p.adjust)
+enriched.motifs.acinar$neglogpval <- -log10(enriched.motifs.acinar$p.adjust)
+enriched.motifs.macro$neglogpval <- -log10(enriched.motifs.macro$p.adjust)
+enriched.motifs.lympho$neglogpval <- -log10(enriched.motifs.lympho$p.adjust)
+enriched.motifs.endo$neglogpval <- -log10(enriched.motifs.endo$p.adjust)
+
+# Plot
+plot_celldata <- top_n(enriched.motifs.gamma, 75, fold.enrichment)
+level_order <- plot_celldata$motif.name
+mid <- mean(plot_celldata$fold.enrichment)
+plot_celldata %>%
+  arrange(fold.enrichment) %>%
+  mutate(name=factor(motif.name, levels=motif.name)) %>%
+  ggplot(aes(x = factor(motif.name, level = level_order),
+             y = fold.enrichment, 
+             color = neglogpval, 
+             size = percent.observed)) + 
+  geom_point(alpha=0.9) + 
+  ylab("") + 
+  xlab("") + 
+  ggtitle("") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.3, hjust=1, size =8, face = "plain", colour = "black")) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =8, face = "plain", colour = "black")) +
+  theme(plot.title = element_text(size = 10, face = "plain"),
+        legend.title=element_text(size=8, face = "plain"), 
+        legend.text=element_text(size=8, face = "plain")) +
+  theme(panel.grid.minor=element_blank(),
+        panel.grid.major=element_blank()) +
+  coord_flip() +
+  scale_size_continuous(
+    breaks = c(0, 25, 50, 100),
+    limits = c(0, 100)) +
+  #scale_x_discrete(limits=rev) + 
+  scale_color_gradient2(mid="white", high="springgreen4", space ="Lab" )
+
+# TF Foot printing
+# gather the footprinting information for sets of motifs
+hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
+DefaultAssay(hm.integrated.dfree) <- "ATAC"
 Idents(hm.integrated.dfree) <- "celltype"
-
-enriched.motifs.alpha <- FindMarkers(
+hm.integrated.dfree <- Footprint(
   object = hm.integrated.dfree,
-  ident.1 = 'alpha',
-  ident.2 = c('beta', "delta", "gamma", "activated_stellate", "quiescent_stellate", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
-  only.pos = TRUE,
-  mean.fxn = rowMeans,
-  fc.name = "avg_diff",
-  test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-  min.pct = 0.2,
-  logfc.threshold = 0
+  motif.name = c("PDX1", "MAFA", "Arx", "NKX6-1", "Isl1", "GBX2", "GATA5", "GLIS3"),
+  genome = BSgenome.Hsapiens.UCSC.hg38,
+  in.peaks = TRUE
 )
 
+PlotFootprint(hm.integrated.dfree, features = c("GATA5"))
+
+# Corelation plots
+# RNA
+install.packages("ggcorrplot")
+library(ggcorrplot)
+seurobj <- processed_rna
+cluster.id <- "beta"
+gene.list <- c("INS", "GCG", "PDX1")
+clusterCorPlot <- function(seurObj, cluster.id, gene.list, assay='RNA', slot='data') {
+  gene.dat <- GetAssayData(
+    subset(seurObj, idents = cluster.id), 
+    assay=assay, 
+    slot=slot)[gene.list,]
+  ggcorrplot(as.data.frame(t(gene.dat)))
+}
+
+processed_rna <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\processed_rna.qs)")
+Idents(processed_rna) <- "celltype_sex_ancestry_disease"
+av.exp <- AverageExpression(processed_rna)$RNA
+av.exp <- av.exp[rownames(av.exp) %in% processed_rna@assays[["RNA"]]@var.features, ]
+cor.exp <- as.data.frame(round(cor(av.exp, method = "pearson"),2))
+cor.exp$x <- rownames(cor.exp)
+cor.df <- tidyr::gather(data = cor.exp, y, correlation, unique(processed_rna@meta.data[["celltype_sex_ancestry_disease"]]))
+ggplot(cor.df, aes(x, y, fill = correlation)) +
+  geom_tile(#color = "black"
+    ) + theme_bw() + theme(axis.text.x = element_text(angle=70,vjust = 1, hjust=1)) + scale_fill_gradient2(low = "dodgerblue4", high = "red4", mid = "white", 
+                                    midpoint = 0.5, limit = c(0,1), space = "Lab", 
+                                    name="Pearson\nCorrelation")
+hm.integrated.dfree
+
+# ATAC
+hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
+Idents(hm.integrated.dfree) <- "celltype_sex_ancestry"
+av.exp <- AverageExpression(hm.integrated.dfree)$RNA
+DefaultAssay(hm.integrated.dfree) <- "RNA"
+hm.integrated.dfree <- FindVariableFeatures(hm.integrated.dfree, selection.method = "vst", nfeatures = 2000)
+av.exp <- av.exp[rownames(av.exp) %in% hm.integrated.dfree@assays[["RNA"]]@var.features, ]
+cor.exp <- as.data.frame(round(cor(av.exp, method = "pearson"),2))
+cor.exp$x <- rownames(cor.exp)
+datanames_toplot <- unique(hm.integrated.dfree@meta.data[["celltype_sex_ancestry"]])
+datanames_toplot <- as.character(datanames_toplot[!is.na(datanames_toplot)])
+cor.df <- tidyr::gather(data = cor.exp, y, correlation, datanames_toplot)
+ggplot(cor.df, aes(x, y, fill = correlation)) +
+  geom_tile(#color = "black"
+  ) + theme_bw() + theme(axis.text.x = element_text(angle=70,vjust = 1, hjust=1)) + scale_fill_gradient2(low = "dodgerblue4", high = "red4", mid = "white", 
+                                                                                                         midpoint = 0.5, limit = c(0,1), space = "Lab", 
+                                                                                                         name="Pearson\nCorrelation")
+
+av.exp <- AverageExpression(hm.integrated.dfree)$ATAC
+DefaultAssay(hm.integrated.dfree) <- "ATAC"
+av.exp <- av.exp[rownames(av.exp) %in% hm.integrated.dfree@assays[["ATAC"]]@var.features, ]
+cor.exp <- as.data.frame(round(cor(av.exp, method = "pearson"),2))
+cor.exp$x <- rownames(cor.exp)
+datanames_toplot <- unique(hm.integrated.dfree@meta.data[["celltype_sex_ancestry"]])
+datanames_toplot <- as.character(datanames_toplot[!is.na(datanames_toplot)])
+cor.df <- tidyr::gather(data = cor.exp, y, correlation, datanames_toplot)
+ggplot(cor.df, aes(x, y, fill = correlation)) +
+  geom_tile(#color = "black"
+  ) + theme_bw() + theme(axis.text.x = element_text(angle=70,vjust = 1, hjust=1)) + scale_fill_gradient2(low = "dodgerblue4", high = "red4", mid = "white", 
+                                                                                                         midpoint = 0, limit = c(-1,1), space = "Lab", 
+                                                                                                         name="Pearson\nCorrelation")
+
+av.exp <- AverageExpression(hm.integrated.dfree)$predicted
+DefaultAssay(hm.integrated.dfree) <- "predicted"
+hm.integrated.dfree <- FindVariableFeatures(hm.integrated.dfree, selection.method = "vst", nfeatures = 2000)
+av.exp <- av.exp[rownames(av.exp) %in% hm.integrated.dfree@assays[["predicted"]]@var.features, ]
+cor.exp <- as.data.frame(round(cor(av.exp, method = "pearson"),2))
+cor.exp$x <- rownames(cor.exp)
+datanames_toplot <- unique(hm.integrated.dfree@meta.data[["celltype_sex_ancestry"]])
+datanames_toplot <- as.character(datanames_toplot[!is.na(datanames_toplot)])
+cor.df <- tidyr::gather(data = cor.exp, y, correlation, datanames_toplot)
+ggplot(cor.df, aes(x, y, fill = correlation)) +
+  geom_tile(#color = "black"
+  ) + theme_bw() + theme(axis.text.x = element_text(angle=70,vjust = 1, hjust=1)) + scale_fill_gradient2(low = "dodgerblue4", high = "red4", mid = "white", 
+                                                                                                         midpoint = 0.5, limit = c(0,1), space = "Lab", 
+                                                                                                         name="Pearson\nCorrelation")
+
+
+# Load in motifs From 
 enriched.motifs.beta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.beta.csv)")
-enriched.motifs.delta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.delta.csv)")
-enriched.motifs.alpha <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.alpha.csv)")
+enriched.motifs.delta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.alpha.csv)")
+enriched.motifs.alpha <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.delta.csv)")
 enriched.motifs.gamma <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.gamma.csv)")
 enriched.motifs.ductal <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.ductal.csv)")
 enriched.motifs.acinar <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.acinar.csv)")
@@ -1339,6 +1684,7 @@ enriched.motifs.endo <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Cod
 enriched.motifs.lympho <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.lympho.csv)")
 enriched.motifs.macro <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.macro.csv)")
 
+motifs.to.plot <- rownames(hm.integrated.dfree@assays[["chromvar"]])
 combined_processed_atac <- FindVariableFeatures(combined_processed_atac, selection.method = "vst", nfeatures = 500)
 
 DefaultAssay(combined_processed_atac) <- "ATAC"
@@ -1439,7 +1785,6 @@ dev.off()
 
 
 # Plot motifs
-
 # look at the activity of Mef2c
 DefaultAssay(hm.integrated.dfree) <- "chromvar"
 FeaturePlot(
@@ -1486,7 +1831,19 @@ MotifPlot(
   motifs = c("GLI3")
 )
 
+# Alternative to calculating 
+bone <- Footprint(
+  object = bone,
+  motif.name = c("GATA2", "CEBPA", "EBF1"),
+  genome = BSgenome.Hsapiens.UCSC.hg19
+)
 
+
+# Translating Motifs
+motif_id <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\motif.ID.csv)", row.names = 1)
+table1.df <- merge(motif_id, enriched.cvar.motifs.beta,
+                   by = 'row.names', all = TRUE)
+enriched.cvar.motifs.beta
 # Stop
 
 
