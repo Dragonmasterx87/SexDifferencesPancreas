@@ -1299,275 +1299,294 @@ table(combined_processed_atac$celltype)
 Idents(combined_processed_atac) <- "celltype"
 
 
-# # DE testing Motifs
-# DefaultAssay(hm.integrated.dfree) <- "chromvar"
-# Idents(hm.integrated.dfree) <- "celltype"
-# 
-# enriched.cvar.motifs.beta <- FindMarkers(
-#   object = hm.integrated.dfree,
-#   ident.1 = 'beta',
-#   ident.2 = c('alpha', "delta", "gamma", "activated_stellate", "quiescent_stellate", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.2,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.alpha <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'alpha',
-#   ident.2 = c('beta', "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.05,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.delta <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'delta',
-#   ident.2 = c('alpha', "beta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.gamma <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'gamma',
-#   ident.2 = c('alpha', "beta", "delta", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.astel <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'activated',
-#   ident.2 = c('alpha', "beta", "delta", "gamma", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.qstel <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'quiescent',
-#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "ductal", "acinar", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.ductal <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'ductal',
-#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "acinar", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.acinar <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'acinar',
-#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "macrophage", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.macro <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'macrophage',
-#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "lymphocyte", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.lympho <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'lymphocyte',
-#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "endothelial"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.endo <- FindMarkers(
-#   object = combined_processed_atac,
-#   ident.1 = 'endothelial',
-#   ident.2 = c('alpha', "beta", "delta", "gamma", "activated", "quiescent", "ductal", "acinar", "macrophage", "lymphocyte"),
-#   only.pos = TRUE,
-#   mean.fxn = rowMeans,
-#   fc.name = "avg_diff",
-#   test.use = "wilcox", # Based on #2938 DESeq2 not recommended for single cell gene expression analysis
-#   min.pct = 0.1,
-#   logfc.threshold = 0
-# )
-# 
-# enriched.cvar.motifs.beta
-# enriched.cvar.motifs.alpha
-# enriched.cvar.motifs.delta
-# enriched.cvar.motifs.gamma
-# enriched.cvar.motifs.astel
-# enriched.cvar.motifs.qstel
-# enriched.cvar.motifs.ductal
-# enriched.cvar.motifs.acinar
-# enriched.cvar.motifs.macro
-# enriched.cvar.motifs.lympho
-# enriched.cvar.motifs.endo
-# 
-# # Translating Motifs
-# motif_id <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\motif.ID.csv)", row.names = 1)
-# enriched.motifs.beta <- merge(motif_id, enriched.cvar.motifs.beta, by = 'row.names')
-# enriched.motifs.delta <- merge(motif_id, enriched.cvar.motifs.delta, by = 'row.names')
-# enriched.motifs.alpha <- merge(motif_id, enriched.cvar.motifs.alpha, by = 'row.names')
-# enriched.motifs.gamma <- merge(motif_id, enriched.cvar.motifs.gamma, by = 'row.names')
-# enriched.motifs.astel <- merge(motif_id, enriched.cvar.motifs.astel, by = 'row.names')
-# enriched.motifs.qstel <- merge(motif_id, enriched.cvar.motifs.qstel, by = 'row.names')
-# enriched.motifs.ductal <- merge(motif_id, enriched.cvar.motifs.ductal, by = 'row.names')
-# enriched.motifs.acinar <- merge(motif_id, enriched.cvar.motifs.acinar, by = 'row.names')
-# enriched.motifs.macro <- merge(motif_id, enriched.cvar.motifs.macro, by = 'row.names')
-# enriched.motifs.lympho <- merge(motif_id, enriched.cvar.motifs.lympho, by = 'row.names')
-# enriched.motifs.endo <- merge(motif_id, enriched.cvar.motifs.endo, by = 'row.names')
-# 
-# enriched.motifs.beta <- enriched.motifs.beta %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.delta <- enriched.motifs.delta %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.alpha <- enriched.motifs.alpha %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.gamma <- enriched.motifs.gamma %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.astel <- enriched.motifs.astel %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.qstel <- enriched.motifs.qstel %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.ductal <- enriched.motifs.ductal %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.acinar <- enriched.motifs.acinar %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.macro <- enriched.motifs.macro %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.lympho <- enriched.motifs.lympho %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# enriched.motifs.endo <- enriched.motifs.endo %>% remove_rownames %>% column_to_rownames(var="Row.names")
-# 
-# write.csv(enriched.motifs.beta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.beta.csv)")
-# write.csv(enriched.motifs.alpha, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.alpha.csv)")
-# write.csv(enriched.motifs.delta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.delta.csv)")
-# write.csv(enriched.motifs.gamma, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.gamma.csv)")
-# write.csv(enriched.motifs.astel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.activated.stellate.csv)")
-# write.csv(enriched.motifs.qstel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.quiescent.stellate.csv)")
-# write.csv(enriched.motifs.ductal, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.ductal.csv)")
-# write.csv(enriched.motifs.acinar, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.acinar.csv)")
-# write.csv(enriched.motifs.macro, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.macro.csv)")
-# write.csv(enriched.motifs.lympho, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.lympho.csv)")
-# write.csv(enriched.motifs.endo, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.endo.csv)")
+# DE testing Motifs
+DefaultAssay(hm.integrated.dfree) <- "chromvar"
+Idents(hm.integrated.dfree) <- "celltype"
+
+enriched.cvar.motifs.beta <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'beta',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.alpha <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'alpha',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.delta <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'delta',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.gamma <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'gamma',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.astel <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'activated_stellate',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.qstel <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'quiescent_stellate',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.ductal <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'ductal',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.acinar <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'acinar',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.macro <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'macrophage',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.lympho <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'lymphocyte',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.endo <- FindMarkers(
+  object = hm.integrated.dfree,
+  ident.1 = 'endothelial',
+  only.pos = TRUE,
+  mean.fxn = rowMeans,
+  fc.name = "avg_diff",
+  min.pct = 0.1,
+  logfc.threshold = 0
+)
+
+enriched.cvar.motifs.beta
+enriched.cvar.motifs.alpha
+enriched.cvar.motifs.delta
+enriched.cvar.motifs.gamma
+enriched.cvar.motifs.astel
+enriched.cvar.motifs.qstel
+enriched.cvar.motifs.ductal
+enriched.cvar.motifs.acinar
+enriched.cvar.motifs.macro
+enriched.cvar.motifs.lympho
+enriched.cvar.motifs.endo
+
+# Adjust for incalculable pvals
+enriched.cvar.motifs.beta$p_val_adj[enriched.cvar.motifs.beta$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.alpha$p_val_adj[enriched.cvar.motifs.alpha$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.delta$p_val_adj[enriched.cvar.motifs.delta$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.gamma$p_val_adj[enriched.cvar.motifs.gamma$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.astel$p_val_adj[enriched.cvar.motifs.astel$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.qstel$p_val_adj[enriched.cvar.motifs.qstel$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.ductal$p_val_adj[enriched.cvar.motifs.ductal$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.acinar$p_val_adj[enriched.cvar.motifs.acinar$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.macro$p_val_adj[enriched.cvar.motifs.macro$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.lympho$p_val_adj[enriched.cvar.motifs.lympho$p_val_adj == 0] <- 2e-307
+enriched.cvar.motifs.endo$p_val_adj[enriched.cvar.motifs.endo$p_val_adj == 0] <- 2e-307
+
+# Translating Motifs
+motif_id <- read.csv(r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\motif.ID.csv)", row.names = 1)
+enriched.motifs.beta <- merge(motif_id, enriched.cvar.motifs.beta, by = 'row.names')
+enriched.motifs.delta <- merge(motif_id, enriched.cvar.motifs.delta, by = 'row.names')
+enriched.motifs.alpha <- merge(motif_id, enriched.cvar.motifs.alpha, by = 'row.names')
+enriched.motifs.gamma <- merge(motif_id, enriched.cvar.motifs.gamma, by = 'row.names')
+enriched.motifs.astel <- merge(motif_id, enriched.cvar.motifs.astel, by = 'row.names')
+enriched.motifs.qstel <- merge(motif_id, enriched.cvar.motifs.qstel, by = 'row.names')
+enriched.motifs.ductal <- merge(motif_id, enriched.cvar.motifs.ductal, by = 'row.names')
+enriched.motifs.acinar <- merge(motif_id, enriched.cvar.motifs.acinar, by = 'row.names')
+enriched.motifs.macro <- merge(motif_id, enriched.cvar.motifs.macro, by = 'row.names')
+enriched.motifs.lympho <- merge(motif_id, enriched.cvar.motifs.lympho, by = 'row.names')
+enriched.motifs.endo <- merge(motif_id, enriched.cvar.motifs.endo, by = 'row.names')
+
+enriched.motifs.beta <- enriched.motifs.beta %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.delta <- enriched.motifs.delta %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.alpha <- enriched.motifs.alpha %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.gamma <- enriched.motifs.gamma %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.astel <- enriched.motifs.astel %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.qstel <- enriched.motifs.qstel %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.ductal <- enriched.motifs.ductal %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.acinar <- enriched.motifs.acinar %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.macro <- enriched.motifs.macro %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.lympho <- enriched.motifs.lympho %>% remove_rownames %>% column_to_rownames(var="tf")
+enriched.motifs.endo <- enriched.motifs.endo %>% remove_rownames %>% column_to_rownames(var="tf")
+
+write.csv(enriched.motifs.beta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.beta.csv)")
+write.csv(enriched.motifs.alpha, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.alpha.csv)")
+write.csv(enriched.motifs.delta, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.delta.csv)")
+write.csv(enriched.motifs.gamma, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.gamma.csv)")
+write.csv(enriched.motifs.astel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.activated.stellate.csv)")
+write.csv(enriched.motifs.qstel, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.quiescent.stellate.csv)")
+write.csv(enriched.motifs.ductal, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.ductal.csv)")
+write.csv(enriched.motifs.acinar, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.acinar.csv)")
+write.csv(enriched.motifs.macro, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.macro.csv)")
+write.csv(enriched.motifs.lympho, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.lympho.csv)")
+write.csv(enriched.motifs.endo, file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.endo.csv)")
 
 # Load in motifs From 
-enriched.motifs.beta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.beta.csv)", row.names = 1)
-enriched.motifs.alpha <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.alpha.csv)", row.names = 1)
-enriched.motifs.delta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.delta.csv)", row.names = 1)
-enriched.motifs.gamma <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.gamma.csv)", row.names = 1)
-enriched.motifs.ductal <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.ductal.csv)", row.names = 1)
-enriched.motifs.acinar <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.acinar.csv)", row.names = 1)
-enriched.motifs.astel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.astel.csv)", row.names = 1)
-enriched.motifs.qstel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.qstel.csv)", row.names = 1)
-enriched.motifs.endo <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.endo.csv)", row.names = 1)
-enriched.motifs.lympho <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.lympho.csv)", row.names = 1)
-enriched.motifs.macro <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\enriched.motifs.macro.csv)", row.names = 1)
+enriched.motifs.beta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.beta.csv)", row.names = 1)
+enriched.motifs.alpha <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.alpha.csv)", row.names = 1)
+enriched.motifs.delta <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.delta.csv)", row.names = 1)
+enriched.motifs.gamma <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.gamma.csv)", row.names = 1)
+enriched.motifs.ductal <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.ductal.csv)", row.names = 1)
+enriched.motifs.acinar <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.acinar.csv)", row.names = 1)
+enriched.motifs.astel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.activated.stellate.csv)", row.names = 1)
+enriched.motifs.qstel <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.quiescent.stellate.csv)", row.names = 1)
+enriched.motifs.endo <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.endo.csv)", row.names = 1)
+enriched.motifs.lympho <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.lympho.csv)", row.names = 1)
+enriched.motifs.macro <- read.csv(file = r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scripts\Sex Biology Study\Data Output\snATAC\DE_accessible_sites\DA_motifs\allsex\chromvar\enriched.motifs.macro.csv)", row.names = 1)
+
+# Order data based on pval #beta_motifs <- as.character(rownames(enriched.motifs.beta[enriched.motifs.beta$p_val_adj < 1e-50,]))
+enriched.motifs.beta <- enriched.motifs.beta[order(enriched.motifs.beta$ordering),] 
+enriched.motifs.delta <- enriched.motifs.delta[order(enriched.motifs.delta$ordering),] 
+enriched.motifs.alpha <- enriched.motifs.alpha[order(enriched.motifs.alpha$ordering),] 
+enriched.motifs.gamma <- enriched.motifs.gamma[order(enriched.motifs.gamma$ordering),]
+enriched.motifs.astel <- enriched.motifs.astel[order(enriched.motifs.astel$ordering),] 
+enriched.motifs.qstel <- enriched.motifs.qstel[order(enriched.motifs.qstel$ordering),]
+enriched.motifs.ductal <- enriched.motifs.ductal[order(enriched.motifs.ductal$ordering),] 
+enriched.motifs.acinar <- enriched.motifs.acinar[order(enriched.motifs.acinar$ordering),]
+enriched.motifs.macro <- enriched.motifs.macro[order(enriched.motifs.macro$ordering),] 
+enriched.motifs.lympho <- enriched.motifs.lympho[order(enriched.motifs.lympho$ordering),]
+enriched.motifs.endo <- enriched.motifs.endo[order(enriched.motifs.endo$ordering),]
+
+# Add divided data
+enriched.motifs.beta$foldenrich <- enriched.motifs.beta$pct.1 / enriched.motifs.beta$pct.2
+enriched.motifs.delta$foldenrich <- enriched.motifs.delta$pct.1 / enriched.motifs.delta$pct.2
+enriched.motifs.alpha$foldenrich <- enriched.motifs.alpha$pct.1 / enriched.motifs.alpha$pct.2
+enriched.motifs.gamma$foldenrich <- enriched.motifs.gamma$pct.1 / enriched.motifs.gamma$pct.2
+enriched.motifs.astel$foldenrich <- enriched.motifs.astel$pct.1 / enriched.motifs.astel$pct.2
+enriched.motifs.qstel$foldenrich <- enriched.motifs.qstel$pct.1 / enriched.motifs.qstel$pct.2
+enriched.motifs.ductal$foldenrich <- enriched.motifs.ductal$pct.1 / enriched.motifs.ductal$pct.2
+enriched.motifs.acinar$foldenrich <- enriched.motifs.acinar$pct.1 / enriched.motifs.acinar$pct.2
+enriched.motifs.macro$foldenrich <- enriched.motifs.macro$pct.1 / enriched.motifs.macro$pct.2
+enriched.motifs.lympho$foldenrich <- enriched.motifs.lympho$pct.1 / enriched.motifs.lympho$pct.2
+enriched.motifs.endo$foldenrich <- enriched.motifs.endo$pct.1 / enriched.motifs.endo$pct.2
 
 # Plotting heatmap from ->
-# Adjust for incalculable pvals
-enriched.motifs.beta$p.adjust[enriched.motifs.beta$p.adjust == 0] <- 2e-307
-enriched.motifs.delta$p.adjust[enriched.motifs.delta$p.adjust == 0] <- 2e-307
-enriched.motifs.alpha$p.adjust[enriched.motifs.alpha$p.adjust == 0] <- 2e-307
-enriched.motifs.gamma$p.adjust[enriched.motifs.gamma$p.adjust == 0] <- 2e-307
-enriched.motifs.astel$p.adjust[enriched.motifs.astel$p.adjust == 0] <- 2e-307
-enriched.motifs.qstel$p.adjust[enriched.motifs.qstel$p.adjust == 0] <- 2e-307
-enriched.motifs.ductal$p.adjust[enriched.motifs.ductal$p.adjust == 0] <- 2e-307
-enriched.motifs.acinar$p.adjust[enriched.motifs.acinar$p.adjust == 0] <- 2e-307
-enriched.motifs.macro$p.adjust[enriched.motifs.macro$p.adjust == 0] <- 2e-307
-enriched.motifs.lympho$p.adjust[enriched.motifs.lympho$p.adjust == 0] <- 2e-307
-enriched.motifs.endo$p.adjust[enriched.motifs.endo$p.adjust == 0] <- 2e-307
+enriched.motifs.beta <- dplyr::filter(enriched.motifs.beta, p_val_adj < 5e-2) 
+enriched.motifs.delta <- dplyr::filter(enriched.motifs.delta, p_val_adj < 5e-2) 
+enriched.motifs.alpha <- dplyr::filter(enriched.motifs.alpha, p_val_adj < 5e-2) 
+enriched.motifs.gamma <- dplyr::filter(enriched.motifs.gamma, p_val_adj < 5e-2) 
+enriched.motifs.astel <- dplyr::filter(enriched.motifs.astel, p_val_adj < 5e-2) 
+enriched.motifs.qstel <- dplyr::filter(enriched.motifs.qstel, p_val_adj < 5e-2) 
+enriched.motifs.ductal <- dplyr::filter(enriched.motifs.ductal, p_val_adj < 5e-2) 
+enriched.motifs.acinar <- dplyr::filter(enriched.motifs.acinar, p_val_adj < 5e-2) 
+enriched.motifs.macro <- dplyr::filter(enriched.motifs.macro, p_val_adj < 5e-2) 
+enriched.motifs.lympho <- dplyr::filter(enriched.motifs.lympho, p_val_adj < 5e-2)
+enriched.motifs.endo <- dplyr::filter(enriched.motifs.endo, p_val_adj < 5e-2)
 
-enriched.motifs.beta <- dplyr::filter(enriched.motifs.beta, p.adjust < 1e-10) 
-enriched.motifs.delta <- dplyr::filter(enriched.motifs.delta, p.adjust < 1e-10) 
-enriched.motifs.alpha <- dplyr::filter(enriched.motifs.alpha, p.adjust < 1e-10) 
-enriched.motifs.gamma <- dplyr::filter(enriched.motifs.gamma, p.adjust < 1e-10) 
-enriched.motifs.astel <- dplyr::filter(enriched.motifs.astel, p.adjust < 1e-10) 
-enriched.motifs.qstel <- dplyr::filter(enriched.motifs.qstel, p.adjust < 1e-10) 
-enriched.motifs.ductal <- dplyr::filter(enriched.motifs.ductal, p.adjust < 1e-10) 
-enriched.motifs.acinar <- dplyr::filter(enriched.motifs.acinar, p.adjust < 1e-10) 
-enriched.motifs.macro <- dplyr::filter(enriched.motifs.macro, p.adjust < 1e-10) 
-enriched.motifs.lympho <- dplyr::filter(enriched.motifs.lympho, p.adjust < 1e-10)
-enriched.motifs.endo <- dplyr::filter(enriched.motifs.endo, p.adjust < 1e-10)
+# Select top 50 motifs
+enriched.motifs.beta <- top_n(enriched.motifs.beta, -100, ordering)
+enriched.motifs.delta <- top_n(enriched.motifs.delta, -100, ordering)
+enriched.motifs.alpha <- top_n(enriched.motifs.alpha, -100, ordering)
+enriched.motifs.gamma <- top_n(enriched.motifs.gamma, -100, ordering)
+enriched.motifs.astel <- top_n(enriched.motifs.astel, -100, ordering)
+enriched.motifs.qstel <- top_n(enriched.motifs.qstel, -100, ordering)
+enriched.motifs.ductal <- top_n(enriched.motifs.ductal, -100, ordering)
+enriched.motifs.acinar <- top_n(enriched.motifs.acinar, -100, ordering)
+enriched.motifs.macro <- top_n(enriched.motifs.macro, -100, ordering)
+enriched.motifs.lympho <- top_n(enriched.motifs.lympho, -100, ordering)
+enriched.motifs.endo <- top_n(enriched.motifs.endo, -100, ordering)
 
 # Order data #beta_motifs <- as.character(rownames(enriched.motifs.beta[enriched.motifs.beta$p_val_adj < 1e-50,]))
-enriched.motifs.beta <- enriched.motifs.beta[order(enriched.motifs.beta$fold.enrichment),] 
-enriched.motifs.delta <- enriched.motifs.delta[order(enriched.motifs.delta$fold.enrichment),] 
-enriched.motifs.alpha <- enriched.motifs.alpha[order(enriched.motifs.alpha$fold.enrichment),] 
-enriched.motifs.gamma <- enriched.motifs.gamma[order(enriched.motifs.gamma$fold.enrichment),]
-enriched.motifs.astel <- enriched.motifs.astel[order(enriched.motifs.astel$fold.enrichment),] 
-enriched.motifs.qstel <- enriched.motifs.qstel[order(enriched.motifs.qstel$fold.enrichment),]
-enriched.motifs.ductal <- enriched.motifs.ductal[order(enriched.motifs.ductal$fold.enrichment),] 
-enriched.motifs.acinar <- enriched.motifs.acinar[order(enriched.motifs.acinar$fold.enrichment),]
-enriched.motifs.macro <- enriched.motifs.macro[order(enriched.motifs.macro$fold.enrichment),] 
-enriched.motifs.lympho <- enriched.motifs.lympho[order(enriched.motifs.lympho$fold.enrichment),]
-enriched.motifs.endo <- enriched.motifs.endo[order(enriched.motifs.endo$fold.enrichment),]
+enriched.motifs.beta <- enriched.motifs.beta[order(enriched.motifs.beta$foldenrich),] 
+enriched.motifs.delta <- enriched.motifs.delta[order(enriched.motifs.delta$foldenrich),] 
+enriched.motifs.alpha <- enriched.motifs.alpha[order(enriched.motifs.alpha$foldenrich),] 
+enriched.motifs.gamma <- enriched.motifs.gamma[order(enriched.motifs.gamma$foldenrich),]
+enriched.motifs.astel <- enriched.motifs.astel[order(enriched.motifs.astel$foldenrich),] 
+enriched.motifs.qstel <- enriched.motifs.qstel[order(enriched.motifs.qstel$foldenrich),]
+enriched.motifs.ductal <- enriched.motifs.ductal[order(enriched.motifs.ductal$foldenrich),] 
+enriched.motifs.acinar <- enriched.motifs.acinar[order(enriched.motifs.acinar$foldenrich),]
+enriched.motifs.macro <- enriched.motifs.macro[order(enriched.motifs.macro$foldenrich),] 
+enriched.motifs.lympho <- enriched.motifs.lympho[order(enriched.motifs.lympho$foldenrich),]
+enriched.motifs.endo <- enriched.motifs.endo[order(enriched.motifs.endo$foldenrich),]
 
 # -log10adjpval
-enriched.motifs.beta$neglogpval <- -log10(enriched.motifs.beta$p.adjust)
-enriched.motifs.delta$neglogpval <- -log10(enriched.motifs.delta$p.adjust)
-enriched.motifs.alpha$neglogpval <- -log10(enriched.motifs.alpha$p.adjust)
-enriched.motifs.gamma$neglogpval <- -log10(enriched.motifs.gamma$p.adjust)
-enriched.motifs.astel$neglogpval <- -log10(enriched.motifs.astel$p.adjust)
-enriched.motifs.qstel$neglogpval <- -log10(enriched.motifs.qstel$p.adjust)
-enriched.motifs.ductal$neglogpval <- -log10(enriched.motifs.ductal$p.adjust)
-enriched.motifs.acinar$neglogpval <- -log10(enriched.motifs.acinar$p.adjust)
-enriched.motifs.macro$neglogpval <- -log10(enriched.motifs.macro$p.adjust)
-enriched.motifs.lympho$neglogpval <- -log10(enriched.motifs.lympho$p.adjust)
-enriched.motifs.endo$neglogpval <- -log10(enriched.motifs.endo$p.adjust)
+enriched.motifs.beta$neglogpval <- -log10(enriched.motifs.beta$p_val_adj)
+enriched.motifs.delta$neglogpval <- -log10(enriched.motifs.delta$p_val_adj)
+enriched.motifs.alpha$neglogpval <- -log10(enriched.motifs.alpha$p_val_adj)
+enriched.motifs.gamma$neglogpval <- -log10(enriched.motifs.gamma$p_val_adj)
+enriched.motifs.astel$neglogpval <- -log10(enriched.motifs.astel$p_val_adj)
+enriched.motifs.qstel$neglogpval <- -log10(enriched.motifs.qstel$p_val_adj)
+enriched.motifs.ductal$neglogpval <- -log10(enriched.motifs.ductal$p_val_adj)
+enriched.motifs.acinar$neglogpval <- -log10(enriched.motifs.acinar$p_val_adj)
+enriched.motifs.macro$neglogpval <- -log10(enriched.motifs.macro$p_val_adj)
+enriched.motifs.lympho$neglogpval <- -log10(enriched.motifs.lympho$p_val_adj)
+enriched.motifs.endo$neglogpval <- -log10(enriched.motifs.endo$p_val_adj)
 
 # Plot
-plot_celldata <- top_n(enriched.motifs.gamma, 75, fold.enrichment)
+plot_celldata <- top_n(enriched.motifs.macro, -50, foldenrich)
+plot_celldata <- tibble::rownames_to_column(plot_celldata, "motif.name")
 level_order <- plot_celldata$motif.name
-mid <- mean(plot_celldata$fold.enrichment)
+mid <- mean(plot_celldata$foldenrich)
 plot_celldata %>%
-  arrange(fold.enrichment) %>%
+  arrange(foldenrich) %>%
   mutate(name=factor(motif.name, levels=motif.name)) %>%
   ggplot(aes(x = factor(motif.name, level = level_order),
-             y = fold.enrichment, 
+             y = foldenrich, 
              color = neglogpval, 
-             size = percent.observed)) + 
-  geom_point(alpha=0.9) + 
+             size = pct.1)) + 
+  #geom_point(alpha=0.5, colour = "chartreuse3") + 
+  geom_point(alpha=0.5) +
   ylab("") + 
   xlab("") + 
   ggtitle("") +
   theme_bw() + 
-  theme(axis.text.x = element_text(angle = 0, vjust = 0.3, hjust=1, size =8, face = "plain", colour = "black")) +
-  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =8, face = "plain", colour = "black")) +
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.3, hjust=1, size =6, face = "plain", colour = "black")) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =6, face = "plain", colour = "black")) +
   theme(plot.title = element_text(size = 10, face = "plain"),
         legend.title=element_text(size=8, face = "plain"), 
         legend.text=element_text(size=8, face = "plain")) +
@@ -1575,10 +1594,11 @@ plot_celldata %>%
         panel.grid.major=element_blank()) +
   coord_flip() +
   scale_size_continuous(
-    breaks = c(0, 25, 50, 100),
-    limits = c(0, 100)) +
+    breaks = c(0, 0.25, 0.5, 0.75, 1),
+    limits = c(0, 1)) +
   #scale_x_discrete(limits=rev) + 
-  scale_color_gradient2(mid="white", high="springgreen4", space ="Lab" )
+  scale_color_gradient2(low = "white", high="magenta3", space ="Lab" )
+low = "white"
 
 # TF Foot printing
 # gather the footprinting information for sets of motifs
@@ -1813,9 +1833,49 @@ FeaturePlot(
 
 MotifPlot(
   object = hm.integrated.dfree,
-  motifs = "MA1608.1",
+  motifs = "MA1512.1",
   assay = 'ATAC'
 )
+
+# Dotplots
+# Selected genes
+DefaultAssay(hm.integrated.dfree) <- "chromvar"
+markers.to.plot <- c("MA0132.2", #PDX1
+                     "MA0148.4",  #FOXA1
+                     "MA0874.1",  #Arx
+                     "MA1608.1", #ISL1
+                     "MA0674.1", #NKX6-1
+                     "MA1645.1", #NKX2-2
+                     "MA0117.2", #MAFB
+                     "MA0077.1", #SOX9
+                     "MA0068.2", #PAX4
+                     "MA1618.1", #PTF1A
+                     "MA0114.4", #HNF4A
+                     "MA0046.2", #HNF1A
+                     "MA0084.1", #SRY
+                     "MA0007.3", #Ar
+                     "MA0098.3", #ETS1
+                     "MA1484.1" #ETS2
+                     )
+
+# Dotplot
+DotPlot(hm.integrated.dfree,  
+        dot.scale = 8,
+        col.min = -1, #minimum level
+        col.max = 1,  #maximum level
+        features = rev(markers.to.plot),
+        scale = TRUE) + 
+  geom_point(aes(size=pct.exp), shape = 21, stroke=0.5) +
+  theme_light() +
+  #facet_wrap(~??? what metadata should be here??)
+  #coord_flip() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(axis.text.y = element_text(angle = 0, vjust = 0.3, hjust=1, size =12, face = "bold", colour = "black")) +
+  theme(plot.title = element_text(size = 10, face = "bold"),
+        legend.title=element_text(size=12, face = "bold"), 
+        legend.text=element_text(size=12, face = "bold")) +
+  scale_colour_gradient2(low =c("dodgerblue"), high =c("red3")) +
+  guides(color = guide_colorbar(title = 'Average Expression')) + coord_flip() 
 
 # Finding enriched motifs
 enriched.motifs.xist <- FindMotifs(
@@ -1828,7 +1888,7 @@ write.csv(enriched.motifs.xist, r"(C:\Users\mqadir\Box\Lab 2301\1. R_Coding Scri
 # Plot
 MotifPlot(
   object = hm.integrated.dfree,
-  motifs = c("GLI3")
+  motifs = c("GLIS2")
 )
 
 # Alternative to calculating 
