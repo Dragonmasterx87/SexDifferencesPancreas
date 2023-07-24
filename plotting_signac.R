@@ -129,6 +129,7 @@ suppressPackageStartupMessages({
   library(cicero)
   library(BiocParallel)
   library(ggseqlogo)
+  library(DESeq2)
   # Set global environment parameter par-proc
   # options(future.globals.maxSize = 8000 * 1024^2)
   set.seed(1234)
@@ -153,6 +154,7 @@ packageVersion("signac")
 packageVersion("EnrichmentBrowser")
 packageVersion("monocle3")
 packageVersion("cicero")
+packageVersion("scDblFinder")
 
 # Load object
 hm.integrated.dfree <- qread(r"(E:\2.SexbasedStudyCurrent\QS files\hm.integrated.dfree.qs)")
